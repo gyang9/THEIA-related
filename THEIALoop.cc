@@ -492,7 +492,7 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
    nuebarOsc = (TH1D*)f1->Get("nuebar_fluxosc");
    numuOsc   = (TH1D*)f1->Get("numu_fluxosc");
    numubarOsc= (TH1D*)f1->Get("numubar_fluxosc");
-
+/*
    //normalize to 1
    nue         ->Scale(1./nue->Integral());
    nuebar      ->Scale(1./nuebar->Integral());
@@ -502,6 +502,16 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
    nuebarOsc   ->Scale(1./nuebarOsc->Integral());
    numuOsc     ->Scale(1./numuOsc->Integral());
    numubarOsc  ->Scale(1./numubarOsc->Integral());
+*/
+
+   TH1D * hists[] = {nue, nuebar, numu, numubar, nueOsc, nuebarOsc, numuOsc, numubarOsc};
+
+   // Divide by bin width first!
+   for (int iHist = 0; iHist < 8; iHist++) {
+     for (int iBin = 1; iBin <= hists[iHist]->GetNbinsX(); iBin++)
+       hists[iHist]->SetBinContent(iBin, hists[iHist]->GetBinContent(iBin)/hists[iHist]->GetBinWidth(iBin));
+       //hists[iHist]->Scale(1./hists[iHist]->Integral()); // Why normalizing each component independently?!
+   }
 
    TSpline5* duneNue       = new TSpline5( nue);
    TSpline5* duneNuebar    = new TSpline5( nuebar);
@@ -528,29 +538,23 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
 
 TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
 {
-   double nueIn[200]={};
-   double numuIn[200]={};
-   double nuebarIn[200]={};
-   double numubarIn[200]={};
-   double totNumber[4]={};
-   double xx[200]={};
 
    int counter = 0;
    std::ifstream in;
    in.open(atmFlux);
-   while (!in.eof()){
+   std::cout<<"fluxes from Honda: energy, nue, nuebar, numu, numubar  ***|*** "<<std::endl;
+   while (1){
         if (!in.good()) break;
         in>>xx[counter]>>nueIn[counter]>>nuebarIn[counter]>>numuIn[counter]>>numubarIn[counter];
         std::cout<<xx[counter]<<" "<<nueIn[counter]<<" "<<nuebarIn[counter]<<" "<<numuIn[counter]<<" "<<numubarIn[counter]<<std::endl;
+        totNumber[0] = totNumber[0] + nueIn[counter];
+        totNumber[1] = totNumber[1] + nuebarIn[counter];
+        totNumber[2] = totNumber[2] + numuIn[counter];
+        totNumber[3] = totNumber[3] + numubarIn[counter];
    counter++;
    }
 
-   for(Int_t i=0;i<counter;i++){
-        totNumber[0] += nueIn[counter];
-        totNumber[1] += nuebarIn[counter];
-        totNumber[2] += numuIn[counter];
-        totNumber[3] += numubarIn[counter];
-   }
+   std::cout<<"summation of atm fluxes "<<totNumber[0]<<" "<<totNumber[1]<<" "<<totNumber[2]<<" "<<totNumber[3]<<std::endl;
 
    for(Int_t i=0;i<counter;i++){
 	nueIn[counter]    = nueIn[counter]/totNumber[0];
@@ -564,6 +568,19 @@ TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
    TSpline5* atmNumu   = new TSpline5("atmNumu", xx, numuIn, counter);
    TSpline5* atmNumubar= new TSpline5("atmNumubar", xx, numubarIn, counter);
 
+
+/*
+   // Use TGraphs to read file directly, much easier
+   TGraph * gAtmNue     = new TGraph(atmFlux, "%lg %lg");
+   TGraph * gAtmNuebar  = new TGraph(atmFlux, "%lg %*lg %lg");
+   TGraph * gAtmNumu    = new TGraph(atmFlux, "%lg %*lg %*lg %lg");
+   TGraph * gAtmNumubar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg");
+
+   TSpline5* atmNue    = new TSpline5("atmNue", gAtmNue);
+   TSpline5* atmNuebar = new TSpline5("atmNuebar", gAtmNuebar);
+   TSpline5* atmNumu   = new TSpline5("atmNumu", gAtmNumu);
+   TSpline5* atmNumubar= new TSpline5("atmNumubar", gAtmNumubar);
+*/
    reTot[0] = atmNue;
    reTot[1] = atmNuebar;
    reTot[2] = atmNumu;
@@ -699,11 +716,11 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isBKG = true;
                         }
 		}	  
-		else { 
+		else {
+			if(TMath::Abs(ipnu[0])==12) isSIG = true; 
                         for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isSIG = false;
 			}
-		isSIG = true;
 		}
 		if(isBKG == true) bkgCategory = 0;
                 if(isSIG == true) sigCategory = 0;
@@ -735,10 +752,10 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
                         }
                 }
                 else {
+                        if(TMath::Abs(ipnu[0])==12) isSIG = true;
                         for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isSIG = false;
                         }
-                isSIG = true;
                 }
                 if(isBKG == true) bkgCategory = 1;
                 if(isSIG == true) sigCategory = 1;
@@ -770,10 +787,10 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
                         }
                 }
                 else {
+                        if(TMath::Abs(ipnu[0])==12) isSIG = true;
                         for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isSIG = false;
                         }
-                isSIG = true;
                 }
                 if(isBKG == true) bkgCategory = 2;
                 if(isSIG == true) sigCategory = 2;

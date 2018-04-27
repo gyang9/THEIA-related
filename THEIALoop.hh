@@ -830,6 +830,12 @@ public :
    Int_t    sigCategory;
    Int_t    bkgCategory;
 
+   double nueIn[200]={};
+   double numuIn[200]={};
+   double nuebarIn[200]={};
+   double numubarIn[200]={};
+   double totNumber[4]={};
+   double xx[200]={};
 };
 
 //#endif

@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
    //sLoop->Init(tree);
    sLoop->prepareOutput("outputTest.root");
 
-   TString atmFlux("input/hondaFlux.txt");
+   TString atmFlux("input/hondaFluxTruncated.txt");
    TSpline5** atmSpline = sLoop->LoadAtmFlux(atmFlux);
 
    TString duneFlux("input/g4lbne_FHC_FD.root");
