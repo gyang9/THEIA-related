@@ -1,3 +1,15 @@
+/// \file
+/// \ingroup tutorial_tmva
+/// \notebook -nodraw
+/// This macro provides a simple example on how to use the trained classifiers
+/// within an analysis module
+/// - Project   : TMVA - a Root-integrated toolkit for multivariate data analysis
+/// - Package   : TMVA
+/// - Exectuable: TMVAClassificationApplication
+///
+/// \macro_output
+/// \macro_code
+/// \author Andreas Hoecker
 
 #include <cstdlib>
 #include <vector>
@@ -95,7 +107,7 @@ void TMVAClassificationApplication_theia( TString myMethodList = "" )
    Use["SVM_Lin"]         = 0;
 
    std::cout << std::endl;
-   std::cout << "==> Start TMVAClassificationApplication_gy" << std::endl;
+   std::cout << "==> Start TMVAClassificationApplication_theia" << std::endl;
 
    // Select methods (don't look at this code - not of interest)
    if (myMethodList != "") {
@@ -156,7 +168,198 @@ void TMVAClassificationApplication_theia( TString myMethodList = "" )
    reader->AddVariable( "fqpi0dirtot[0][1]", "fqpi0dirtot1", "units", 'F' );
    reader->AddVariable( "fqpi0dirtot[0][2]", "fqpi0dirtot2", "units", 'F' );
 */
-   Float_t fqpi0mom1, fqpi0mom2, fq1rnll, fqpi0mass, fqpi0photangle, fqpi0nll, fqpi0momtot, fq1rmom, fqpi0dconv1, fqpi0dconv2, fqpi0t0, fqpi0totmu, fqpi0dirtot0, fqpi0dirtot1, fqpi0dirtot2, lepi, angleepi, momepi1, momepi2;
+   //Float_t fqpi0mom1, fqpi0mom2, fq1rnll, fqpi0mass, fqpi0photangle, fqpi0nll, fqpi0momtot, fq1rmom, fqpi0dconv1, fqpi0dconv2, fqpi0t0, fqpi0totmu, fqpi0dirtot0, fqpi0dirtot1, fqpi0dirtot2, lepi, angleepi, momepi1, momepi2;
+
+   Float_t fqpi0momm1;
+   Float_t fqpi0momm2;
+   Float_t  fq1rnll01_fqpi0nll0;
+   Float_t  fqpi0mass0  ;
+   Float_t  fqpi0photanglee ;
+
+   Float_t erecmr;
+   Float_t fq1rmom01 ;
+   Float_t fq1rmom02 ;
+   Float_t  fq1rmom03 ;
+   Float_t  fqwall ;
+   Float_t  fq1rnll01_fq1rnll02  ;
+   Float_t  fq1rnll02_fq1rnll03  ;
+   Float_t  fq1reloss03 ;
+   Float_t  eTOpre ;
+   Float_t  towall ;
+
+   Float_t  momee0 ;
+   Float_t  momee1 ;
+   Float_t  momepi0 ;
+   Float_t  momepi1 ;
+   Float_t  mompp0 ;
+   Float_t  mompp1;
+   Float_t  mompie0 ;
+   Float_t  mompie1 ;
+   Float_t  angleepi;
+   Float_t  anglepie ;
+   Float_t  angleee ;
+   Float_t  anglepp ;
+   Float_t  fq1rE_fq2rEE ;
+   Float_t  fq1rE_fq2rEP ;
+   Float_t  fq1rE_fq2rPE ;
+   Float_t  fq1rE_fq2rPP ;
+
+    Float_t momeee0 ;
+   Float_t  momeee1 ;
+   Float_t  momeee2 ;
+   Float_t  momppp0 ;
+   Float_t  momppp1 ;
+   Float_t  momppp2 ;
+   Float_t  momeep0 ;
+   Float_t  momeep1 ;
+   Float_t  momeep2 ;
+   Float_t  momepe0 ;
+   Float_t  momepe1 ;
+   Float_t  momepe2 ;
+   Float_t  mompee0 ;
+   Float_t  mompee1 ;
+   Float_t  mompee2 ;
+   Float_t  momppe0;
+   Float_t  momppe1 ;
+   Float_t  momppe2;
+   Float_t  mompep0;
+   Float_t  mompep1;
+   Float_t  mompep2;
+   Float_t  momepp0;
+   Float_t  momepp1;
+   Float_t  momepp2;
+    Float_t angleeee0;
+    Float_t angleeee1;
+    Float_t angleeee2;
+    Float_t angleppp0;
+    Float_t angleppp1;
+    Float_t angleppp2;
+    Float_t angleeep0;
+    Float_t angleeep1;
+    Float_t angleeep2;
+    Float_t angleepe0;
+    Float_t angleepe1;
+    Float_t angleepe2;
+    Float_t anglepee0;
+    Float_t anglepee1;
+    Float_t anglepee2;
+    Float_t angleppe0;
+    Float_t angleppe1;
+    Float_t angleppe2;
+    Float_t anglepep0;
+    Float_t anglepep1;
+    Float_t anglepep2;
+    Float_t angleepp0;
+    Float_t angleepp1;
+    Float_t angleepp2;
+    Float_t fq3rEEE_fq2rEE;
+    Float_t fq3rPPP_fq2rPP;
+    Float_t fq3rEEP_fq2rEE ;
+    Float_t fq3rEPE_fq2rEP ;
+    Float_t fq3rPEE_fq2rPE ;
+    Float_t fq3rEPP_fq2rEP ;
+    Float_t fq3rPEP_fq2rPE ;
+    Float_t fq3rPPE_fq2rPP;
+
+   Float_t fqnse;
+
+   ////////
+   
+   reader->AddVariable( "fqpi0mom1[0]", &fqpi0momm1);
+   reader->AddVariable( "fqpi0mom2[0]", &fqpi0momm2);
+   reader->AddVariable( "fq1rnll[0][1]-fqpi0nll[0]", &fq1rnll01_fqpi0nll0  );
+   reader->AddVariable( "fqpi0mass[0]",&fqpi0mass0  );
+   reader->AddVariable( "fqpi0photangle[0]",&fqpi0photanglee );
+
+   reader->AddVariable( "erecmr",  &erecmr);
+   reader->AddVariable( "fq1rmom[0][1]", &fq1rmom01 );
+   reader->AddVariable( "fq1rmom[0][2]", &fq1rmom02 );
+   reader->AddVariable( "fq1rmom[0][3]", &fq1rmom03 );
+   reader->AddVariable( "fqwall", &fqwall );
+   reader->AddVariable( "fq1rnll[0][1]-fq1rnll[0][2]",&fq1rnll01_fq1rnll02  );
+   reader->AddVariable( "fq1rnll[0][2]-fq1rnll[0][3]",&fq1rnll01_fq1rnll02  );
+   reader->AddVariable( "fq1reloss[0][3]", &fq1reloss03 );
+   reader->AddVariable( "eTOpre", &eTOpre );
+   reader->AddVariable( "towall", &towall );
+
+   reader->AddVariable( "momee[0]", &momee0 );
+   reader->AddVariable( "momee[1]", &momee1 );
+   reader->AddVariable( "momepi[0]",&momepi0 );
+   reader->AddVariable( "momepi[1]", &momepi1 );
+   reader->AddVariable( "mompp[0]", &mompp0 );
+   reader->AddVariable( "mompp[1]", &mompp1);
+   reader->AddVariable( "mompie[0]", &mompie0 );
+   reader->AddVariable( "mompie[1]", &mompie1 );
+   reader->AddVariable( "angleepi", &angleepi );
+   reader->AddVariable( "anglepie", &anglepie );
+   reader->AddVariable( "angleee", &angleee );
+   reader->AddVariable( "anglepp", &anglepp );
+   reader->AddVariable( "fq1rE-fq2rEE", &fq1rE_fq2rEE );
+   reader->AddVariable( "fq1rE-fq2rEP", &fq1rE_fq2rEP );
+   reader->AddVariable( "fq1rE-fq2rPE", &fq1rE_fq2rPE );
+   reader->AddVariable( "fq1rE-fq2rPP", &fq1rE_fq2rPP );
+
+   reader->AddVariable( "momeee[0]", &momeee0 );
+   reader->AddVariable( "momeee[1]", &momeee1 );
+   reader->AddVariable( "momeee[2]", &momeee2 );
+   reader->AddVariable( "momppp[0]", &momppp0 );
+   reader->AddVariable( "momppp[1]", &momppp1 );
+   reader->AddVariable( "momppp[2]", &momppp2 );
+   reader->AddVariable( "momeep[0]", &momeep0 );
+   reader->AddVariable( "momeep[1]", &momeep1 );
+   reader->AddVariable( "momeep[2]", &momeep2 );
+   reader->AddVariable( "momepe[0]", &momepe0 );
+   reader->AddVariable( "momepe[1]", &momepe1 );
+   reader->AddVariable( "momepe[2]", &momepe2 );
+   reader->AddVariable( "mompee[0]", &mompee0 );
+   reader->AddVariable( "mompee[1]", &mompee1 );
+   reader->AddVariable( "mompee[2]", &mompee2 );
+   reader->AddVariable( "momppe[0]", &momppe0);
+   reader->AddVariable( "momppe[1]", &momppe1 );
+   reader->AddVariable( "momppe[2]", &momppe2);
+   reader->AddVariable( "mompep[0]", &mompep0);
+   reader->AddVariable( "mompep[1]", &mompep1);
+   reader->AddVariable( "mompep[2]", &mompep2);
+   reader->AddVariable( "momepp[0]", &momepp0);
+   reader->AddVariable( "momepp[1]", &momepp1);
+   reader->AddVariable( "momepp[2]", &momepp2);
+
+   reader->AddVariable( "angleeee[0]", &angleeee0);
+   reader->AddVariable( "angleeee[1]", &angleeee1);
+   reader->AddVariable( "angleeee[2]", &angleeee2);
+   reader->AddVariable( "angleppp[0]", &angleppp0);
+   reader->AddVariable( "angleppp[1]", &angleppp1);
+   reader->AddVariable( "angleppp[2]", &angleppp2);
+   reader->AddVariable( "angleeep[0]", &angleeep0);
+   reader->AddVariable( "angleeep[1]", &angleeep1);
+   reader->AddVariable( "angleeep[2]", &angleeep2);
+   reader->AddVariable( "angleepe[0]", &angleepe0);
+   reader->AddVariable( "angleepe[1]", &angleepe1);
+   reader->AddVariable( "angleepe[2]", &angleepe2);
+   reader->AddVariable( "anglepee[0]", &anglepee0);
+   reader->AddVariable( "anglepee[1]", &anglepee1);
+   reader->AddVariable( "anglepee[2]", &anglepee2);
+   reader->AddVariable( "angleppe[0]", &angleppe0);
+   reader->AddVariable( "angleppe[1]", &angleppe1);
+   reader->AddVariable( "angleppe[2]", &angleppe2);
+   reader->AddVariable( "anglepep[0]", &anglepep0);
+   reader->AddVariable( "anglepep[1]", &anglepep1);
+   reader->AddVariable( "anglepep[2]", &anglepep2);
+   reader->AddVariable( "angleepp[0]", &angleepp0);
+   reader->AddVariable( "angleepp[1]", &angleepp1);
+   reader->AddVariable( "angleepp[2]", &angleepp2);
+
+   reader->AddVariable( "fq3rEEE-fq2rEE",&fq3rEEE_fq2rEE );
+   reader->AddVariable( "fq3rPPP-fq2rPP",&fq3rPPP_fq2rPP );
+   reader->AddVariable( "fq3rEEP-fq2rEE",&fq3rEEP_fq2rEE );
+   reader->AddVariable( "fq3rEPE-fq2rEP",&fq3rEPE_fq2rEP );
+   reader->AddVariable( "fq3rPEE-fq2rPE",&fq3rPEE_fq2rPE );
+   reader->AddVariable( "fq3rEPP-fq2rEP",&fq3rEPP_fq2rEP );
+   reader->AddVariable( "fq3rPEP-fq2rPE",&fq3rPEP_fq2rPE );
+   reader->AddVariable( "fq3rPPE-fq2rPP",&fq3rPPE_fq2rPP);
+
+   reader->AddVariable( "fqnse", &fqnse );
+
 /*
    reader->AddVariable( "fqpi0mom1[0]", &fqpi0mom1 );
    reader->AddVariable( "fqpi0mom2[0]", &fqpi0mom2 );
@@ -188,7 +391,8 @@ void TMVAClassificationApplication_theia( TString myMethodList = "" )
    reader->AddVariable( "var13", &fqpi0dirtot1 );
    reader->AddVariable( "var14", &fqpi0dirtot2 );
 */
-if( atoi(gApplication->Argv(5))==3){
+/*
+if( 1){ //atoi(gApplication->Argv(5))==3){
    reader->AddVariable( "var1:=fqpi0mom1[0]", &fqpi0mom1);
    reader->AddVariable( "var2:=fqpi0mom2[0]", &fqpi0mom2);
    reader->AddVariable( "var3:=lepi", &lepi );
@@ -209,6 +413,7 @@ else {
    reader->AddVariable( "var6:=fqpi0momtot[0]", &fqpi0momtot);
    reader->AddVariable( "var7:=fq1rmom[0][1]", &fq1rmom );
 }
+*/
    //reader->AddVariable( "var8:=fqpi0dconv1[0]", &fqpi0dconv1 );
    //reader->AddVariable( "var9:=fqpi0dconv2[0]", &fqpi0dconv2 );
    //reader->AddVariable( "var10:=fqpi0t0[0]", &fqpi0t0 );
@@ -216,7 +421,7 @@ else {
    //reader->AddVariable( "var12:=fqpi0dirtot[0][0]", &fqpi0dirtot0 );
    //reader->AddVariable( "var13:=fqpi0dirtot[0][1]", &fqpi0dirtot1 );
    //reader->AddVariable( "var14:=fqpi0dirtot[0][2]", &fqpi0dirtot2 );
-
+   cout<<"reading variables done.. "<<endl;
 
    Float_t Category_cat1, Category_cat2, Category_cat3;
    if (Use["Category"]){
@@ -339,9 +544,9 @@ else {
    //
    TFile *input(0);
    TString fname;
-   if( atoi(gApplication->Argv(6))> 0) fname = Form("outputTree_reinput%d.root",atoi(gApplication->Argv(6)));
-   else fname = "/home/gyang/work/t2k/wc/combined_fluxWeightAdded2.root";
-   //TString fname = "/home/gyang/work/t2k/wc/input/skmc/combined.root";
+   if( /*atoi(gApplication->Argv(6))> 0*/ 1) fname = Form("/home/gyang/work/t2k/wc/outputTest.root" /*atoi(gApplication->Argv(6))*/);
+   else fname = "/home/gyang/work/t2k/wc/outputTest.root";
+   //TString fname = "/home/theiaang/work/t2k/wc/input/skmc/combined.root";
    //TString fname = "./tmva_class_example.root";
    if (!gSystem->AccessPathName( fname )) {
       input = TFile::Open( fname ); // check if file in local directory exists
@@ -365,67 +570,222 @@ else {
    //
    std::cout << "--- Select signal sample" << std::endl;
 
+   double fq2rPE;
+   double fq2rEE;
+   double fq2rEP;
+   double fq2rPP;
+   double fq1rE;
+   double fq3rEEE;
+   double fq3rPPP;
+   double fq3rPPE;
+   double fq3rPEP;
+   double fq3rEPP;
+   double fq3rEEP;
+   double fq3rEPE;
+   double fq3rPEE;
+/*
+   double angleepi;
+   double anglepie;
+   double anglepp;
+   double angleee;
+*/
+   double angleeee[3];
+   double angleppp[3];
+   double angleepp[3];
+   double anglepep[3];
+   double angleppe[3];
+   double angleeep[3];
+   double angleepe[3];
+   double anglepee[3];
+   double momee[2];
+   double momepi[2];
+   double mompie[2];
+   double mompp[2];
+   double momeee[3];
+   double momppp[3];
+   double momeep[3];
+   double momepe[3];
+   double mompee[3];
+   double momepp[3];
+   double mompep[3];
+   double momppe[3];
+
+   double erec1r;
+/*
+   double eTOpre;
+   double fqwall;
+   double towall;
+   double erec1r;
+   double erecmr;
+*/   
    Float_t         dirnu[50][3];
    Int_t           fqnse2;
-   Int_t           fqnhitpmt2[1000];
-   Float_t         fqtotq2[1000];
-   Int_t           fq1rpcflg2[1000][7];
-   Float_t         fq1rmom2[1000][7];
-   Float_t         fq1rnll2[1000][7];
-   Float_t         fq1rpos2[1000][7][3];
-   Float_t         fq1rdir2[1000][7][3];
-   Float_t         fq1rdconv2[1000][7];
-   Float_t         fq1reloss2[1000][7];
-   Float_t         fq1rdir[10][7][3];
+   Int_t           fqntwnd;
+   Int_t           fqtwnd_iclstr[10];   //[fqntwnd]
+   Int_t           fqtwnd_npeak[10];   //[fqntwnd]
+   Float_t         fqtwnd_prftt0[10];   //[fqntwnd]
+   Float_t         fqtwnd_prftpos[10][3];   //[fqntwnd]
+   Float_t         fqtwnd[10][2];   //[fqntwnd]
+   Float_t         fqtwnd_peakt0[10][10];   //[fqntwnd]
+   Float_t         fqtwnd_peakiness[10][10];   //[fqntwnd]
+   //Int_t           fqnse;
+   Int_t           fqitwnd[10];   //[fqnse]
+   Int_t           fqipeak[10];   //[fqnse]
+   Int_t           fqnhitpmt[10];   //[fqnse]
+   Float_t         fqtotq[10];   //[fqnse]
+   Float_t         fq0rtotmu[10];   //[fqnse]
+   Float_t         fq0rnll[10];   //[fqnse]
+   Int_t           fqn50[10];   //[fqnse]
+   Float_t         fqq50[10];   //[fqnse]
+   Int_t           fq1rpcflg[10][7];   //[fqnse]
+   Float_t         fq1rmom[10][7];   //[fqnse]
+   Float_t         fq1rt0[10][7];   //[fqnse]
+   Float_t         fq1rtotmu[10][7];   //[fqnse]
+   Float_t         fq1rnll[10][7];   //[fqnse]
+   Float_t         fq1rpos[10][7][3];   //[fqnse]
+   Float_t         fq1rdir[10][7][3];   //[fqnse]
+   Float_t         fq1rdconv[10][7];   //[fqnse]
+   Float_t         fq1reloss[10][7];   //[fqnse]
+   Int_t           fqpi0pcflg[2];
+   Float_t         fqpi0mom1[2];
+   Float_t         fqpi0mom2[2];
+   Float_t         fqpi0momtot[2];
+   Float_t         fqpi0dconv1[2];
+   Float_t         fqpi0dconv2[2];
+   Float_t         fqpi0t0[2];
+   Float_t         fqpi0totmu[2];
+   Float_t         fqpi0nll[2];
+   Float_t         fqpi0mass[2];
+   Float_t         fqpi0photangle[2];
+   Float_t         fqpi0pos[2][3];
+   Float_t         fqpi0dir1[2][3];
+   Float_t         fqpi0dir2[2][3];
+   Float_t         fqpi0dirtot[2][3];
+   Int_t           fqnmrfit;
+   Int_t           fqmrifit [60];   //[fqnmrfit]
+   Int_t           fqmrnring[60];   //[fqnmrfit]
+   Int_t           fqmrpcflg[60];   //[fqnmrfit]
+   Float_t         fqmrnll  [60];   //[fqnmrfit]
+   Float_t         fqmrtotmu[60];   //[fqnmrfit]
+   Int_t           fqmrpid  [60][6];   //[fqnmrfit]
+   Float_t         fqmrmom  [60][6];   //[fqnmrfit]
+   Float_t         fqmrdconv[60][6];   //[fqnmrfit]
+   Float_t         fqmreloss[60][6];   //[fqnmrfit]
+   Float_t         fqmrt0   [60][6];   //[fqnmrfit]
+   Float_t         fqmrpos  [60][6][3];   //[fqnmrfit]
+   Float_t         fqmrdir  [60][6][3];   //[fqnmrfit]
 
-   Int_t           fqnmrfit2;
-   Int_t           fqmrifit2[1000];
-   Int_t           fqmrnring2[1000];
-   Int_t           fqmrpcflg2[1000];
-   Float_t         fqmrnll2[1000];
-   Float_t         fqmrtotmu2[1000];
-   Int_t           fqmrpid2[1000][6];
-   Float_t         fqmrmom2[1000][6];
-   Float_t         fqmrdconv2[1000][6];
-   Float_t         fqmreloss2[1000][6];
-   Float_t         fqmrt02[1000][6];
-   Float_t         fqmrpos2[1000][6][3];
-   Float_t         fqmrdir2[1000][6][3];
-
-   Int_t        fqpi0pcflg2[2];
-   Float_t      fqpi0mom12[2];
-   Float_t      fqpi0mom22[2];
-   Float_t      fqpi0momtot2[2];
-   Float_t      fqpi0dconv12[2];
-   Float_t      fqpi0dconv22[2];
-   Float_t      fqpi0t02[2];
-   Float_t      fqpi0totmu2[2];
-   Float_t      fqpi0nll2[2];
-   Float_t      fqpi0mass2[2];
-   Float_t      fqpi0photangle2[2];
-   Float_t      fqpi0pos2[2][3];
-   Float_t      fqpi0dir12[2][3];
-   Float_t      fqpi0dir22[2][3];
-   Float_t      fqpi0dirtot22[2][3];
+   Double_t  erecmr2;
+   Double_t  eTOpre2;
+   Double_t  fqwall2;
+   Double_t  towall2;
+   Double_t  angleee2;
+   Double_t  anglepp2;
+   Double_t  angleepi2;
+   Double_t  anglepie2;    
 
    TTree* theTree = (TTree*)input->Get("h1");
   
    theTree->Print(); 
-   theTree->SetBranchAddress( "fqpi0mom1", &fqpi0mom12 );
-   theTree->SetBranchAddress( "fqpi0mom2", &fqpi0mom22 );
-   theTree->SetBranchAddress( "fq1rnll", &fq1rnll2 );
-   theTree->SetBranchAddress( "fqpi0nll", &fqpi0nll2 );
-   theTree->SetBranchAddress( "fqpi0mass", &fqpi0mass2 );
-   theTree->SetBranchAddress( "fqpi0photangle", &fqpi0photangle2 );
-   theTree->SetBranchAddress( "fqpi0momtot", &fqpi0momtot2);
-   theTree->SetBranchAddress( "fq1rmom", &fq1rmom2 );
-   theTree->SetBranchAddress( "fqpi0dconv1", &fqpi0dconv12 );
-   theTree->SetBranchAddress( "fqpi0dconv2", &fqpi0dconv22 );
-   theTree->SetBranchAddress( "fqpi0t0", &fqpi0t02 );
-   theTree->SetBranchAddress( "fqpi0totmu", &fqpi0totmu2 );
-   theTree->SetBranchAddress( "fqpi0dirtot", &fqpi0dirtot22 );
-   theTree->SetBranchAddress("dirnu", dirnu);
+
+   theTree->SetBranchAddress("fqntwnd", &fqntwnd);
+   theTree->SetBranchAddress("fqtwnd_iclstr", fqtwnd_iclstr);
+   theTree->SetBranchAddress("fqtwnd_npeak", fqtwnd_npeak);
+   theTree->SetBranchAddress("fqtwnd_prftt0", fqtwnd_prftt0);
+   theTree->SetBranchAddress("fqtwnd_prftpos", fqtwnd_prftpos);
+   theTree->SetBranchAddress("fqtwnd", fqtwnd);
+   theTree->SetBranchAddress("fqtwnd_peakt0", fqtwnd_peakt0);
+   theTree->SetBranchAddress("fqtwnd_peakiness", fqtwnd_peakiness);
+   theTree->SetBranchAddress("fqnse", &fqnse2);
+   theTree->SetBranchAddress("fqitwnd", fqitwnd);
+   theTree->SetBranchAddress("fqipeak", fqipeak);
+   theTree->SetBranchAddress("fqnhitpmt", fqnhitpmt);
+   theTree->SetBranchAddress("fqtotq", fqtotq);
+   theTree->SetBranchAddress("fq0rtotmu", fq0rtotmu);
+   theTree->SetBranchAddress("fq0rnll", fq0rnll);
+   theTree->SetBranchAddress("fqn50", fqn50);
+   theTree->SetBranchAddress("fqq50", fqq50);
+   theTree->SetBranchAddress("fq1rpcflg", fq1rpcflg);
+   theTree->SetBranchAddress("fq1rmom", fq1rmom);
+   theTree->SetBranchAddress("fq1rt0", fq1rt0);
+   theTree->SetBranchAddress("fq1rtotmu", fq1rtotmu);
+   theTree->SetBranchAddress("fq1rnll", fq1rnll);
+   theTree->SetBranchAddress("fq1rpos", fq1rpos);
    theTree->SetBranchAddress("fq1rdir", fq1rdir);
+   theTree->SetBranchAddress("fq1rdconv", fq1rdconv);
+   theTree->SetBranchAddress("fq1reloss", fq1reloss);
+   theTree->SetBranchAddress("fqpi0pcflg", fqpi0pcflg);
+   theTree->SetBranchAddress("fqpi0mom1", fqpi0mom1);
+   theTree->SetBranchAddress("fqpi0mom2", fqpi0mom2);
+   theTree->SetBranchAddress("fqpi0momtot", fqpi0momtot);
+   theTree->SetBranchAddress("fqpi0dconv1", fqpi0dconv1);
+   theTree->SetBranchAddress("fqpi0dconv2", fqpi0dconv2);
+   theTree->SetBranchAddress("fqpi0t0", fqpi0t0);
+   theTree->SetBranchAddress("fqpi0totmu", fqpi0totmu);
+   theTree->SetBranchAddress("fqpi0nll", fqpi0nll);
+   theTree->SetBranchAddress("fqpi0mass", fqpi0mass);
+   theTree->SetBranchAddress("fqpi0photangle", fqpi0photangle);
+   theTree->SetBranchAddress("fqpi0pos", fqpi0pos);
+   theTree->SetBranchAddress("fqpi0dir1", fqpi0dir1);
+   theTree->SetBranchAddress("fqpi0dir2", fqpi0dir2);
+   theTree->SetBranchAddress("fqpi0dirtot", fqpi0dirtot);
+   theTree->SetBranchAddress("fqnmrfit", &fqnmrfit);
+   theTree->SetBranchAddress("fqmrifit", fqmrifit);
+   theTree->SetBranchAddress("fqmrnring", fqmrnring);
+   theTree->SetBranchAddress("fqmrpcflg", fqmrpcflg);
+   theTree->SetBranchAddress("fqmrnll", fqmrnll);
+   theTree->SetBranchAddress("fqmrtotmu", fqmrtotmu);
+   theTree->SetBranchAddress("fqmrpid", fqmrpid);
+   theTree->SetBranchAddress("fqmrmom", fqmrmom);
+   theTree->SetBranchAddress("fqmrdconv", fqmrdconv);
+   theTree->SetBranchAddress("fqmreloss", fqmreloss);
+   theTree->SetBranchAddress("fqmrt0", fqmrt0);
+   theTree->SetBranchAddress("fqmrpos", fqmrpos);
+   theTree->SetBranchAddress("fqmrdir", fqmrdir);
+
+   theTree->SetBranchAddress("fq1rE",&fq1rE);
+   theTree->SetBranchAddress("fq2rPE",&fq2rPE);
+   theTree->SetBranchAddress("fq2rEE",&fq2rEE);
+   theTree->SetBranchAddress("fq2rPP",&fq2rPP);
+   theTree->SetBranchAddress("fq2rEP",&fq2rEP);
+   theTree->SetBranchAddress("fq3rEEP",&fq3rEEP);
+   theTree->SetBranchAddress("fq3rEPE",&fq3rEPE);
+   theTree->SetBranchAddress("fq3rPEE",&fq3rPEE);
+   theTree->SetBranchAddress("fq3rPPP",&fq3rPPP);
+   theTree->SetBranchAddress("fq3rEEE",&fq3rEEE);
+   theTree->SetBranchAddress("fq3rEPP",&fq3rEPP);
+   theTree->SetBranchAddress("fq3rPEP",&fq3rPEP);
+   theTree->SetBranchAddress("fq3rPPE",&fq3rPPE);
+   theTree->SetBranchAddress("erec1r",&erec1r);
+   theTree->SetBranchAddress("erecmr",&erecmr2);
+   theTree->SetBranchAddress("eTOpre",&eTOpre2);
+
+   theTree->SetBranchAddress("fqwall",&fqwall2);
+   theTree->SetBranchAddress("towall",&towall2);
+   theTree->SetBranchAddress("angleepi",&angleepi2);
+   theTree->SetBranchAddress("anglepie",&anglepie2);
+   theTree->SetBranchAddress("angleee",&angleee2);
+   theTree->SetBranchAddress("anglepp",&anglepp2);
+   theTree->SetBranchAddress("angleeee",&angleeee);
+   theTree->SetBranchAddress("angleppp",&angleppp);
+   theTree->SetBranchAddress("angleepp",&angleepp);
+   theTree->SetBranchAddress("anglepep",&anglepep);
+   theTree->SetBranchAddress("angleppe",&angleppe);
+   theTree->SetBranchAddress("angleeep",&angleeep);
+   theTree->SetBranchAddress("angleepe",&angleepe);
+   theTree->SetBranchAddress("anglepee",&anglepee);
+   theTree->SetBranchAddress("momee",&momee);
+   theTree->SetBranchAddress("momepi",&momepi);
+   theTree->SetBranchAddress("mompie",&mompie);
+   theTree->SetBranchAddress("mompp",&mompp);
+   theTree->SetBranchAddress("momeee",&momeee);
+   theTree->SetBranchAddress("momppp",&momppp);
+   theTree->SetBranchAddress("momeep",&momeep);
+   theTree->SetBranchAddress("momepe",&momepe);
+   theTree->SetBranchAddress("mompee",&mompee);
+   theTree->SetBranchAddress("momepp",&momepp);
+   theTree->SetBranchAddress("mompep",&mompep);
+   theTree->SetBranchAddress("momppe",&momppe);
 
    double tmvaR;
    //TBranch *tmvaAdd = theTree->Branch("tmva",&tmvaR,"tmva/D");
@@ -441,7 +801,7 @@ else {
    Int_t    nSelCutsGA = 0;
    Double_t effS       = 0.7;
 
-   TFile* ff = TFile::Open(Form("outputTree_reinput%d.root",atoi(gApplication->Argv(5))),"RECREATE");
+   TFile* ff = TFile::Open(Form("outputTree_reinput%d.root", 0 /*atoi(gApplication->Argv(5))*/),"RECREATE");
    TTree* tt = theTree->CloneTree(0);
    //ff->Write();
    //delete ff;
@@ -449,7 +809,7 @@ else {
 
    //TFile* fff = new TFile("outputTree.root","update");
    //TTree* ttt = (TTree*)fff->Get("h1");
-   tt->Branch(Form("tmvaMR%d",atoi(gApplication->Argv(5))),&tmvaR,"tmvaMR/D");
+   tt->Branch(Form("tmvaMR%d", 0 /*atoi(gApplication->Argv(5))*/),&tmvaR,"tmvaMR/D");
 
    std::vector<Float_t> vecVar(4); // vector for EvaluateMVA tests
 
@@ -458,44 +818,283 @@ else {
    sw.Start();
    for (Long64_t ievt=0; ievt< theTree->GetEntries();ievt++) {
 
-      if (ievt%1000 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
+      if (ievt%10000 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
 
       theTree->GetEntry(ievt);
 
-      fqpi0mom1      =  fqpi0mom12[0];
-      fqpi0mom2      =  fqpi0mom22[0] ;
-      fq1rnll        =  fq1rnll2[0][1] - fqpi0nll2[0] ;
-      fqpi0mass      =  fqpi0mass2[0] ;
-      fqpi0photangle =  fqpi0photangle2[0] ;
-      fqpi0momtot    =  fqpi0momtot2[0] ;
-      fq1rmom        =  fq1rmom2[0][1] ;
-      fqpi0dconv1    =  fqpi0dconv12[0] ;
-      fqpi0dconv2    =  fqpi0dconv22[0] ;
-      fqpi0t0        =  fqpi0t02[0] ;
-      fqpi0totmu     =  fqpi0totmu2[0] ;
-      fqpi0dirtot0   =  fqpi0dirtot22[0][0] ;
-      fqpi0dirtot1   =  fqpi0dirtot22[0][1] ;
-      fqpi0dirtot2   =  fqpi0dirtot22[0][2]; 
-      //var1 = userVar1 + userVar2;
-      //var2 = userVar1 - userVar2;
+      /*
+        for(Int_t fqLoop=0;fqLoop<fqnmrfit;fqLoop++){
 
-      double lemu = fq1rnll2[0][2]-fq1rnll2[0][1];
-      double lpie = fq1rnll2[0][1]-fqpi0nll2[0];
-      double lpimu = fq1rnll2[0][2]-fq1rnll2[0][3];
+	int ringN = fqmrifit[fqLoop]/1e8;
+        int pid1 = fqmrifit[fqLoop] % 10;
+        int pid2 = fqmrifit[fqLoop] / 10 % 10;
+        int pid3 = fqmrifit[fqLoop] / 100% 10;
 
-      double pe = fq1rmom;
-      double me = 0.5109989461;
-      double ee = sqrt(pe*pe+me*me);
-      double mp = 938.2720813;
-      double mn = 939.5654133;
+	if(TMath::Abs(fqmrifit[fqLoop]) < 1e9 && ringN == 2){
+		if(pid1 == 1 && pid2 == 1) {fq2rEE = fqmrnll[fqLoop]; angleee = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; momee[0] = fqmrmom[fqLoop][0]; momee[1] = fqmrmom[fqLoop][1]; }
+		if(pid1 == 3 && pid2 == 3) {fq2rPP = fqmrnll[fqLoop]; anglepp = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; mompp[0] = fqmrmom[fqLoop][0]; mompp[1] = fqmrmom[fqLoop][1]; }
+		if(pid1 == 1 && pid2 == 3) {fq2rEP = fqmrnll[fqLoop]; angleepi = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; momepi[0] = fqmrmom[fqLoop][0]; momepi[1] = fqmrmom[fqLoop][1]; }
+		if(pid1 == 3 && pid2 == 1) {fq2rPE = fqmrnll[fqLoop]; anglepie = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; mompie[0] = fqmrmom[fqLoop][0]; mompie[1] = fqmrmom[fqLoop][1];}
+	}
+// angle123[3]: [0],[1],[2]-> 12,13,23
+	else if(TMath::Abs(fqmrifit[fqLoop]) < 1e9 && ringN == 3){
+                if(pid1 == 1 && pid2 == 1 && pid3 == 1) {fq3rEEE = fqmrnll[fqLoop]; 
+			angleeee[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; 
+			angleeee[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+			angleeee[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];				
+			momeee[0] = fqmrmom[fqLoop][0]; momeee[1] = fqmrmom[fqLoop][1]; momeee[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 3 && pid3 == 3) {fq3rPPP = fqmrnll[fqLoop];
+                        angleppp[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleppp[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleppp[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momppp[0] = fqmrmom[fqLoop][0]; momppp[1] = fqmrmom[fqLoop][1]; momppp[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 1 && pid2 == 3 && pid3 == 3) {fq3rEPP = fqmrnll[fqLoop];
+                        angleepp[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleepp[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleepp[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momepp[0] = fqmrmom[fqLoop][0]; momepp[1] = fqmrmom[fqLoop][1]; momepp[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 1 && pid3 == 3) {fq3rPEP = fqmrnll[fqLoop];
+                        anglepep[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        anglepep[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        anglepep[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        mompep[0] = fqmrmom[fqLoop][0]; mompep[1] = fqmrmom[fqLoop][1]; mompep[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 3 && pid3 == 1) {fq3rPPE = fqmrnll[fqLoop];
+                        angleppe[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleppe[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleppe[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momppe[0] = fqmrmom[fqLoop][0]; momppe[1] = fqmrmom[fqLoop][1]; momppe[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 1 && pid2 == 1 && pid3 == 3) {fq3rEEP = fqmrnll[fqLoop];
+                        angleeep[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleeep[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleeep[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momeep[0] = fqmrmom[fqLoop][0]; momeep[1] = fqmrmom[fqLoop][1]; momeep[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 1 && pid2 == 3 && pid3 == 1) {fq3rEPE = fqmrnll[fqLoop];
+                        angleepe[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleepe[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleepe[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momepe[0] = fqmrmom[fqLoop][0]; momepe[1] = fqmrmom[fqLoop][1]; momepe[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 1 && pid3 == 1) {fq3rPEE = fqmrnll[fqLoop];
+                        anglepee[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        anglepee[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        anglepee[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        mompee[0] = fqmrmom[fqLoop][0]; mompee[1] = fqmrmom[fqLoop][1]; mompee[2] = fqmrmom[fqLoop][2]; }
+	}
+      }
+	
 
-      double costhbeam = sqrt(fq1rdir[0][1][0]*dirnu[0][0]
+        double xpos = fq1rpos[0][1][0];
+        double ypos = fq1rpos[0][1][1];
+        double zpos = fq1rpos[0][1][2];
+        double rpos = TMath::Sqrt(xpos*xpos+ypos*ypos);
+        fqwall = std::min(1690.-rpos,std::min(1810.-zpos,1810.+zpos));
+        double tempDir[3], tempPos[3];
+        for(Int_t loopTemp=0;loopTemp<3;loopTemp++){
+		tempDir[loopTemp] = fq1rdir[0][1][loopTemp];
+                tempPos[loopTemp] = fq1rpos[0][1][loopTemp];
+	}
+        towall = GetToWall(tempPos, tempDir);
+	//std::cout<<"towall is "<<towall<<" "<<fq1rdir[0][1][2]<<" "<<fq1rpos[0][1][2]<<std::endl;
+	//std::cout<<"fqwall and towall "<<fqwall<<" "<<towall<<std::endl;
+        double lemu = fq1rnll[0][2]-fq1rnll[0][1];
+        double lpie = fq1rnll[0][1]-fqpi0nll[0];
+        double lpimu = fq1rnll[0][2]-fq1rnll[0][3];
+
+        double pe = fq1rmom[0][1];
+        double me = 0.5109989461;
+        double ee = TMath::Sqrt(pe*pe+me*me);
+        double mp = 938.2720813;
+        double mn = 939.5654133;
+	erec1r = 0;
+        eTOpre = TMath::Sqrt( (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0])* (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0]) + (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1])* (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1]) + (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2])* (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2]));
+
+        double costhbeam = fq1rdir[0][1][0]*dirnu[0][0]
                               + fq1rdir[0][1][1]*dirnu[0][1]
-                              + fq1rdir[0][1][2]*dirnu[0][2]);
+                              + fq1rdir[0][1][2]*dirnu[0][2];
+        erec1r = (me*me+mn*mn-mp*mp-2*mn*ee)/-2./(mn-ee+pe*costhbeam)/1000.;
+	//std::cout<<"directoins for fq and nu: "<<fq1rdir[0][1][0]<<" "<<fq1rdir[0][1][1]<<" "<<fq1rdir[0][1][2]<<" "<<dirnu[0][0]<<" "<<dirnu[0][1]<<" "<<dirnu[0][2]<<std::endl;
+        //std::cout<<"costhbeam, me, mn, mp, ee and erec1r "<<costhbeam<<" "<<me<<" "<<mn<<" "<<mp<<" "<<ee<<" "<<erec1r<<std::endl;
 
-      double erec = (me*me+mn*mn-mp*mp-2*mn*ee)/-2./(mn-ee+pe*costhbeam);
-      //cout<<me*me+mn*mn-mp*mp-2*mn*ee<<" "<<pe<<" "<<costhbeam<<" "<<erec<<endl;
 
+        double md = 1232;
+        double mN = (mp + mn) / 2.;
+
+	erecmr = 0;
+
+	// 2 rings
+	if (fqmrnring[0] == 2) {
+	  int pidcode = 0;
+	  int ie = -1;
+	  // 1st (most energetic) ring
+	  if ((fqmrpid[0][0]==2)||(fqmrpid[0][0]==3)) {
+	    pidcode = 2;
+	  } else if (fqmrpid[0][0] == 1) {
+	    ie = 0;
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][0] = " << fqmrpid[0][0] << std::endl;
+	  }
+	  // 2nd ring
+	  if ((fqmrpid[0][1]==2)||(fqmrpid[0][1]==3)) {
+	    pidcode++;
+	  } else if (fqmrpid[0][1] == 1) {
+	    if (ie < 0) {ie = 1;}
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][1] = " << fqmrpid[0][1] << std::endl;
+	  }
+	  if (ie < 0) {
+	    //	    std::cout << "Ugh, ie = " << ie << ". Setting to 0" << std::endl;
+	    ie = 0;
+	  }
+
+	  pe = fqmrmom[0][ie];
+	  ee = TMath::Sqrt(pe*pe+me*me);
+	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
+			   + fqmrdir[0][ie][1]*dirnu[0][1]
+			   + fqmrdir[0][ie][2]*dirnu[0][2];
+	  erecmr = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
+
+
+	  // 3 rings
+	} else if (fqmrnring[0] == 3) {
+	  int pidcode = 0;
+	  int ie = -1;
+	  // 1st (most energetic) ring
+	  if ((fqmrpid[0][0]==2)||(fqmrpid[0][0]==3)) {
+	    pidcode = 4;
+	  } else if (fqmrpid[0][0] == 1) {
+	    ie = 0;
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][0] = " << fqmrpid[0][0] << std::endl;
+	  }
+	  // 2nd ring
+	  if ((fqmrpid[0][1]==2)||(fqmrpid[0][1]==3)) {
+	    pidcode += 2;
+	  } else if (fqmrpid[0][1] == 1) {
+	    if (ie < 0) {ie = 1;}
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][1] = " << fqmrpid[0][1] << std::endl;
+	  }
+	  // 3rd ring
+	  if ((fqmrpid[0][2]==2)||(fqmrpid[0][2]==3)) {
+	    pidcode++;
+	  } else if (fqmrpid[0][2] == 1) {
+	    if (ie < 0) {ie = 2;}
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][2] = " << fqmrpid[0][2] << std::endl;
+	  }
+	  if (ie < 0) {
+	    //	    std::cout << "Ugh, ie = " << ie << ". Setting to 0" << std::endl;
+	    ie = 0;
+	  }
+
+	  pe = fqmrmom[0][ie];
+	  ee = TMath::Sqrt(pe*pe+me*me);
+	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
+			   + fqmrdir[0][ie][1]*dirnu[0][1]
+			   + fqmrdir[0][ie][2]*dirnu[0][2];
+	  erecmr = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
+	}
+
+	else{
+	  erecmr = erec1r;
+	}
+      */
+
+        fqpi0momm1 = fqpi0mom1[0];
+        fqpi0momm2 = fqpi0mom2[0];
+        fq1rnll01_fqpi0nll0 = fq1rnll[0][1]-fqpi0nll[0];
+        fqpi0mass0 = fqpi0mass[0];
+        fqpi0photanglee = fqpi0photangle[0];
+
+        fq1rmom01 = fq1rmom[0][1]; 
+        fq1rmom02 = fq1rmom[0][2];
+        fq1rmom03 = fq1rmom[0][3];
+        fq1rnll01_fq1rnll02 = fq1rnll[0][1]-fq1rnll[0][2];
+        fq1rnll02_fq1rnll03 = fq1rnll[0][2]-fq1rnll[0][3];
+        fq1reloss03 = fq1reloss[0][3];
+
+        momee0 = momee[0];
+        momee1 = momee[1];
+        momepi0 = momepi[0];
+        momepi1 = momepi[1];
+        mompp0 = mompp[0];
+        mompp1 = mompp[1];
+        mompie0 = mompie[0];
+        mompie1 = mompie[1];
+        fq1rE_fq2rEE = fq1rE-fq2rEE; 
+        fq1rE_fq2rEP = fq1rE-fq2rEP;
+        fq1rE_fq2rPE = fq1rE-fq2rPE;
+        fq1rE_fq2rPP = fq1rE-fq2rPP;
+
+        momeee0 = momeee[0];  
+        momeee1 = momeee[1];
+        momeee2 = momeee[2];
+        momppp0 = momppp[0];
+        momppp1 = momppp[1];
+        momppp2 = momppp[2];
+        momeep0 = momeep[0];
+        momeep1 = momeep[1];
+        momeep2 = momeep[2];
+        momepe0 = momepe[0];
+        momepe1 = momepe[1];
+        momepe2 = momepe[2];
+        mompee0 = mompee[0];
+        mompee1 = mompee[1];
+        mompee2 = mompee[2];
+        momppe0 = momppe[0];
+        momppe1 = momppe[1];
+        momppe2 = momppe[2];
+        mompep0 = mompep[0];
+        mompep1 = mompep[1];
+        mompep2 = mompep[2];
+        momepp0 = momepp[0];
+        momepp1 = momepp[1];
+        momepp2 = momepp[2];
+
+        angleeee0 = angleeee[0];
+        angleeee1 = angleeee[1];
+        angleeee2 = angleeee[2];
+        angleppp0 = angleppp[0];
+        angleppp1 = angleppp[1];
+        angleppp2 = angleppp[2];
+        angleeep0 = angleeep[0];
+        angleeep1 = angleeep[1];
+        angleeep2 = angleeep[2];
+        angleepe0 = angleepe[0];
+        angleepe1 = angleepe[1];
+        angleepe2 = angleepe[2];
+        anglepee0 = anglepee[0];
+        anglepee1 = anglepee[1];
+        anglepee2 = anglepee[2];
+        angleppe0 = angleppe[0];
+        angleppe1 = angleppe[1];
+        angleppe2 = angleppe[2];
+        anglepep0 = anglepep[0];
+        anglepep1 = anglepep[1];
+        anglepep2 = anglepep[2];
+        angleepp0 = angleepp[0];
+        angleepp1 = angleepp[1];
+        angleepp2 = angleepp[2];
+
+        fq3rEEE_fq2rEE = fq3rEEE-fq2rEE;
+        fq3rPPP_fq2rPP = fq3rPPP-fq2rPP;
+        fq3rEEP_fq2rEE = fq3rEEP-fq2rEE;
+        fq3rEPE_fq2rEP = fq3rEPE-fq2rEP;
+        fq3rPEE_fq2rPE = fq3rPEE-fq2rPE;
+        fq3rEPP_fq2rEP = fq3rEPP-fq2rEP;
+        fq3rPEP_fq2rPE = fq3rPEP-fq2rPE;
+        fq3rPPE_fq2rPP = fq3rPPE-fq2rPP;
+
+        fqnse = fqnse2;
+
+        erecmr = erecmr2;
+        eTOpre = eTOpre2;
+        fqwall = fqwall2;
+        towall = towall2;
+        angleee = angleee2;
+        anglepp = anglepp2;
+        angleepi = angleepi2;
+        anglepie = anglepie2;
+	
       // Return the MVA outputs and fill into histograms
 
       if (Use["CutsGA"]) {
@@ -528,11 +1127,11 @@ else {
       if (Use["BDT"          ])   {
 				  histBdt    ->Fill( reader->EvaluateMVA( "BDT method"           ) );
  				  //cout<<reader->EvaluateMVA( "BDT method"           )<<endl; 
-				  eff1->Fill(erec);
+				  eff1->Fill(erecmr);
 				  tmvaR = reader->EvaluateMVA( "BDT method");
 				  //tmvaAdd -> Fill(); 
 				  tt->Fill();
-				  if(reader->EvaluateMVA( "BDT method"           ) < 0 ) eff2-> Fill(erec);
+				  if(reader->EvaluateMVA( "BDT method"           ) < 0 ) eff2-> Fill(erecmr);
 				  }
       if (Use["BDTG"         ])   histBdtG   ->Fill( reader->EvaluateMVA( "BDTG method"          ) );
       if (Use["BDTB"         ])   histBdtB   ->Fill( reader->EvaluateMVA( "BDTB method"          ) );
@@ -657,7 +1256,7 @@ else {
 
    delete reader;
 
-   std::cout << "==> TMVAClassificationApplication_gy is done!" << std::endl << std::endl;
+   std::cout << "==> TMVAClassificationApplication_theia is done!" << std::endl << std::endl;
 
    tt->Write();
    ff->Write();
@@ -673,6 +1272,6 @@ int main( int argc, char** argv )
       if (!methodList.IsNull()) methodList += TString(",");
       methodList += regMethod;
    }
-   TMVAClassificationApplication_gy(methodList);
+   TMVAClassificationApplication_theia(methodList);
    return 0;
 }

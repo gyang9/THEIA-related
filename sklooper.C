@@ -153,9 +153,9 @@ void sklooper::Loop()
       double mp = 938.2720813;
       double mn = 939.5654133;
 
-      double costhbeam = sqrt(fq1rdir[0][1][0]*dirnu[0][0]
+      double costhbeam = fq1rdir[0][1][0]*dirnu[0][0]
 			      + fq1rdir[0][1][1]*dirnu[0][1]
-			      + fq1rdir[0][1][2]*dirnu[0][2]);
+			      + fq1rdir[0][1][2]*dirnu[0][2];
 
       double erec = (me*me+mn*mn-mp*mp-2*mn*ee)/-2./(mn-ee+pe*costhbeam)/1000.;
       //      double erec = (me*me-2*mn*ee)/-2./(mn-ee+pe*costhbeam);
@@ -194,7 +194,9 @@ void sklooper::Loop()
       if ((nhitac<16)
 	  && (fqwall > 200.)
 	  && (fq1rmom[0][1]>30.)
-	  && (fqnse == 1)) {
+	  //&& (fqnse == 1)
+	  && (fqnse < 2)
+	 ) {
 	if ((inttype == 3)&&(ntpi0 == 1)) {
 	  htruefvpi0->Fill(ppi0);
 	  if ((lpie > 175 - 0.875*fqpi0mass[0])
@@ -209,10 +211,11 @@ void sklooper::Loop()
       // 1-ring e-like preselection
       if ((nhitac<16)
 	  && (fqwall > 200.)
-	  && (fqmrnring[0] == 1)
-	  && (lemu > fq1rmom[0][1]*0.2)
-	  && (fq1rmom[0][1]>100.)
-	  //	  && (fqnse == 1)
+	  && (evis>30)
+	  //&& (fqmrnring[0] == 1)
+	  //&& (lemu > fq1rmom[0][1]*0.2)
+	  //&& (fq1rmom[0][1]>100.)
+	  	  && (fqnse == 1)
 	  ) {
 
 	hprecut[nutype][inttype]->Fill(pnu[0]);	
@@ -289,9 +292,9 @@ void sklooper::Loop()
 	  if (printstuff) {std::cout << "mark 2.4" << std::endl;}
 	  pe = fqmrmom[0][ie];
 	  ee = sqrt(pe*pe+me*me);
-	  costhbeam = sqrt(fqmrdir[0][ie][0]*dirnu[0][0]
+	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
 			   + fqmrdir[0][ie][1]*dirnu[0][1]
-			   + fqmrdir[0][ie][2]*dirnu[0][2]);
+			   + fqmrdir[0][ie][2]*dirnu[0][2];
 	  erec = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
 
 	  if ((inttype==1)&&(nutype==0)) h2eres->Fill((erec-pnu[0])/pnu[0]);
@@ -341,9 +344,9 @@ void sklooper::Loop()
 	  if (printstuff) {std::cout << "mark 3.5" << std::endl;}
 	  pe = fqmrmom[0][ie];
 	  ee = sqrt(pe*pe+me*me);
-	  costhbeam = sqrt(fqmrdir[0][ie][0]*dirnu[0][0]
+	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
 			   + fqmrdir[0][ie][1]*dirnu[0][1]
-			   + fqmrdir[0][ie][2]*dirnu[0][2]);
+			   + fqmrdir[0][ie][2]*dirnu[0][2];
 	  erec = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
 
 	  if ((inttype==1)&&(nutype==0)) h3eres->Fill((erec-pnu[0])/pnu[0]);

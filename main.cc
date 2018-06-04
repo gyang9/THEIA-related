@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
 
    //TChain * chain = new TChain("h1","");
    //chain->Add("input/combined.root");
-   TFile* f = new TFile("input/combined.root");
+   TFile* f = new TFile("input/combined_extra.root");
    //TTree* tree = chain;   
    TTree* tree = (TTree*)f->Get("h1");
 
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
    std::cout<<"ready to loop"<<std::endl;
 
-   Int_t NofEvent = 100;
+   Int_t NofEvent = nentries;
    sLoop->LoopAndWrite(NofEvent, true);   
 
 } 

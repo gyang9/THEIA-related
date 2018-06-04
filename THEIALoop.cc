@@ -10,6 +10,7 @@
 #include <TH2D.h>
 #include <iostream>
 #include <fstream>
+#include <TMath.h>
 
 #include "THEIALoop.hh"
 
@@ -597,7 +598,49 @@ void THEIA::prepareOutput(TString outName){
    tt->Branch("fluxWeight",&fluxWeight,"fluxWeight[2]/D");
    tt->Branch("sigCategory",&sigCategory,"sigCategory/I");
    tt->Branch("bkgCategory",&bkgCategory,"bkgCategory/I");
+   tt->Branch("fqwall",&fqwall,"fqwall/D");
+   tt->Branch("towall",&towall,"towall/D");
+   tt->Branch("angleepi",&angleepi,"angleepi/D");
+   tt->Branch("anglepie",&anglepie,"anglepie/D");
+   tt->Branch("angleee",&angleee,"angleee/D");
+   tt->Branch("anglepp",&anglepp,"anglepp/D");
+   tt->Branch("angleeee",&angleeee,"angleeee[3]/D");
+   tt->Branch("angleppp",&angleppp,"angleppp[3]/D");
+   tt->Branch("angleepp",&angleepp,"angleepp[3]/D");
+   tt->Branch("anglepep",&anglepep,"anglepep[3]/D");
+   tt->Branch("angleppe",&angleppe,"angleppe[3]/D");
+   tt->Branch("angleeep",&angleeep,"angleeep[3]/D");
+   tt->Branch("angleepe",&angleepe,"angleepe[3]/D");
+   tt->Branch("anglepee",&anglepee,"anglepee[3]/D");
+   tt->Branch("momee",&momee,"momee[2]/D");
+   tt->Branch("momepi",&momepi,"momepi[2]/D");
+   tt->Branch("mompie",&mompie,"mompie[2]/D");
+   tt->Branch("mompp",&mompp,"mompp[2]/D");
+   tt->Branch("momeee",&momeee,"momeee[3]/D");
+   tt->Branch("momppp",&momppp,"momppp[3]/D");
+   tt->Branch("momeep",&momeep,"momeep[3]/D");
+   tt->Branch("momepe",&momepe,"momepe[3]/D");
+   tt->Branch("mompee",&mompee,"mompee[3]/D");
+   tt->Branch("momepp",&momepp,"momepp[3]/D");
+   tt->Branch("mompep",&mompep,"mompep[3]/D");
+   tt->Branch("momppe",&momppe,"momppe[3]/D");
 
+   tt->Branch("fq1rE",&fq1rE,"fq1rE/D");
+   tt->Branch("fq2rPE",&fq2rPE,"fq2rPE/D");
+   tt->Branch("fq2rEE",&fq2rEE,"fq2rEE/D");
+   tt->Branch("fq2rPP",&fq2rPP,"fq2rPP/D");
+   tt->Branch("fq2rEP",&fq2rEP,"fq2rEP/D");
+   tt->Branch("fq3rEEP",&fq3rEEP,"fq3rEEP/D");
+   tt->Branch("fq3rEPE",&fq3rEPE,"fq3rEPE/D");
+   tt->Branch("fq3rPEE",&fq3rPEE,"fq3rPEE/D");
+   tt->Branch("fq3rPPP",&fq3rPPP,"fq3rPPP/D");
+   tt->Branch("fq3rEEE",&fq3rEEE,"fq3rEEE/D");
+   tt->Branch("fq3rEPP",&fq3rEPP,"fq3rEPP/D");
+   tt->Branch("fq3rPEP",&fq3rPEP,"fq3rPEP/D");
+   tt->Branch("fq3rPPE",&fq3rPPE,"fq3rPPE/D");
+   tt->Branch("erec1r",&erec1r,"erec1r/D");
+   tt->Branch("erecmr",&erecmr,"erecmr/D");
+   tt->Branch("eTOpre",&eTOpre,"eTOpre/D");
 }
 
 
@@ -613,7 +656,7 @@ TTree* THEIA:: LoopAndWrite(Int_t NofEvent){
 
       if (jentry % 100000 == 0) {std::cout << jentry << " events processed" << std::endl;}
 
-      std::cout<<"neutrino ip and energy : "<<ipnu[0]<<" "<<pnu[0]<<std::endl;
+      //std::cout<<"neutrino ip and energy : "<<ipnu[0]<<" "<<pnu[0]<<std::endl;
 
         if(ipnu[0] == 12){
         fluxWeight[0] = reTot2[0]->Eval(pnu[0])/ reTot[0]->Eval(pnu[0]);
@@ -643,6 +686,26 @@ TTree* THEIA:: LoopAndWrite(Int_t NofEvent){
 }
 
 
+Double_t THEIA::GetToWall(double *pos, double *dir){
+// Cylindrical detector like SK
+    
+    double towall = 0;
+
+    double tmp=(pos[0]*dir[0]+pos[1]*dir[1])*(pos[0]*dir[0]+pos[1]*dir[1]) + (dir[0]*dir[0]+dir[1]*dir[1])*(1690*1690-pos[0]*pos[0]-pos[1]*pos[1]);
+    
+    if (tmp>0.) {// solution exists
+      towall=(-(pos[0]*dir[0]+pos[1]*dir[1])+TMath::Sqrt(tmp))/(dir[0]*dir[0]+dir[1]*dir[1]);
+      
+      if ((pos[2]+towall*dir[2])>1810) {//penetrates top wall!
+        towall=(1810-pos[2])/dir[2];
+      }
+      else if ((pos[2]+towall*dir[2])<-1810) {//penetrates bottom wall!
+        towall=(-1810-pos[2])/dir[2];
+      }
+    }
+}
+
+// 88 variables aimed at 
 void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
    Long64_t nbytes = 0, nb = 0;
@@ -672,39 +735,234 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
         fluxWeight[1] = reTot2[7]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
         }
 
-      std::cout<<"neutrino ip and energy and flux reweights : "<<ipnu[0]<<" "<<pnu[0]<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<std::endl;
+      //std::cout<<"neutrino ip and energy and flux reweights : "<<ipnu[0]<<" "<<pnu[0]<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<std::endl;
+
+      //0 = GAMMA, 1 = ELECTRON, 2 = MUON, 3 = PION, 4 = KAON, 5 = PROTON,  6 = CONE GENERATOR
 
       if(SigBkgTagger){
 
+	for(Int_t fqLoop=0;fqLoop<fqnmrfit;fqLoop++){
+/*
+		if(fqmrnring[fqLoop] == 1 ) {
+			 fq1rE = fq1rnll[0][1];
+		}
+		if(fqmrnring[fqLoop] == 2 ) {
+			if((fqmrpid[fqLoop][0] == 0 && fqmrpid[fqLoop][1] == 0) || (fqmrpid[fqLoop][1] == 0 && fqmrpid[fqLoop][0] == 0))  fq2rGG = fqmrnll[fqLoop];
+                        if((fqmrpid[fqLoop][0] == 1 && fqmrpid[fqLoop][1] == 1) || (fqmrpid[fqLoop][1] == 1 && fqmrpid[fqLoop][0] == 1))  fq2rEE = fqmrnll[fqLoop];
+                        if((fqmrpid[fqLoop][0] == 1 && fqmrpid[fqLoop][1] == 3) || (fqmrpid[fqLoop][1] == 1 && fqmrpid[fqLoop][0] == 3))  fq2rEP = fqmrnll[fqLoop];
+                        if((fqmrpid[fqLoop][0] == 3 && fqmrpid[fqLoop][1] == 3) || (fqmrpid[fqLoop][1] == 3 && fqmrpid[fqLoop][0] == 3))  fq2rPP = fqmrnll[fqLoop];
+		}
+		if(fqmrnring[fqLoop] == 3 ) {
+			if( fqmrpid[fqLoop][0] == 0 && fqmrpid[fqLoop][1] == 0 && fqmrpid[fqLoop][2] == 0 )  fq3rGGG = fqmrnll[fqLoop];
+                        if( fqmrpid[fqLoop][0] == 1 && fqmrpid[fqLoop][1] == 1 && fqmrpid[fqLoop][2] == 1 )  fq3rEEE = fqmrnll[fqLoop];
+                        if( fqmrpid[fqLoop][0] == 3 && fqmrpid[fqLoop][1] == 3 && fqmrpid[fqLoop][2] == 3 )  fq3rPPP = fqmrnll[fqLoop];
+                        if( (fqmrpid[fqLoop][0] == 0 && fqmrpid[fqLoop][1] == 0 && fqmrpid[fqLoop][2] == 1) || (fqmrpid[fqLoop][0] == 0 && fqmrpid[fqLoop][1] == 1 && fqmrpid[fqLoop][2] == 0) || (fqmrpid[fqLoop][0] == 1 && fqmrpid[fqLoop][1] == 0 && fqmrpid[fqLoop][2] == 0) )  fq3rGGE = fqmrnll[fqLoop];
+                        if( (fqmrpid[fqLoop][0] == 0 && fqmrpid[fqLoop][1] == 0 && fqmrpid[fqLoop][2] == 3) || (fqmrpid[fqLoop][0] == 0 && fqmrpid[fqLoop][1] == 3 && fqmrpid[fqLoop][2] == 0) || (fqmrpid[fqLoop][0] == 3 && fqmrpid[fqLoop][1] == 0 && fqmrpid[fqLoop][2] == 0) )  fq3rGGP = fqmrnll[fqLoop];
+		}
+*/
+	int ringN = fqmrifit[fqLoop]/1e8;
+        int pid1 = fqmrifit[fqLoop] % 10;
+        int pid2 = fqmrifit[fqLoop] / 10 % 10;
+        int pid3 = fqmrifit[fqLoop] / 100% 10;
 
-        double lemu = fq1rnll[0][2]-fq1rnll[0][1];
-        double lpie = fq1rnll[0][1]-fqpi0nll[0];
-        double lpimu = fq1rnll[0][2]-fq1rnll[0][3];
+	if(TMath::Abs(fqmrifit[fqLoop]) < 1e9 && ringN == 2){
+		if(pid1 == 1 && pid2 == 1) {fq2rEE = fqmrnll[fqLoop]; angleee = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; momee[0] = fqmrmom[fqLoop][0]; momee[1] = fqmrmom[fqLoop][1]; }
+		if(pid1 == 3 && pid2 == 3) {fq2rPP = fqmrnll[fqLoop]; anglepp = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; mompp[0] = fqmrmom[fqLoop][0]; mompp[1] = fqmrmom[fqLoop][1]; }
+		if(pid1 == 1 && pid2 == 3) {fq2rEP = fqmrnll[fqLoop]; angleepi = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; momepi[0] = fqmrmom[fqLoop][0]; momepi[1] = fqmrmom[fqLoop][1]; }
+		if(pid1 == 3 && pid2 == 1) {fq2rPE = fqmrnll[fqLoop]; anglepie = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; mompie[0] = fqmrmom[fqLoop][0]; mompie[1] = fqmrmom[fqLoop][1];}
+	}
+// angle123[3]: [0],[1],[2]-> 12,13,23
+	else if(TMath::Abs(fqmrifit[fqLoop]) < 1e9 && ringN == 3){
+                if(pid1 == 1 && pid2 == 1 && pid3 == 1) {fq3rEEE = fqmrnll[fqLoop]; 
+			angleeee[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2]; 
+			angleeee[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+			angleeee[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];				
+			momeee[0] = fqmrmom[fqLoop][0]; momeee[1] = fqmrmom[fqLoop][1]; momeee[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 3 && pid3 == 3) {fq3rPPP = fqmrnll[fqLoop];
+                        angleppp[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleppp[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleppp[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momppp[0] = fqmrmom[fqLoop][0]; momppp[1] = fqmrmom[fqLoop][1]; momppp[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 1 && pid2 == 3 && pid3 == 3) {fq3rEPP = fqmrnll[fqLoop];
+                        angleepp[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleepp[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleepp[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momepp[0] = fqmrmom[fqLoop][0]; momepp[1] = fqmrmom[fqLoop][1]; momepp[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 1 && pid3 == 3) {fq3rPEP = fqmrnll[fqLoop];
+                        anglepep[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        anglepep[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        anglepep[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        mompep[0] = fqmrmom[fqLoop][0]; mompep[1] = fqmrmom[fqLoop][1]; mompep[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 3 && pid3 == 1) {fq3rPPE = fqmrnll[fqLoop];
+                        angleppe[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleppe[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleppe[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momppe[0] = fqmrmom[fqLoop][0]; momppe[1] = fqmrmom[fqLoop][1]; momppe[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 1 && pid2 == 1 && pid3 == 3) {fq3rEEP = fqmrnll[fqLoop];
+                        angleeep[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleeep[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleeep[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momeep[0] = fqmrmom[fqLoop][0]; momeep[1] = fqmrmom[fqLoop][1]; momeep[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 1 && pid2 == 3 && pid3 == 1) {fq3rEPE = fqmrnll[fqLoop];
+                        angleepe[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        angleepe[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        angleepe[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        momepe[0] = fqmrmom[fqLoop][0]; momepe[1] = fqmrmom[fqLoop][1]; momepe[2] = fqmrmom[fqLoop][2]; }
+                if(pid1 == 3 && pid2 == 1 && pid3 == 1) {fq3rPEE = fqmrnll[fqLoop];
+                        anglepee[0] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][1][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][1][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][1][2];
+                        anglepee[1] = fqmrdir[fqLoop][0][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][0][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][0][2]*fqmrdir[fqLoop][2][2];
+                        anglepee[2] = fqmrdir[fqLoop][1][0]*fqmrdir[fqLoop][2][0]+fqmrdir[fqLoop][1][1]*fqmrdir[fqLoop][2][1]+fqmrdir[fqLoop][1][2]*fqmrdir[fqLoop][2][2];
+                        mompee[0] = fqmrmom[fqLoop][0]; mompee[1] = fqmrmom[fqLoop][1]; mompee[2] = fqmrmom[fqLoop][2]; }
+	}
+      }
+	
+
         double xpos = fq1rpos[0][1][0];
         double ypos = fq1rpos[0][1][1];
         double zpos = fq1rpos[0][1][2];
-        double rpos = sqrt(xpos*xpos+ypos*ypos);
-        double fqwall = std::min(1690.-rpos,std::min(1810.-zpos,1810.+zpos));
-	
+        double rpos = TMath::Sqrt(xpos*xpos+ypos*ypos);
+        fqwall = std::min(1690.-rpos,std::min(1810.-zpos,1810.+zpos));
+        double tempDir[3], tempPos[3];
+        for(Int_t loopTemp=0;loopTemp<3;loopTemp++){
+		tempDir[loopTemp] = fq1rdir[0][1][loopTemp];
+                tempPos[loopTemp] = fq1rpos[0][1][loopTemp];
+	}
+        towall = GetToWall(tempPos, tempDir);
+	//std::cout<<"towall is "<<towall<<" "<<fq1rdir[0][1][2]<<" "<<fq1rpos[0][1][2]<<std::endl;
+	//std::cout<<"fqwall and towall "<<fqwall<<" "<<towall<<std::endl;
+        double lemu = fq1rnll[0][2]-fq1rnll[0][1];
+        double lpie = fq1rnll[0][1]-fqpi0nll[0];
+        double lpimu = fq1rnll[0][2]-fq1rnll[0][3];
+
+        double pe = fq1rmom[0][1];
+        double me = 0.5109989461;
+        double ee = TMath::Sqrt(pe*pe+me*me);
+        double mp = 938.2720813;
+        double mn = 939.5654133;
+	erec1r = 0;
+        eTOpre = TMath::Sqrt( (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0])* (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0]) + (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1])* (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1]) + (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2])* (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2]));
+
+        double costhbeam = fq1rdir[0][1][0]*dirnu[0][0]
+                              + fq1rdir[0][1][1]*dirnu[0][1]
+                              + fq1rdir[0][1][2]*dirnu[0][2];
+        erec1r = (me*me+mn*mn-mp*mp-2*mn*ee)/-2./(mn-ee+pe*costhbeam)/1000.;
+	//std::cout<<"directoins for fq and nu: "<<fq1rdir[0][1][0]<<" "<<fq1rdir[0][1][1]<<" "<<fq1rdir[0][1][2]<<" "<<dirnu[0][0]<<" "<<dirnu[0][1]<<" "<<dirnu[0][2]<<std::endl;
+        //std::cout<<"costhbeam, me, mn, mp, ee and erec1r "<<costhbeam<<" "<<me<<" "<<mn<<" "<<mp<<" "<<ee<<" "<<erec1r<<std::endl;
+
+
+        double md = 1232;
+        double mN = (mp + mn) / 2.;
+
+	erecmr = 0;
+
+	// 2 rings
+	if (fqmrnring[0] == 2) {
+	  int pidcode = 0;
+	  int ie = -1;
+	  // 1st (most energetic) ring
+	  if ((fqmrpid[0][0]==2)||(fqmrpid[0][0]==3)) {
+	    pidcode = 2;
+	  } else if (fqmrpid[0][0] == 1) {
+	    ie = 0;
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][0] = " << fqmrpid[0][0] << std::endl;
+	  }
+	  // 2nd ring
+	  if ((fqmrpid[0][1]==2)||(fqmrpid[0][1]==3)) {
+	    pidcode++;
+	  } else if (fqmrpid[0][1] == 1) {
+	    if (ie < 0) {ie = 1;}
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][1] = " << fqmrpid[0][1] << std::endl;
+	  }
+	  if (ie < 0) {
+	    //	    std::cout << "Ugh, ie = " << ie << ". Setting to 0" << std::endl;
+	    ie = 0;
+	  }
+
+	  pe = fqmrmom[0][ie];
+	  ee = TMath::Sqrt(pe*pe+me*me);
+	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
+			   + fqmrdir[0][ie][1]*dirnu[0][1]
+			   + fqmrdir[0][ie][2]*dirnu[0][2];
+	  erecmr = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
+
+
+	  // 3 rings
+	} else if (fqmrnring[0] == 3) {
+	  int pidcode = 0;
+	  int ie = -1;
+	  // 1st (most energetic) ring
+	  if ((fqmrpid[0][0]==2)||(fqmrpid[0][0]==3)) {
+	    pidcode = 4;
+	  } else if (fqmrpid[0][0] == 1) {
+	    ie = 0;
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][0] = " << fqmrpid[0][0] << std::endl;
+	  }
+	  // 2nd ring
+	  if ((fqmrpid[0][1]==2)||(fqmrpid[0][1]==3)) {
+	    pidcode += 2;
+	  } else if (fqmrpid[0][1] == 1) {
+	    if (ie < 0) {ie = 1;}
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][1] = " << fqmrpid[0][1] << std::endl;
+	  }
+	  // 3rd ring
+	  if ((fqmrpid[0][2]==2)||(fqmrpid[0][2]==3)) {
+	    pidcode++;
+	  } else if (fqmrpid[0][2] == 1) {
+	    if (ie < 0) {ie = 2;}
+	  } else {
+	    std::cout << "Oh no! fqmrnring[0] = " << fqmrnring[0] << " and fqmrpid[0][2] = " << fqmrpid[0][2] << std::endl;
+	  }
+	  if (ie < 0) {
+	    //	    std::cout << "Ugh, ie = " << ie << ". Setting to 0" << std::endl;
+	    ie = 0;
+	  }
+
+	  pe = fqmrmom[0][ie];
+	  ee = TMath::Sqrt(pe*pe+me*me);
+	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
+			   + fqmrdir[0][ie][1]*dirnu[0][1]
+			   + fqmrdir[0][ie][2]*dirnu[0][2];
+	  erecmr = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
+	}
+
+	else{
+	  erecmr = erec1r;
+	}
+	  
+	//std::cout<<"erec and likelihood ratios examine: "<<erec1r<<" "<<erecmr<<" "<<fq2rGG<<" "<<fq2rEE<<std::endl;
 	sigCategory = -1;
 	bkgCategory = -1;
 	
+	//std::cout<<"nhitac, fqwall, fqmrnring[0], lemu, fq1rmom[0][1], fqnse, mode: "<<nhitac<<" "<< fqwall<<" "<< fqmrnring[0]<<" "<< lemu<<" "<< fq1rmom[0][1]<<" "<< fqnse<< " "<<mode<<std::endl;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Check signal and background categories:  1 ring 0 decay, 1ring 1decay and 2 ring 0 decay.
-// 1ring 0 decay
+// Check signal and background categories:  1 ring 0 decay, 1ring 1decay and 2 ring 0 decay.// 1ring 0 decay
 
+          isBKG = false;
+          isSIG = false;	
           if((nhitac<16)
           && (fqwall > 200.)
           && (fqmrnring[0] == 1)
-          && (lemu > fq1rmom[0][1]*0.2)
-          && (fq1rmom[0][1]>100.)
+	  && evis >30
+          //&& (lemu > fq1rmom[0][1]*0.2)
+          //&& (fq1rmom[0][1]>100.)
 	  && fqnse == 1){
+		//std::cout<<"towall is "<<towall<<" "<<fq1rdir[0][1][2]<<" "<<fq1rpos[0][1][2]<<std::endl;
 
-		Bool_t isBKG = false;
-		Bool_t isSIG = false;
-		if(mode >30) {
+		if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
+		else isBKG = true; 
+/*
+                //std::cout<<"pass 1 "<<std::endl;
+		if(TMath::Abs(mode) >30) {
+			isBKG = true;
+
+			std::cout<<"pass 2 "<<std::endl;
 			for(Int_t l1=0;l1<Npvc;l1++){
-				if(Ipvc[l1] == 111 && Iflvc[l1] != 3 && Iflvc[l1] != 4 && Iflvc[l1] != 5) isBKG = true;	
+				std::cout<<"Ipvc[l1], Iflvc[l1]: "<<Ipvc[l1]<<" "<<Iflvc[l1]<<std::endl;
+				if(Ipvc[l1] == 111 && Iflvc[l1] != 3 && Iflvc[l1] != 4 && Iflvc[l1] != 5) { isBKG = true; std::cout<<"got one. "<<std::endl; exit(1);	}
 			}
 				if(isBKG == true){
 					for(Int_t l2=0;l2<nscndprt;l2++){
@@ -715,13 +973,16 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 			for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isBKG = true;
                         }
+
 		}	  
 		else {
 			if(TMath::Abs(ipnu[0])==12) isSIG = true; 
                         for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isSIG = false;
 			}
+
 		}
+*/
 		if(isBKG == true) bkgCategory = 0;
                 if(isSIG == true) sigCategory = 0;
 
@@ -731,13 +992,18 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
           else if((nhitac<16)
           && (fqwall > 200.)
+	  && evis > 30
           && (fqmrnring[0] == 1)
-          && (lemu > fq1rmom[0][1]*0.2)
-          && (fq1rmom[0][1]>100.)
+          //&& (lemu > fq1rmom[0][1]*0.2)
+          //&& (fq1rmom[0][1]>100.)
           && fqnse == 2){
-                Bool_t isBKG = false;
-                Bool_t isSIG = false;
-                if(mode >30) {
+
+                if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
+                else isBKG = true;
+/*
+                if(TMath::Abs(mode) >30) {
+		isBKG = true;
+
                         for(Int_t l1=0;l1<Npvc;l1++){
                                 if(Ipvc[l1] == 111 && Iflvc[l1] != 3 && Iflvc[l1] != 4 && Iflvc[l1] != 5) isBKG = true;
                         }
@@ -750,13 +1016,16 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
                         for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isBKG = true;
                         }
+
                 }
                 else {
                         if(TMath::Abs(ipnu[0])==12) isSIG = true;
                         for(Int_t l1=0;l1<nscndprt;l1++){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isSIG = false;
                         }
+
                 }
+*/
                 if(isBKG == true) bkgCategory = 1;
                 if(isSIG == true) sigCategory = 1;
 
@@ -766,15 +1035,23 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
           else if((nhitac<16)
           && (fqwall > 200.)
-          && (fqmrnring[0] == 2)
-          && (lemu > fq1rmom[0][1]*0.2)
-          && (fq1rmom[0][1]>100.)
-          && fqnse == 1){
-                Bool_t isBKG = false;
-                Bool_t isSIG = false;
-                if(mode >30) {
+	  && evis > 30
+          && (fqmrnring[0] > 1)
+          //&& (lemu > fq1rmom[0][1]*0.2)
+          //&& (fq1rmom[0][1]>100.)
+          && fqnse < 2){
+
+                if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
+                else isBKG = true;
+/*
+                if(TMath::Abs(mode) >30) {
+			isBKG = true;
+
                         for(Int_t l1=0;l1<Npvc;l1++){
-                                if(Ipvc[l1] == 111 && Iflvc[l1] != 3 && Iflvc[l1] != 4 && Iflvc[l1] != 5) isBKG = true;
+				//std::cout<<"Ipvc[l1], Iflvc[l1]: "<<Ipvc[l1]<<" "<<Iflvc[l1]<<std::endl;
+                                if(Ipvc[l1] == 111 && Iflvc[l1] != 3 && Iflvc[l1] != 4 && Iflvc[l1] != 5) {
+					isBKG = true; 
+				}
                         }
                                 if(isBKG == true){
                                         for(Int_t l2=0;l2<nscndprt;l2++){
@@ -792,6 +1069,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
                                 if(iprtscnd[l1] == 111 && iprtscnd[l1] != 3 && iprtscnd[l1] != 4 && iprtscnd[l1] != 5) isSIG = false;
                         }
                 }
+*/
                 if(isBKG == true) bkgCategory = 2;
                 if(isSIG == true) sigCategory = 2;
 
