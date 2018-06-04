@@ -937,7 +937,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	sigCategory = -1;
 	bkgCategory = -1;
 	
-	//std::cout<<"nhitac, fqwall, fqmrnring[0], lemu, fq1rmom[0][1], fqnse, mode: "<<nhitac<<" "<< fqwall<<" "<< fqmrnring[0]<<" "<< lemu<<" "<< fq1rmom[0][1]<<" "<< fqnse<< " "<<mode<<std::endl;
+	//std::cout<<"nhitac, fqwall, fqmrnring[0], evis, lemu, fq1rmom[0][1], fqnse, mode: "<<nhitac<<" "<< fqwall<<" "<< fqmrnring[0]<<" "<<evis<<" "<< lemu<<" "<< fq1rmom[0][1]<<" "<< fqnse<< " "<<mode<<std::endl;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Check signal and background categories:  1 ring 0 decay, 1ring 1decay and 2 ring 0 decay.// 1ring 0 decay
 
@@ -1039,7 +1039,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
           && (fqmrnring[0] > 1)
           //&& (lemu > fq1rmom[0][1]*0.2)
           //&& (fq1rmom[0][1]>100.)
-          && fqnse < 2){
+          && fqnse < 3){
 
                 if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
                 else isBKG = true;

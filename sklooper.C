@@ -215,7 +215,7 @@ void sklooper::Loop()
 	  //&& (fqmrnring[0] == 1)
 	  //&& (lemu > fq1rmom[0][1]*0.2)
 	  //&& (fq1rmom[0][1]>100.)
-	  	  && (fqnse == 1)
+	  	  && (fqnse < 2)
 	  ) {
 
 	hprecut[nutype][inttype]->Fill(pnu[0]);	
@@ -258,7 +258,7 @@ void sklooper::Loop()
 	  //	  && (fqmrnring[0] == 1)
 	  //	  && (lemu > fq1rmom[0][1]*0.2)
 	  && (fq1rmom[0][1]>30.)
-	  && (fqnse <= 3)
+	  && (fqnse < 2)
 	  ) {
 	// 2 rings
 	if (fqmrnring[0] == 2) {

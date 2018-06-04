@@ -452,8 +452,8 @@ else if(atoi(gApplication->Argv(4))==2){
    dataloader->SetBackgroundWeightExpression( "fluxWeight[1]" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = "sigCategory == 0 || sigCategory == 1 && pnu[0] > 3"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = "bkgCategory == 0 || bkgCategory == 1 && pnu[0] > 3"; // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = "sigCategory >= 0 && sigCategory <= 2 && erecmr > 1 && erecmr < 2 "; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2 && erecmr > 1 && erecmr < 2 "; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // Tell the dataloader how to use the training and testing events
    //
@@ -466,7 +466,7 @@ else if(atoi(gApplication->Argv(4))==2){
    //
    //    dataloader->PrepareTrainingAndTestTree( mycut,
    //         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
-   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"SplitMode=Random:NormMode=NumEvents:!V" );
+   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"nTest_Signal=100:nTest_Background=100:SplitMode=Random:NormMode=NumEvents:!V" );
                                         //"nTrain_Signal=1000:nTrain_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
 
 
