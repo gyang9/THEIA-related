@@ -59,6 +59,8 @@ void sklooper::Loop()
    TH1D* h2precutrec [nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
    TH1D* h2postcutrec[nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
 
+   TH2D* htrueToreco [nnutypes][ninttypes];
+
    const int nbins = 25;
    double binedges[nbins+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0,100.0};
 
@@ -77,6 +79,8 @@ void sklooper::Loop()
        hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_postcutrec";
        hpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       hname = hprefix + "_trueToreco";
+       htrueToreco[nt][it] = new TH1D(hname,hname,nbins,binedges,bins,binedges);
 
        int ncomb[nrings2] = {4,8};
        for (int ide=0; ide<ndecaye2; ide++) {
@@ -208,11 +212,44 @@ void sklooper::Loop()
 	}
       }
 
+
+      // all included
+      if ((nhitac<16)
+          && (fqwall > 200.)
+          && (evis>30)
+          //&& (fqmrnring[0] == 1)
+          //&& (lemu > fq1rmom[0][1]*0.2)
+          //&& (fq1rmom[0][1]>100.)
+                  && (fqnse < 2)
+          ) {
+
+        hprecut[nutype][inttype]->Fill(pnu[0]);
+        hprecutrec[nutype][inttype]->Fill(erec);
+        if ((inttype==0)&&(nutype==0)) heres->Fill((erec-pnu[0])/pnu[0]);
+
+        if (fq1rmom[0][1]<500.) {
+          if (lpie < 125 - 0.875*fqpi0mass[0]) {
+            hpostcutrec[nutype][inttype]->Fill(erec);
+          }
+        } else if (fq1rmom[0][1]<1000.) {
+          if (lpie < 150 - 0.6*fqpi0mass[0]) {
+            hpostcutrec[nutype][inttype]->Fill(erec);
+          }
+        } else if (fq1rmom[0][1]>=1000.) {
+          if (lpie < 100) {
+            hpostcutrec[nutype][inttype]->Fill(erec);
+          }
+        }
+
+      }
+
+
+
       // 1-ring e-like preselection
       if ((nhitac<16)
 	  && (fqwall > 200.)
 	  && (evis>30)
-	  //&& (fqmrnring[0] == 1)
+	  && (fqmrnring[0] == 1)
 	  //&& (lemu > fq1rmom[0][1]*0.2)
 	  //&& (fq1rmom[0][1]>100.)
 	  	  && (fqnse < 2)
