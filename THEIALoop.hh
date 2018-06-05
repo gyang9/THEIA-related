@@ -827,8 +827,57 @@ public :
    TTree*     LoopAndWrite(Int_t NofEvent);
    void    LoopAndWrite(Int_t NofEvent, Bool_t sel);
 
+   Double_t GetToWall(double*, double*);
+
+
    Int_t    sigCategory;
    Int_t    bkgCategory;
+   double fq2rPE;
+   double fq2rEE;
+   double fq2rEP;
+   double fq2rPP;
+   double fq1rE;
+   double fq3rEEE;
+   double fq3rPPP;
+   double fq3rPPE;
+   double fq3rPEP;
+   double fq3rEPP;
+   double fq3rEEP;
+   double fq3rEPE;
+   double fq3rPEE;
+
+   double angleepi;
+   double anglepie;
+   double anglepp;
+   double angleee;
+   double angleeee[3];
+   double angleppp[3];
+   double angleepp[3];
+   double anglepep[3];
+   double angleppe[3];
+   double angleeep[3];
+   double angleepe[3];
+   double anglepee[3];
+   double momee[2];
+   double momepi[2];
+   double mompie[2];
+   double mompp[2];
+   double momeee[3];
+   double momppp[3];
+   double momeep[3];
+   double momepe[3];   
+   double mompee[3];
+   double momepp[3];
+   double mompep[3];
+   double momppe[3];
+
+   double eTOpre;
+   double fqwall;
+   double towall;
+   double erec1r;
+   double erecmr;
+   bool isSIG;
+   bool isBKG;
 
    double nueIn[200]={};
    double numuIn[200]={};
