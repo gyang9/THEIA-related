@@ -539,7 +539,7 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
 
 TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
 {
-
+/*
    int counter = 0;
    std::ifstream in;
    in.open(atmFlux);
@@ -568,20 +568,28 @@ TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
    TSpline5* atmNuebar = new TSpline5("atmNuebar", xx, nuebarIn, counter);
    TSpline5* atmNumu   = new TSpline5("atmNumu", xx, numuIn, counter);
    TSpline5* atmNumubar= new TSpline5("atmNumubar", xx, numubarIn, counter);
+*/
 
-
-/*
    // Use TGraphs to read file directly, much easier
-   TGraph * gAtmNue     = new TGraph(atmFlux, "%lg %lg");
-   TGraph * gAtmNuebar  = new TGraph(atmFlux, "%lg %*lg %lg");
-   TGraph * gAtmNumu    = new TGraph(atmFlux, "%lg %*lg %*lg %lg");
-   TGraph * gAtmNumubar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg");
+   TGraph * gAtmNue     = new TGraph(atmFlux, "%lg %lg" , "");
+   TGraph * gAtmNuebar  = new TGraph(atmFlux, "%lg %*lg %lg", "");
+   TGraph * gAtmNumu    = new TGraph(atmFlux, "%lg %*lg %*lg %lg", "");
+   TGraph * gAtmNumubar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg", "");
+
+   double inteNue = gAtmNue->Integral();
+   for (int iGra=0;iGra<gAtmNue->GetN();iGra++) gAtmNue->GetY()[iGra] *= inteNue;
+   double inteNuebar = gAtmNuebar->Integral();
+   for (int iGra=0;iGra<gAtmNuebar->GetN();iGra++) gAtmNuebar->GetY()[iGra] *= inteNuebar;
+   double inteNumu = gAtmNumu->Integral();
+   for (int iGra=0;iGra<gAtmNumu->GetN();iGra++) gAtmNumu->GetY()[iGra] *= inteNumu;
+   double inteNumubar = gAtmNumubar->Integral();
+   for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) gAtmNumubar->GetY()[iGra] *= inteNumubar;
 
    TSpline5* atmNue    = new TSpline5("atmNue", gAtmNue);
    TSpline5* atmNuebar = new TSpline5("atmNuebar", gAtmNuebar);
    TSpline5* atmNumu   = new TSpline5("atmNumu", gAtmNumu);
    TSpline5* atmNumubar= new TSpline5("atmNumubar", gAtmNumubar);
-*/
+
    reTot[0] = atmNue;
    reTot[1] = atmNuebar;
    reTot[2] = atmNumu;
