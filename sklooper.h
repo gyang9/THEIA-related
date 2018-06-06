@@ -809,8 +809,9 @@ sklooper::sklooper(TTree *tree)
       // of trees.
       TChain * chain = new TChain("h1","");
       //      chain->Add("skatm/mar16sk4.reduc.*_fQv5r0.root");
-      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
       //      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
+      //      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
+	chain->Add("/home/guang/work/root-6.12.06/builddir/tutorials/tmva/outputTree_reinput0.root");
       tree = chain;
 #endif // SINGLE_TREE
 
