@@ -52,6 +52,10 @@ void sklooper::Loop()
    TH1D* hprecutrec [nnutypes][ninttypes];
    TH1D* hpostcutrec[nnutypes][ninttypes];
 
+   TH1D* h1rprecut [nnutypes][ninttypes];
+   TH1D* h1rprecutrec [nnutypes][ninttypes];
+   TH1D* h1rpostcutrec[nnutypes][ninttypes];
+
    const int ndecaye2 = 3;
    const int nrings2 = 2;
    const int maxcomb = 8;
@@ -79,6 +83,12 @@ void sklooper::Loop()
        hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_postcutrec";
        hpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       hname = hprefix + "_1rprecut";
+       h1rprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       hname = hprefix + "_1rprecutrec";
+       h1rprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       hname = hprefix + "_1rpostcutrec";
+       h1rpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_trueToreco";
        htrueToreco[nt][it] = new TH1D(hname,hname,nbins,binedges,bins,binedges);
 
