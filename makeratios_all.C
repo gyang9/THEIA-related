@@ -113,6 +113,7 @@
   int combepi[nrings2] = {1,3};
   int iccqecolor[nccqenutypes] = {46,6};
 
+  std::cout<<"CCQE; "<<endl;
   for (int inu=0; inu < nccqenutypes; inu++) {
 
 	repiccqe[inu] = (TH1D*)hprecut[inu][0]->Clone();
@@ -120,7 +121,7 @@
 	repiccqe[inu]->Divide(htruefv[inu][0]);
 
 	for (int ibin=0; ibin<nbins; ibin++) {
-	  yvals[ibin] = repiccqe[inu][ide]->GetBinContent(ibin+1);
+	  yvals[ibin] = repiccqe[inu]->GetBinContent(ibin+1);
 	  xvals[ibin] = ibin;
 	}
 
@@ -134,7 +135,7 @@
 	tgepiccqe[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
 	tgepiccqe[inu]->GetYaxis()->SetTitle("Efficiency");
   }
-
+  std::cout<<"... "<<std::endl;
   for (int inu=0; inu < nccqenutypes; inu++) {
 
         repiccqePost[inu] = (TH1D*)hpostcutrec[inu][0]->Clone();
@@ -142,7 +143,7 @@
         repiccqePost[inu]->Divide(hprecutrec[inu][0]);
 
         for (int ibin=0; ibin<nbinsPost; ibin++) {
-          yvalsPost[ibin] = repiccqePost[inu][ide]->GetBinContent(ibin+1);
+          yvalsPost[ibin] = repiccqePost[inu]->GetBinContent(ibin+1);
           xvalsPost[ibin] = ibin;
         }
 
@@ -159,7 +160,7 @@
 
 
   // CCpi+
-
+  std::cout<<"CCpi+; "<<endl;
   const int nccpipnutypes = 2;
   const int nccpipdecaye = 2;
   TH1D* repiccpip[nccpipnutypes];
@@ -213,7 +214,7 @@
   }
 
   // CCOther
-
+  std::cout<<"CCother; "<<endl;
   const int nccothernutypes = 2;
   const int nccotherdecaye = 2;
   TH1D* repiccother[nccothernutypes];
@@ -267,7 +268,7 @@
   }
 
   // CCnumu
-
+  std::cout<<"CCnumu; "<<endl;
   const int nccnumudecaye = 2;
   TH1D* repiccnumu;
   TGraph* tgepiccnumu;
@@ -341,13 +342,41 @@
   }
 
   // NC
-
+  std::cout<<"NC; "<<std::endl;
   const int nncdecaye = 2;
   TH1D* repinc;
   TGraph* tgepinc;
   TH1D* repincPost;
   TGraph* tgepincPost;
 
+  {
+      repinc = (TH1D*)hprecut[0][3]->Clone();
+      repinc->Add(hprecut[1][3]);
+      repinc->Add(hprecut[2][3]);
+      repinc->Add(hprecut[3][3]);
+      repinc->SetName("repincPost");
+      TH1D* denom = (TH1D*)htruefv[0][3]->Clone();
+      denom->Add(htruefv[1][3]);
+      denom->Add(htruefv[2][3]);
+      denom->Add(htruefv[3][3]);
+      repinc->Divide(denom);
+
+      for (int ibin=0; ibin<nbins; ibin++) {
+        yvals[ibin] = repinc->GetBinContent(ibin+1);
+        xvals[ibin] = ibin;
+      }
+
+      tgepinc = new TGraph(nbins,xvals,yvals);
+      tgepinc->SetLineColor(42);
+      tgepinc->SetLineWidth(4);
+      tgepinc->SetMarkerColor(42);
+      tgepinc->SetMarkerSize(1.5);
+      tgepinc->SetMarkerStyle(21);
+      tgepinc->GetXaxis()->SetTitleOffset(1.4);
+      tgepinc->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
+      tgepinc->GetYaxis()->SetTitle("Efficiency");
+
+  }
   {
       repincPost = (TH1D*)hpostcutrec[0][3]->Clone();
       repincPost->Add(hpostcutrec[1][3]);
@@ -448,7 +477,7 @@
     canprefixPost += ide;
     for (int ir=0; ir<1; ir++) {
       TString cannamePost = canprefix;
-      cannamePost += "_nrings";
+      cannamePost += "_post_nrings";
       cannamePost += (ir+2);
 
       double maxeffPost = 0.;

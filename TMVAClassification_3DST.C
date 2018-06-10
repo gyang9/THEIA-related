@@ -1,3 +1,45 @@
+/// \file
+/// \ingroup tutorial_tmva
+/// \notebook -nodraw
+/// This macro provides examples for the training and testing of the
+/// TMVA classifiers.
+///
+/// As input data is used a toy-MC sample consisting of four Gaussian-distributed
+/// and linearly correlated input variables.
+/// The methods to be used can be switched on and off by means of booleans, or
+/// via the prompt command, for example:
+///
+///     root -l ./TMVAClassification.C\(\"Fisher,Likelihood\"\)
+///
+/// (note that the backslashes are mandatory)
+/// If no method given, a default set of classifiers is used.
+/// The output file "TMVA.root" can be analysed with the use of dedicated
+/// macros (simply say: root -l <macro.C>), which can be conveniently
+/// invoked through a GUI that will appear at the end of the run of this macro.
+/// Launch the GUI via the command:
+///
+///     root -l ./TMVAGui.C
+///
+/// You can also compile and run the example with the following commands
+///
+///     make
+///     ./TMVAClassification <Methods>
+///
+/// where: `<Methods> = "method1 method2"` are the TMVA classifier names
+/// example:
+///
+///     ./TMVAClassification Fisher LikelihoodPCA BDT
+///
+/// If no method given, a default set is of classifiers is used
+///
+/// - Project   : TMVA - a ROOT-integrated toolkit for multivariate data analysis
+/// - Package   : TMVA
+/// - Root Macro: TMVAClassification
+///
+/// \macro_output
+/// \macro_code
+/// \author Andreas Hoecker
+
 
 #include <cstdlib>
 #include <iostream>
@@ -17,7 +59,7 @@
 #include "TMVA/Tools.h"
 #include "TMVA/TMVAGui.h"
 
-int TMVAClassification_theia( TString myMethodList = "" )
+int TMVAClassification_3DST( TString myMethodList = "" )
 {
    // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
@@ -119,25 +161,16 @@ int TMVAClassification_theia( TString myMethodList = "" )
 
    // Here the preparation phase begins
 
-   cout<<atoi(gApplication->Argv(4))<<" "<<atoi(gApplication->Argv(5))<<endl;
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
    TFile *input(0);
    TFile *input2(0);
-   TFile *inputTest(0);
-   TFile *inputTest2(0);
    //TString fname = "./tmva_class_example.root";
-   //TString fname = Form("/home/gyang/work/t2k/wc/combined_fluxWeightAdded_%dring%ddecay_hE.root",atoi(gApplication->Argv(5)),atoi(gApplication->Argv(6)));
-   //TString fname2 = Form("/home/gyang/work/t2k/wc/combined_fluxWeightAdded_%dring%ddecay_bkg_hE.root",atoi(gApplication->Argv(5)),atoi(gApplication->Argv(6)));
-   //TString fnameTest = "/home/gyang/work/t2k/wc/combined_sbu_processed_sig.root";
-   //TString fnameTest2 = "/home/gyang/work/t2k/wc/combined_sbu_processed_bkg.root";
-
-   TString fname  = "/home/gyang/work/t2k/wc/outputTest.root";
-   TString fname2 = "/home/gyang/work/t2k/wc/outputTest.root";
+   TString fname = "testEvent_3DST_222_particleGun1000MeVAntiMuon_30cone_0.4Bfield_sample0.root";
+   TString fname2 = "testEvent_3DST_222_particleGun1000MeVMuon_30cone_0.4Bfield_sample0.root";
 
    if (!gSystem->AccessPathName( fname )) {
       input = TFile::Open( fname ); // check if file in local directory exists
-      //inputTest = TFile::Open( fnameTest );
    }
    else {
       TFile::SetCacheFileDir(".");
@@ -151,7 +184,6 @@ int TMVAClassification_theia( TString myMethodList = "" )
 
    if (!gSystem->AccessPathName( fname2 )) {
       input2 = TFile::Open( fname2 ); // check if file in local directory exists
-      //inputTest2 = TFile::Open( fnameTest2 );
    }
    else {
       TFile::SetCacheFileDir(".");
@@ -165,14 +197,11 @@ int TMVAClassification_theia( TString myMethodList = "" )
 
    // Register the training and test trees
 
-   TTree *signalTree     = (TTree*)input->Get("h1");
-   TTree *background     = (TTree*)input->Get("h1");
-
-   //TTree *signalTreeTest     = (TTree*)inputTest->Get("h1");
-   //TTree *backgroundTest     = (TTree*)inputTest2->Get("h1");
+   TTree *signalTree     = (TTree*)input->Get("EDepSimTree");
+   TTree *background     = (TTree*)input2->Get("EDepSimTree");
 
    // Create a ROOT output file where TMVA will store ntuples, histograms, etc.
-   TString outfileName( "TMVA_gy.root" );
+   TString outfileName( "TMVA_3DST.root" );
    TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
 
    // Create the factory object. Later you can choose the methods
@@ -185,10 +214,8 @@ int TMVAClassification_theia( TString myMethodList = "" )
    // The second argument is the output file for the training results
    // All TMVA output can be suppressed by removing the "!" (not) in
    // front of the "Silent" argument in the option string
-   //TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
-   //                                            "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
-                                               "!V:!Silent:Color:DrawProgressBar:Transformations=D:AnalysisType=Classification" );
+                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
 
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    // If you wish to modify default settings
@@ -200,191 +227,16 @@ int TMVAClassification_theia( TString myMethodList = "" )
    // Define the input variables that shall be used for the MVA training
    // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
    // [all types of expressions that can also be parsed by TTree::Draw( "expression" )]
-
-   dataloader->AddVariable( "var1:=fqpi0mom1[0]", "fqpi0mom1[0]", "units",  'F' );
-   dataloader->AddVariable( "var2:=fqpi0mom2[0]", "fqpi0mom2[0]", "units", 'F' );
-   dataloader->AddVariable( "var3:=fq1rnll[0][1]-fqpi0nll[0]", "fq1rnll[0][1]-fqpi0nll[0]", "units", 'F' );
-   dataloader->AddVariable( "var4:=fqpi0mass[0]", "qpi0mass", "units", 'F' );
-   dataloader->AddVariable( "var5:=fqpi0photangle[0]", "fqpi0photangle[0]", "units", 'F' );
-
-   dataloader->AddVariable( "var6:=erecmr", "erecmr", "units", 'F' );
-   dataloader->AddVariable( "var7:=fq1rmom[0][1]", "fq1rmom[0][1]", "units", 'F' );
-   dataloader->AddVariable( "var8:=fq1rmom[0][2]", "fq1rmom[0][2]", "units", 'F' );
-   dataloader->AddVariable( "var9:=fq1rmom[0][3]", "fq1rmom[0][3]", "units", 'F' );
-   dataloader->AddVariable( "var10:=fqwall", "fqwall", "units", 'F' );
-   dataloader->AddVariable( "var11:=fq1rnll[0][1]-fq1rnll[0][2]", "fq1rnll[0][1]-fq1rnll[0][2]", "units", 'F' );
-   dataloader->AddVariable( "var12:=fq1rnll[0][2]-fq1rnll[0][3]", "fq1rnll[0][2]-fq1rnll[0][3]", "units", 'F' );
-   dataloader->AddVariable( "var13:=fq1reloss[0][3]", "fq1reloss[0][3]", "units", 'F' );
-   dataloader->AddVariable( "var14:=eTOpre", "eTOpre", "units", 'F' );
-   dataloader->AddVariable( "var15:=towall", "towall", "units", 'F' );
-
-   dataloader->AddVariable( "var16:=momee[0]", "momee[0]", "units", 'F' );
-   dataloader->AddVariable( "var17:=momee[1]", "momee[1]", "units", 'F' );
-   dataloader->AddVariable( "var18:=momepi[0]", "momepi[0]", "units", 'F' );
-   dataloader->AddVariable( "var19:=momepi[1]", "momepi[1]", "units", 'F' );
-   dataloader->AddVariable( "var20:=mompp[0]", "mompp[0]", "units", 'F' );
-   dataloader->AddVariable( "var21:=mompp[1]", "mompp[1]", "units", 'F' );
-   dataloader->AddVariable( "var22:=mompie[0]", "mompie[0]", "units", 'F' );
-   dataloader->AddVariable( "var23:=mompie[1]", "mompie[1]", "units", 'F' );
-   dataloader->AddVariable( "var24:=angleepi", "angleepi", "units", 'F' );
-   dataloader->AddVariable( "var25:=anglepie", "anglepie", "units", 'F' );
-   dataloader->AddVariable( "var26:=angleee", "angleee", "units", 'F' );
-   dataloader->AddVariable( "var27:=anglepp", "anglepp", "units", 'F' );
-   dataloader->AddVariable( "var28:=fq1rE-fq2rEE", "fq1rE-fq2rEE", "units", 'F' );
-   dataloader->AddVariable( "var29:=fq1rE-fq2rEP", "fq1rE-fq2rEP", "units", 'F' );
-   dataloader->AddVariable( "var30:=fq1rE-fq2rPE", "fq1rE-fq2rPE", "units", 'F' );
-   dataloader->AddVariable( "var31:=fq1rE-fq2rPP", "fq1rE-fq2rPP", "units", 'F' );
-
-   dataloader->AddVariable( "var32:=momeee[0]", "momeee[0]", "units", 'F' );
-   dataloader->AddVariable( "var33:=momeee[1]", "momeee[1]", "units", 'F' );
-   dataloader->AddVariable( "var34:=momeee[2]", "momeee[2]", "units", 'F' );
-   dataloader->AddVariable( "var35:=momppp[0]", "momppp[0]", "units", 'F' );
-   dataloader->AddVariable( "var36:=momppp[1]", "momppp[1]", "units", 'F' );
-   dataloader->AddVariable( "var37:=momppp[2]", "momppp[2]", "units", 'F' );
-   dataloader->AddVariable( "var38:=momeep[0]", "momeep[0]", "units", 'F' );
-   dataloader->AddVariable( "var39:=momeep[1]", "momeep[1]", "units", 'F' );
-   dataloader->AddVariable( "var40:=momeep[2]", "momeep[2]", "units", 'F' );
-   dataloader->AddVariable( "var41:=momepe[0]", "momepe[0]", "units", 'F' );
-   dataloader->AddVariable( "var42:=momepe[1]", "momepe[1]", "units", 'F' );
-   dataloader->AddVariable( "var43:=momepe[2]", "momepe[2]", "units", 'F' );
-   dataloader->AddVariable( "var44:=mompee[0]", "mompee[0]", "units", 'F' );
-   dataloader->AddVariable( "var45:=mompee[1]", "mompee[1]", "units", 'F' );
-   dataloader->AddVariable( "var46:=mompee[2]", "mompee[2]", "units", 'F' );
-   dataloader->AddVariable( "var47:=momppe[0]", "momppe[0]", "units", 'F' );
-   dataloader->AddVariable( "var48:=momppe[1]", "momppe[1]", "units", 'F' );
-   dataloader->AddVariable( "var49:=momppe[2]", "momppe[2]", "units", 'F' );
-   dataloader->AddVariable( "var50:=mompep[0]", "mompep[0]", "units", 'F' );
-   dataloader->AddVariable( "var51:=mompep[1]", "mompep[1]", "units", 'F' );
-   dataloader->AddVariable( "var52:=mompep[2]", "mompep[2]", "units", 'F' );
-   dataloader->AddVariable( "var53:=momepp[0]", "momepp[0]", "units", 'F' );
-   dataloader->AddVariable( "var54:=momepp[1]", "momepp[1]", "units", 'F' );
-   dataloader->AddVariable( "var55:=momepp[2]", "momepp[2]", "units", 'F' );
-
-   dataloader->AddVariable( "var56:=angleeee[0]", "angleeee[0]", "units", 'F' );
-   dataloader->AddVariable( "var57:=angleeee[1]", "angleeee[1]", "units", 'F' );
-   dataloader->AddVariable( "var58:=angleeee[2]", "angleeee[2]", "units", 'F' );
-   dataloader->AddVariable( "var59:=angleppp[0]", "angleppp[0]", "units", 'F' );
-   dataloader->AddVariable( "var60:=angleppp[1]", "angleppp[1]", "units", 'F' );
-   dataloader->AddVariable( "var61:=angleppp[2]", "angleppp[2]", "units", 'F' );
-   dataloader->AddVariable( "var62:=angleeep[0]", "angleeep[0]", "units", 'F' );
-   dataloader->AddVariable( "var63:=angleeep[1]", "angleeep[1]", "units", 'F' );
-   dataloader->AddVariable( "var64:=angleeep[2]", "angleeep[2]", "units", 'F' );
-   dataloader->AddVariable( "var65:=angleepe[0]", "angleepe[0]", "units", 'F' );
-   dataloader->AddVariable( "var66:=angleepe[1]", "angleepe[1]", "units", 'F' );
-   dataloader->AddVariable( "var67:=angleepe[2]", "angleepe[2]", "units", 'F' );
-   dataloader->AddVariable( "var68:=anglepee[0]", "anglepee[0]", "units", 'F' );
-   dataloader->AddVariable( "var69:=anglepee[1]", "anglepee[1]", "units", 'F' );
-   dataloader->AddVariable( "var70:=anglepee[2]", "anglepee[2]", "units", 'F' );
-   dataloader->AddVariable( "var71:=angleppe[0]", "angleppe[0]", "units", 'F' );
-   dataloader->AddVariable( "var72:=angleppe[1]", "angleppe[1]", "units", 'F' );
-   dataloader->AddVariable( "var73:=angleppe[2]", "angleppe[2]", "units", 'F' );
-   dataloader->AddVariable( "var74:=anglepep[0]", "anglepep[0]", "units", 'F' );
-   dataloader->AddVariable( "var75:=anglepep[1]", "anglepep[1]", "units", 'F' );
-   dataloader->AddVariable( "var76:=anglepep[2]", "anglepep[2]", "units", 'F' );
-   dataloader->AddVariable( "var77:=angleepp[0]", "angleepp[0]", "units", 'F' );
-   dataloader->AddVariable( "var78:=angleepp[1]", "angleepp[1]", "units", 'F' );
-   dataloader->AddVariable( "var79:=angleepp[2]", "angleepp[2]", "units", 'F' );
-
-   dataloader->AddVariable( "var80:=fq3rEEE-fq2rEE", "fq3rEEE-fq2rEE", "units", 'F' );
-   dataloader->AddVariable( "var81:=fq3rPPP-fq2rPP", "fq3rPPP-fq2rPP", "units", 'F' );
-   dataloader->AddVariable( "var82:=fq3rEEP-fq2rEE", "fq3rEEP-fq2rEE", "units", 'F' );
-   dataloader->AddVariable( "var83:=fq3rEPE-fq2rEP", "fq3rEPE-fq2rEP", "units", 'F' );
-   dataloader->AddVariable( "var84:=fq3rPEE-fq2rPE", "fq3rPEE-fq2rPE", "units", 'F' );
-   dataloader->AddVariable( "var85:=fq3rEPP-fq2rEP", "fq3rEPP-fq2rEP", "units", 'F' );
-   dataloader->AddVariable( "var86:=fq3rPEP-fq2rPE", "fq3rPEP-fq2rPE", "units", 'F' );
-   dataloader->AddVariable( "var87:=fq3rPPE-fq2rPP", "fq3rPPE-fq2rPP", "units", 'F' );
-
-   dataloader->AddVariable( "var88:=fqnse", "fqnse", "units", 'I' );
-
+   dataloader->AddVariable( "hitLocation[1]/hitLocation[2]", "hitlocation0", "units",  'F' );
+   dataloader->AddVariable( "hitLocation[1]/hitLocation[0]", "hitlocation1", "units",  'F' );
+   dataloader->AddVariable( "hitLocation[1]", "hitlocation2", "units",  'F' );
 /*
-if(atoi(gApplication->Argv(4))==1){
-   dataloader->AddVariable( "var1:=fqpi0mom1[0]", "fqpi0mom1[0]", "units",  'F' );
-   dataloader->AddVariable( "var2:=fqpi0mom2[0]", "fqpi0mom2[0]", "units", 'F' );
-   dataloader->AddVariable( "var3:=fq1rnll[0][1]-fqpi0nll[0]", "fq1rnll[0][1]-fqpi0nll[0]", "units", 'F' );
-   dataloader->AddVariable( "var4:=fqpi0mass[0]", "qpi0mass", "units", 'F' );
-   dataloader->AddVariable( "var5:=fqpi0photangle[0]", "fqpi0photangle[0]", "units", 'F' );
-   dataloader->AddVariable( "var6:=fqpi0momtot[0]", "fqpi0momtot[0]", "units", 'F' );
-   dataloader->AddVariable( "var7:=fq1rmom[0][1]", "fq1rmom[0][1]", "units", 'F' );
-  
-   dataloader->AddVariable( "var8:=fq1rE-fq2rEE", "fq1rE-fq2rEE", "units", 'F' );
-   dataloader->AddVariable( "var9:=fq1rE-fq2rEP", "fq1rE-fq2rEP", "units", 'F' );
-   dataloader->AddVariable( "var10:=fq1rE-fq2rPE", "fq1rE-fq2rPE", "units", 'F' );
-   dataloader->AddVariable( "var11:=fq1rE-fq2rPP", "fq1rE-fq2rPP", "units", 'F' );
-   dataloader->AddVariable( "var12:=erec1r", "erec1r", "units", 'F' );
-
-   dataloader->AddVariable( "var13:=wall", "wall", "units", 'F' );
-   dataloader->AddVariable( "var14:=evis", "evis", "units", 'F' );
-}
-else if(atoi(gApplication->Argv(4))==2){
-   dataloader->AddVariable( "var1:=fqpi0mom1[0]", "fqpi0mom1[0]", "units",  'F' );
-   dataloader->AddVariable( "var2:=fqpi0mom2[0]", "fqpi0mom2[0]", "units", 'F' );
-   dataloader->AddVariable( "var3:=fq2rEP-fqpi0nll[0]", "fq2rEP-fqpi0nll[0]", "units", 'F' );
-   dataloader->AddVariable( "var4:=fqpi0mass[0]", "qpi0mass", "units", 'F' );
-   dataloader->AddVariable( "var5:=fqpi0photangle[0]", "fqpi0photangle[0]", "units", 'F' );
-   dataloader->AddVariable( "var6:=fqpi0momtot[0]", "fqpi0momtot[0]", "units", 'F' );
-   dataloader->AddVariable( "var7:=angleepi", "angleepi", "units", 'F' );
-   dataloader->AddVariable( "var8:=momepi[0]", "momepi[0]", "units", 'F' );
-   dataloader->AddVariable( "var9:=momepi[1]", "momepi[1]", "units", 'F' );
-   dataloader->AddVariable( "var10:=fqpi0nll[0]", "fqpi0nll[0]", "units", 'F' );
-*/
-/*
-   dataloader->AddVariable( "var11:=fq2rEE-fq3rEEE", "fq2rEE-fq3rEEE", "units", 'F' );
-   dataloader->AddVariable( "var12:=fq2rEE-fq3rEPE", "fq2rEE-fq3rEPE", "units", 'F' );
-   dataloader->AddVariable( "var13:=fq2rEE-fq3rPEE", "fq2rEE-fq3rPEE", "units", 'F' );
-   dataloader->AddVariable( "var14:=fq2rEE-fq3rEEP", "fq2rEE-fq3rEEP", "units", 'F' );
-   dataloader->AddVariable( "var15:=fq2rEE-fq3rEPP", "fq2rEE-fq3rEPP", "units", 'F' );
-   dataloader->AddVariable( "var16:=fq2rEE-fq3rPPE", "fq2rEE-fq3rPPE", "units", 'F' );
-   dataloader->AddVariable( "var17:=fq2rEE-fq3rPEP", "fq2rEE-fq3rPEP", "units", 'F' );
-   dataloader->AddVariable( "var18:=fq2rEE-fq3rPPP", "fq2rEE-fq3rPPP", "units", 'F' );
-
-   dataloader->AddVariable( "var19:=fq2rPP-fq3rEEE", "fq2rPP-fq3rEEE", "units", 'F' );
-   dataloader->AddVariable( "var20:=fq2rPP-fq3rEPE", "fq2rPP-fq3rEPE", "units", 'F' );
-   dataloader->AddVariable( "var21:=fq2rPP-fq3rPEE", "fq2rPP-fq3rPEE", "units", 'F' );
-   dataloader->AddVariable( "var22:=fq2rPP-fq3rEEP", "fq2rPP-fq3rEEP", "units", 'F' );
-   dataloader->AddVariable( "var23:=fq2rPP-fq3rEPP", "fq2rPP-fq3rEPP", "units", 'F' );
-   dataloader->AddVariable( "var24:=fq2rPP-fq3rPPE", "fq2rPP-fq3rPPE", "units", 'F' );
-   dataloader->AddVariable( "var25:=fq2rPP-fq3rPEP", "fq2rPP-fq3rPEP", "units", 'F' );
-   dataloader->AddVariable( "var26:=fq2rPP-fq3rPPP", "fq2rPP-fq3rPPP", "units", 'F' );
-
-   dataloader->AddVariable( "var27:=fq2rEP-fq3rEEE", "fq2rEP-fq3rEEE", "units", 'F' );
-   dataloader->AddVariable( "var28:=fq2rEP-fq3rEPE", "fq2rEP-fq3rEPE", "units", 'F' );
-   dataloader->AddVariable( "var29:=fq2rEP-fq3rPEE", "fq2rEP-fq3rPEE", "units", 'F' );
-   dataloader->AddVariable( "var30:=fq2rEP-fq3rEEP", "fq2rEP-fq3rEEP", "units", 'F' );
-   dataloader->AddVariable( "var31:=fq2rEP-fq3rEPP", "fq2rEP-fq3rEPP", "units", 'F' );
-   dataloader->AddVariable( "var32:=fq2rEP-fq3rPPE", "fq2rEP-fq3rPPE", "units", 'F' );
-   dataloader->AddVariable( "var33:=fq2rEP-fq3rPEP", "fq2rEP-fq3rPEP", "units", 'F' );
-   dataloader->AddVariable( "var34:=fq2rEP-fq3rPPP", "fq2rEP-fq3rPPP", "units", 'F' );
-
-   dataloader->AddVariable( "var35:=fq2rPE-fq3rEEE", "fq2rPE-fq3rEEE", "units", 'F' );
-   dataloader->AddVariable( "var36:=fq2rPE-fq3rEPE", "fq2rPE-fq3rEPE", "units", 'F' );
-   dataloader->AddVariable( "var37:=fq2rPE-fq3rPEE", "fq2rPE-fq3rPEE", "units", 'F' );
-   dataloader->AddVariable( "var38:=fq2rPE-fq3rEEP", "fq2rPE-fq3rEEP", "units", 'F' );
-   dataloader->AddVariable( "var39:=fq2rPE-fq3rEPP", "fq2rPE-fq3rEPP", "units", 'F' );
-   dataloader->AddVariable( "var40:=fq2rPE-fq3rPPE", "fq2rPE-fq3rPPE", "units", 'F' );
-   dataloader->AddVariable( "var41:=fq2rPE-fq3rPEP", "fq2rPE-fq3rPEP", "units", 'F' );
-   dataloader->AddVariable( "var42:=fq2rPE-fq3rPPP", "fq2rPE-fq3rPPP", "units", 'F' );
-}
-*/
-   //dataloader->AddVariable( "var8:=fqpi0dconv1[0]", "fqpi0dconv1", "units", 'F' );
-   //dataloader->AddVariable( "var9:=fqpi0dconv2[0]", "fqpi0dconv2", "units", 'F' );
-   //dataloader->AddVariable( "var10:=fqpi0t0[0]", "qpi0t0", "units",  'F' );
-   //dataloader->AddVariable( "var11:=fqpi0totmu[0]", "fqpi0totmu", "units", 'F' );
-   //dataloader->AddVariable( "var12:=fqpi0dirtot[0][0]", "fqpi0dirtot0", "units", 'F' );
-   //dataloader->AddVariable( "var13:=fqpi0dirtot[0][1]", "fqpi0dirtot1", "units", 'F' );
-   //dataloader->AddVariable( "var14:=fqpi0dirtot[0][2]", "fqpi0dirtot2", "units", 'F' );
-/*
-   dataloader->AddVariable( "fqpi0mom1[1]", "fqpi0mom12", "units",  'F' );
-   dataloader->AddVariable( "fqpi0mom2[1]", "fqpi0mom22", "units", 'F' );
-   dataloader->AddVariable( "fqpi0dconv1[1]", "fqpi0dconv12", "units", 'F' );
-   dataloader->AddVariable( "fqpi0dconv2[1]", "fqpi0dconv22", "units", 'F' );
-   dataloader->AddVariable( "fqpi0t0[1]", "qpi0t02", "units",  'F' );
-   dataloader->AddVariable( "fqpi0totmu[1]", "fqpi0totmu2", "units", 'F' );
-   dataloader->AddVariable( "fqpi0nll[1]", "fqpi0nll2", "units", 'F' );
-   dataloader->AddVariable( "fqpi0mass[1]", "qpi0mass2", "units", 'F' );
-   dataloader->AddVariable( "fqpi0photangle[1]", "fqpi0photangle2", "units", 'F' );
-   dataloader->AddVariable( "fqpi0dirtot[1][0]", "fqpi0dirtot02", "units", 'F' );
-   dataloader->AddVariable( "fqpi0dirtot[1][1]", "fqpi0dirtot12", "units", 'F' );
-   dataloader->AddVariable( "fqpi0dirtot[1][2]", "fqpi0dirtot22", "units", 'F' );
+   dataloader->AddVariable( "hitPE[0]", "hitPE[0]", "units",  'F' );
+   dataloader->AddVariable( "hitPE[1]", "hitPE[1]", "units",  'F' );
+   dataloader->AddVariable( "hitPE[2]", "hitPE[2]", "units",  'F' );
+   dataloader->AddVariable( "hitPE[3]", "hitPE[3]", "units",  'F' );
+   dataloader->AddVariable( "hitPE[4]", "hitPE[4]", "units",  'F' );
+   dataloader->AddVariable( "hitPE[5]", "hitPE[5]", "units",  'F' );
 */
    // You can add so-called "Spectator variables", which are not used in the MVA training,
    // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the
@@ -399,11 +251,8 @@ else if(atoi(gApplication->Argv(4))==2){
    Double_t backgroundWeight = 1.0;
 
    // You can add an arbitrary number of signal or background trees
-   dataloader->AddSignalTree    ( signalTree,     signalWeight  );
-   dataloader->AddBackgroundTree( background, backgroundWeight  );
-
-   //dataloader->AddSignalTree    ( signalTreeTest,     signalWeight, "Test" );
-   //dataloader->AddBackgroundTree( backgroundTest, backgroundWeight, "Test" );
+   dataloader->AddSignalTree    ( signalTree,     signalWeight );
+   dataloader->AddBackgroundTree( background, backgroundWeight );
 
    // To give different trees for training and testing, do as follows:
    //
@@ -448,12 +297,11 @@ else if(atoi(gApplication->Argv(4))==2){
    // Set individual event weights (the variables must exist in the original TTree)
    // -  for signal    : `dataloader->SetSignalWeightExpression    ("weight1*weight2");`
    // -  for background: `dataloader->SetBackgroundWeightExpression("weight1*weight2");`
-   dataloader->SetSignalWeightExpression( "fluxWeight[1]" );
-   dataloader->SetBackgroundWeightExpression( "fluxWeight[1]" );
+   // dataloader->SetBackgroundWeightExpression( "weight" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = "sigCategory >= 0 && sigCategory <= 2   "; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2   "; // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // Tell the dataloader how to use the training and testing events
    //
@@ -466,11 +314,9 @@ else if(atoi(gApplication->Argv(4))==2){
    //
    //    dataloader->PrepareTrainingAndTestTree( mycut,
    //         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
-   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"nTest_Signal=50000:nTest_Background=50000:SplitMode=Random:NormMode=NumEvents:!V" );
-                                        //"nTrain_Signal=1000:nTrain_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
+   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,
+                                        "nTrain_Signal=1000:nTrain_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
 
-
-   cout<<"Booking MVA methods.. "<<endl;
    // ### Book MVA methods
    //
    // Please lookup the various method configuration options in the corresponding cxx files, eg:
@@ -700,7 +546,6 @@ else if(atoi(gApplication->Argv(4))==2){
    //
    // --------------------------------------------------------------------------------------------------
 
-   cout<<"MVA method has been booked.. "<<endl;
    // Now you can tell the factory to train, test, and evaluate the MVAs
    //
    // Train MVAs using the set of training events
@@ -738,5 +583,5 @@ int main( int argc, char** argv )
       if (!methodList.IsNull()) methodList += TString(",");
       methodList += regMethod;
    }
-   return TMVAClassification_theia(methodList);
+   return TMVAClassification_3DST(methodList);
 }

@@ -577,13 +577,13 @@ TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
    TGraph * gAtmNumubar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg", "");
 
    double inteNue = gAtmNue->Integral();
-   for (int iGra=0;iGra<gAtmNue->GetN();iGra++) gAtmNue->GetY()[iGra] *= inteNue;
+   for (int iGra=0;iGra<gAtmNue->GetN();iGra++) gAtmNue->GetY()[iGra] /= inteNue;
    double inteNuebar = gAtmNuebar->Integral();
-   for (int iGra=0;iGra<gAtmNuebar->GetN();iGra++) gAtmNuebar->GetY()[iGra] *= inteNuebar;
+   for (int iGra=0;iGra<gAtmNuebar->GetN();iGra++) gAtmNuebar->GetY()[iGra] /= inteNuebar;
    double inteNumu = gAtmNumu->Integral();
-   for (int iGra=0;iGra<gAtmNumu->GetN();iGra++) gAtmNumu->GetY()[iGra] *= inteNumu;
+   for (int iGra=0;iGra<gAtmNumu->GetN();iGra++) gAtmNumu->GetY()[iGra] /= inteNumu;
    double inteNumubar = gAtmNumubar->Integral();
-   for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) gAtmNumubar->GetY()[iGra] *= inteNumubar;
+   for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) gAtmNumubar->GetY()[iGra] /= inteNumubar;
 
    TSpline5* atmNue    = new TSpline5("atmNue", gAtmNue);
    TSpline5* atmNuebar = new TSpline5("atmNuebar", gAtmNuebar);
@@ -683,6 +683,9 @@ TTree* THEIA:: LoopAndWrite(Int_t NofEvent){
         fluxWeight[1] = reTot2[7]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
         }
 
+        //if(fluxWeight[0]>0.1) {fluxWeight[0] = 10e-22;}
+        //if(fluxWeight[1]>0.1) {fluxWeight[1] = 10e-22;}
+
         tt->Fill();
    }
 
@@ -742,6 +745,9 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
         fluxWeight[0] = reTot2[3]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
         fluxWeight[1] = reTot2[7]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
         }
+
+        //if(fluxWeight[0]>0.1) {fluxWeight[0] = 10e-22;}
+        //if(fluxWeight[1]>0.1) {fluxWeight[1] = 10e-22;}
 
       //std::cout<<"neutrino ip and energy and flux reweights : "<<ipnu[0]<<" "<<pnu[0]<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<std::endl;
 
@@ -850,10 +856,11 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	erec1r = 0;
         eTOpre = TMath::Sqrt( (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0])* (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0]) + (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1])* (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1]) + (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2])* (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2]));
 
+	// aarxiv. 1502.01550 eq. 11
         double costhbeam = fq1rdir[0][1][0]*dirnu[0][0]
                               + fq1rdir[0][1][1]*dirnu[0][1]
                               + fq1rdir[0][1][2]*dirnu[0][2];
-        erec1r = (me*me+mn*mn-mp*mp-2*mn*ee)/-2./(mn-ee+pe*costhbeam)/1000.;
+        erec1r = (me*me+(mn-27)*(mn-27)-mp*mp-2*(mn-27)*ee)/-2./(mn-27-ee+pe*costhbeam)/1000.;
 	//std::cout<<"directoins for fq and nu: "<<fq1rdir[0][1][0]<<" "<<fq1rdir[0][1][1]<<" "<<fq1rdir[0][1][2]<<" "<<dirnu[0][0]<<" "<<dirnu[0][1]<<" "<<dirnu[0][2]<<std::endl;
         //std::cout<<"costhbeam, me, mn, mp, ee and erec1r "<<costhbeam<<" "<<me<<" "<<mn<<" "<<mp<<" "<<ee<<" "<<erec1r<<std::endl;
 
@@ -888,12 +895,13 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	    ie = 0;
 	  }
 
+	  // arxiv. 1707.01048 eq 5
 	  pe = fqmrmom[0][ie];
 	  ee = TMath::Sqrt(pe*pe+me*me);
 	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
 			   + fqmrdir[0][ie][1]*dirnu[0][1]
 			   + fqmrdir[0][ie][2]*dirnu[0][2];
-	  erecmr = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
+	  erecmr = (md*md-mN*mN-me*me+2*mN*ee)/2/(mN-ee+pe*costhbeam)/1000.;
 
 
 	  // 3 rings
@@ -934,7 +942,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	  costhbeam = fqmrdir[0][ie][0]*dirnu[0][0]
 			   + fqmrdir[0][ie][1]*dirnu[0][1]
 			   + fqmrdir[0][ie][2]*dirnu[0][2];
-	  erecmr = (md*md-mN*mN-me*me)/2/(mN-ee+pe*costhbeam)/1000.;
+	  erecmr = (md*md-mN*mN-me*me+2*mN*ee)/2/(mN-ee+pe*costhbeam)/1000.;
 	}
 
 	else{
@@ -960,7 +968,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	  && fqnse == 1){
 		//std::cout<<"towall is "<<towall<<" "<<fq1rdir[0][1][2]<<" "<<fq1rpos[0][1][2]<<std::endl;
 
-		if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
+		if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0])==12) isSIG = true;
 		else isBKG = true; 
 /*
                 //std::cout<<"pass 1 "<<std::endl;

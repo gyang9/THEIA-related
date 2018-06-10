@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 
    gStyle->SetOptStat(0);
   
-   TFile* f = new TFile("input/combined.root");
+   TFile* f = new TFile("input/combined_extra.root");
    TTree* tree = (TTree*)f->Get("h1");
 
    std::cout<<"preparing.."<<std::endl;
@@ -31,12 +31,12 @@ int main(int argc, char* argv[])
    
    TCanvas * c1 = new TCanvas();
    TH1D * axesAtm = new TH1D("axesAtm", "Atmospheric flux splines;E_{#nu} [GeV];#Phi", 100, 0, 10);
-   axesAtm->Draw();
+   axesAtm->Draw("");
    axesAtm->SetMaximum(30000);
    axesAtm->SetMinimum(10);
    
    atmSpline[0]->SetLineColor(kRed);
-   atmSpline[0]->Draw("SAME");
+   atmSpline[0]->Draw("");
    
    atmSpline[1]->SetLineColor(kRed+2);
    atmSpline[1]->Draw("SAME");
@@ -60,18 +60,18 @@ int main(int argc, char* argv[])
 
    TCanvas * c2 = new TCanvas();
    TH1D * axesDuneOsc = new TH1D("axesDuneOsc", "DUNE oscillated flux splines;E_{#nu} [GeV];#Phi", 100, 0, 10);
-   axesDuneOsc->Draw();
+   axesDuneOsc->Draw("");
    axesDuneOsc->SetMaximum(0.2);
    axesDuneOsc->SetMinimum(0.);
    
-   duneSpline[4]->SetLineColor(kRed);
-   duneSpline[4]->Draw("SAME");
+   duneSpline[6]->SetLineColor(kRed);
+   duneSpline[6]->Draw("");
    
    duneSpline[5]->SetLineColor(kRed+2);
    duneSpline[5]->Draw("SAME");
    
-   duneSpline[6]->SetLineColor(kBlue);
-   duneSpline[6]->Draw("SAME");
+   duneSpline[4]->SetLineColor(kBlue);
+   duneSpline[4]->Draw("SAME");
    
    duneSpline[7]->SetLineColor(kBlue+2);
    duneSpline[7]->Draw("SAME");
@@ -84,8 +84,12 @@ int main(int argc, char* argv[])
    duneLegend->AddEntry(duneSpline[6], "#nu_{#mu}", "l");
    duneLegend->AddEntry(duneSpline[7], "anti-#nu_{#mu}", "l");
    duneLegend->Draw();
-   
+  
+   c2->SetLogy();  
+ 
    c1->SaveAs("atmFluxSplines.png");
    c2->SaveAs("duneSpline.png");
+   c1->SaveAs("atmFluxSplines.C");
+   c2->SaveAs("duneSpline.C");
 
 }

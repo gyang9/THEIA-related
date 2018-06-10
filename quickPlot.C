@@ -5,6 +5,8 @@
    Float_t evis;
    UInt_t nhitac;
    Int_t mode;
+   Int_t fqnse;
+   Int_t ipnu[50];
 
 
    TFile f("outputTree_reinput0.root");
@@ -21,8 +23,9 @@
    t->SetBranchAddress("bkgCategory", &bkgCategory);
    t->SetBranchAddress("pnu", &pnu);
    t->SetBranchAddress("mode", &mode);
+   t->SetBranchAddress("fqnse",&fqnse);
+   t->SetBranchAddress("ipnu", &ipnu);   
 
-   
    TH1D* h1[10];
    TH2D* h2[10];
    for(Int_t i=0;i<10;i++){ 
@@ -31,7 +34,7 @@
    }
 
    Long64_t nbytes = 0, nb = 0;
-   NofEvent = 300000; //t->GetEntries();
+   NofEvent = 500000; //t->GetEntries();
 
    for (Long64_t jentry=0; jentry<NofEvent;jentry++) {
       t->GetEntry(jentry);  
@@ -40,11 +43,12 @@
 
       //cout<<"erecmr sigCategory towall evis nhitac fluxWeight[0] fluxWeight[1] : "<<erecmr<<" "<<sigCategory<<" "<<fqwall<<" "<<evis<<" "<<nhitac<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<endl;
 
-      if(fqwall>200 && evis > 30 && nhitac < 16){
+      if(fqwall>200 && evis > 30 && nhitac < 16 && fqnse <= 2 ){
 	if(sigCategory>=0) h1[0]->Fill(erecmr, fluxWeight[1]);
 	if(bkgCategory>=0) h1[1]->Fill(erecmr, fluxWeight[1]);
 
-        if(tmvaMR > 0){
+	//std::cout<<"tmva for ipnu[0] and mode "<<ipnu[0]<<" "<<mode<<" "<<tmvaMR<<std::endl;
+        if(tmvaMR > 0.2){
 
 	if((abs(mode)==1)||(abs(mode)==2)) {h2[0]->Fill(pnu[0],erecmr);}
 	if((abs(mode)==11)||(abs(mode)==13)||(abs(mode)==16)) {h2[1]->Fill(pnu[0],erecmr);}

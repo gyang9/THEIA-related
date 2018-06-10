@@ -17,7 +17,6 @@
 #include <map>
 #include <string>
 
-#include "TCanvas.h"
 #include "TFile.h"
 #include "TTree.h"
 #include "TString.h"
@@ -31,7 +30,7 @@
 
 using namespace TMVA;
 
-void TMVAClassificationApplication_gy( TString myMethodList = "" )
+void TMVAClassificationApplication( TString myMethodList = "" )
 {
 
    //---------------------------------------------------------------
@@ -107,7 +106,7 @@ void TMVAClassificationApplication_gy( TString myMethodList = "" )
    Use["SVM_Lin"]         = 0;
 
    std::cout << std::endl;
-   std::cout << "==> Start TMVAClassificationApplication_gy" << std::endl;
+   std::cout << "==> Start TMVAClassificationApplication" << std::endl;
 
    // Select methods (don't look at this code - not of interest)
    if (myMethodList != "") {
@@ -138,7 +137,6 @@ void TMVAClassificationApplication_gy( TString myMethodList = "" )
 
    // Create a set of variables and declare them to the reader
    // - the variable names MUST corresponds in name and type to those given in the weight file(s) used
-/*
    Float_t var1, var2;
    Float_t var3, var4;
    reader->AddVariable( "myvar1 := var1+var2", &var1 );
@@ -150,94 +148,13 @@ void TMVAClassificationApplication_gy( TString myMethodList = "" )
    Float_t spec1,spec2;
    reader->AddSpectator( "spec1 := var1*2",   &spec1 );
    reader->AddSpectator( "spec2 := var1*3",   &spec2 );
-*/
-/*
-   reader->AddVariable( "fqpi0mom1[0]", "fqpi0mom1[0]", "units",  'F' );
-   reader->AddVariable( "fqpi0mom2[0]", "fqpi0mom2[0]", "units", 'F' );
-   reader->AddVariable( "fq1rnll[0][1]-fqpi0nll[0]", "fq1rnll[0][1]-fqpi0nll[0]", "units", 'F' );
-   reader->AddVariable( "fqpi0mass[0]", "qpi0mass", "units", 'F' );
-   reader->AddVariable( "fqpi0photangle[0]", "fqpi0photangle[0]", "units", 'F' );
-   reader->AddVariable( "fqpi0momtot[0]", "fqpi0momtot[0]", "units", 'F' );
-   reader->AddVariable( "fq1rmom[0][1]", "fq1rmom[0][1]", "units", 'F' );
-
-   reader->AddVariable( "fqpi0dconv1[0]", "fqpi0dconv1", "units", 'F' );
-   reader->AddVariable( "fqpi0dconv2[0]", "fqpi0dconv2", "units", 'F' );
-   reader->AddVariable( "fqpi0t0[0]", "qpi0t0", "units",  'F' );
-   reader->AddVariable( "fqpi0totmu[0]", "fqpi0totmu", "units", 'F' );
-   reader->AddVariable( "fqpi0dirtot[0][0]", "fqpi0dirtot0", "units", 'F' );
-   reader->AddVariable( "fqpi0dirtot[0][1]", "fqpi0dirtot1", "units", 'F' );
-   reader->AddVariable( "fqpi0dirtot[0][2]", "fqpi0dirtot2", "units", 'F' );
-*/
-   Float_t fqpi0mom1, fqpi0mom2, fq1rnll, fqpi0mass, fqpi0photangle, fqpi0nll, fqpi0momtot, fq1rmom, fqpi0dconv1, fqpi0dconv2, fqpi0t0, fqpi0totmu, fqpi0dirtot0, fqpi0dirtot1, fqpi0dirtot2, lepi, angleepi, momepi1, momepi2;
-/*
-   reader->AddVariable( "fqpi0mom1[0]", &fqpi0mom1 );
-   reader->AddVariable( "fqpi0mom2[0]", &fqpi0mom2 );
-   reader->AddVariable( "fq1rnll[0][1]-fqpi0nll[0]", &fq1rnll );
-   reader->AddVariable( "fqpi0mass[0]", &fqpi0mass );
-   reader->AddVariable( "fqpi0photangle[0]", &fqpi0photangle );
-   reader->AddVariable( "fqpi0momtot[0]", &fqpi0momtot);
-   reader->AddVariable( "fq1rmom[0][1]", &fq1rmom );
-   reader->AddVariable( "fqpi0dconv1[0]", &fqpi0dconv1 );
-   reader->AddVariable( "fqpi0dconv2[0]", &fqpi0dconv2 );
-   reader->AddVariable( "fqpi0t0[0]", &fqpi0t0 );
-   reader->AddVariable( "fqpi0totmu[0]", &fqpi0totmu );
-   reader->AddVariable( "fqpi0dirtot[0][0]", &fqpi0dirtot0 );
-   reader->AddVariable( "fqpi0dirtot[0][1]", &fqpi0dirtot1 );
-   reader->AddVariable( "fqpi0dirtot[0][2]", &fqpi0dirtot2 );
-
-   reader->AddVariable( "var1", &fqpi0mom1 );
-   reader->AddVariable( "var2", &fqpi0mom2 );
-   reader->AddVariable( "var3", &fq1rnll );
-   reader->AddVariable( "var4", &fqpi0mass );
-   reader->AddVariable( "var5", &fqpi0photangle );
-   reader->AddVariable( "var6", &fqpi0momtot);
-   reader->AddVariable( "var7", &fq1rmom );
-   reader->AddVariable( "vaf8", &fqpi0dconv1 );
-   reader->AddVariable( "var9", &fqpi0dconv2 );
-   reader->AddVariable( "var10", &fqpi0t0 );
-   reader->AddVariable( "var11", &fqpi0totmu );
-   reader->AddVariable( "var12", &fqpi0dirtot0 );
-   reader->AddVariable( "var13", &fqpi0dirtot1 );
-   reader->AddVariable( "var14", &fqpi0dirtot2 );
-*/
-/*
-if( 1){ //atoi(gApplication->Argv(5))==3){
-   reader->AddVariable( "var1:=fqpi0mom1[0]", &fqpi0mom1);
-   reader->AddVariable( "var2:=fqpi0mom2[0]", &fqpi0mom2);
-   reader->AddVariable( "var3:=lepi", &lepi );
-   reader->AddVariable( "var4:=fqpi0mass[0]", &fqpi0mass );
-   reader->AddVariable( "var5:=fqpi0photangle[0]", &fqpi0photangle);
-   reader->AddVariable( "var6:=fqpi0momtot[0]", &fqpi0momtot );
-   reader->AddVariable( "var7:=angleepi", &angleepi);
-   reader->AddVariable( "var8:=momepi[0]", &momepi1);
-   reader->AddVariable( "var9:=momepi[1]", &momepi2 );
-   reader->AddVariable( "var10:=fqpi0nll[0]", &fqpi0nll);
-}
-else {
-   reader->AddVariable( "var1:=fqpi0mom1[0]", &fqpi0mom1 );
-   reader->AddVariable( "var2:=fqpi0mom2[0]", &fqpi0mom2 );
-   reader->AddVariable( "var3:=fq1rnll[0][1]-fqpi0nll[0]", &fq1rnll );
-   reader->AddVariable( "var4:=fqpi0mass[0]", &fqpi0mass );
-   reader->AddVariable( "var5:=fqpi0photangle[0]", &fqpi0photangle );
-   reader->AddVariable( "var6:=fqpi0momtot[0]", &fqpi0momtot);
-   reader->AddVariable( "var7:=fq1rmom[0][1]", &fq1rmom );
-}
-*/
-   //reader->AddVariable( "var8:=fqpi0dconv1[0]", &fqpi0dconv1 );
-   //reader->AddVariable( "var9:=fqpi0dconv2[0]", &fqpi0dconv2 );
-   //reader->AddVariable( "var10:=fqpi0t0[0]", &fqpi0t0 );
-   //reader->AddVariable( "var11:=fqpi0totmu[0]", &fqpi0totmu );
-   //reader->AddVariable( "var12:=fqpi0dirtot[0][0]", &fqpi0dirtot0 );
-   //reader->AddVariable( "var13:=fqpi0dirtot[0][1]", &fqpi0dirtot1 );
-   //reader->AddVariable( "var14:=fqpi0dirtot[0][2]", &fqpi0dirtot2 );
-
 
    Float_t Category_cat1, Category_cat2, Category_cat3;
    if (Use["Category"]){
       // Add artificial spectators for distinguishing categories
-      //reader->AddSpectator( "Category_cat1 := var3<=0",             &Category_cat1 );
-      //reader->AddSpectator( "Category_cat2 := (var3>0)&&(var4<0)",  &Category_cat2 );
-      //reader->AddSpectator( "Category_cat3 := (var3>0)&&(var4>=0)", &Category_cat3 );
+      reader->AddSpectator( "Category_cat1 := var3<=0",             &Category_cat1 );
+      reader->AddSpectator( "Category_cat2 := (var3>0)&&(var4<0)",  &Category_cat2 );
+      reader->AddSpectator( "Category_cat3 := (var3>0)&&(var4>=0)", &Category_cat3 );
    }
 
    // Book the MVA methods
@@ -250,7 +167,7 @@ else {
       if (it->second) {
          TString methodName = TString(it->first) + TString(" method");
          TString weightfile = dir + prefix + TString("_") + TString(it->first) + TString(".weights.xml");
-         reader->BookMVA( methodName,  "dataset/weights/TMVAClassification_BDT.weights.xml" );
+         reader->BookMVA( methodName, weightfile );
       }
    }
 
@@ -329,10 +246,6 @@ else {
    if (Use["Category"])      histCat     = new TH1F( "MVA_Category",      "MVA_Category",      nbin, -2., 2. );
    if (Use["Plugin"])        histPBdt    = new TH1F( "MVA_PBDT",          "MVA_BDT",           nbin, -0.8, 0.8 );
 
-   TH1F* eff1 = new TH1F("eff1","eff1",20,0, 5000);
-   TH1F* eff2 = new TH1F("eff2","eff2",20,0, 5000);
-
-
    // PDEFoam also returns per-event error, fill in histogram, and also fill significance
    if (Use["PDEFoam"]) {
       histPDEFoam    = new TH1F( "MVA_PDEFoam",       "MVA_PDEFoam",              nbin,  0, 1 );
@@ -352,17 +265,13 @@ else {
    // we'll later on use only the "signal" events for the test in this example.
    //
    TFile *input(0);
-   TString fname;
-   if( /*atoi(gApplication->Argv(6))> 0*/ 1) fname = Form("outputTree_reinput%d.root", 0 /*atoi(gApplication->Argv(6))*/);
-   else fname = "/home/gyang/work/t2k/wc/combined_fluxWeightAdded2.root";
-   //TString fname = "/home/gyang/work/t2k/wc/input/skmc/combined.root";
-   //TString fname = "./tmva_class_example.root";
+   TString fname = "./tmva_class_example.root";
    if (!gSystem->AccessPathName( fname )) {
       input = TFile::Open( fname ); // check if file in local directory exists
    }
    else {
       TFile::SetCacheFileDir(".");
-      //input = TFile::Open("http://root.cern.ch/files/tmva_class_example.root", "CACHEREAD"); // if not: download from ROOT server
+      input = TFile::Open("http://root.cern.ch/files/tmva_class_example.root", "CACHEREAD"); // if not: download from ROOT server
    }
    if (!input) {
       std::cout << "ERROR: could not open data file" << std::endl;
@@ -378,137 +287,30 @@ else {
    //   but of course you can use different ones and copy the values inside the event loop
    //
    std::cout << "--- Select signal sample" << std::endl;
-
-   Float_t         dirnu[50][3];
-   Int_t           fqnse2;
-   Int_t           fqnhitpmt2[1000];
-   Float_t         fqtotq2[1000];
-   Int_t           fq1rpcflg2[1000][7];
-   Float_t         fq1rmom2[1000][7];
-   Float_t         fq1rnll2[1000][7];
-   Float_t         fq1rpos2[1000][7][3];
-   Float_t         fq1rdir2[1000][7][3];
-   Float_t         fq1rdconv2[1000][7];
-   Float_t         fq1reloss2[1000][7];
-   Float_t         fq1rdir[10][7][3];
-
-   Int_t           fqnmrfit2;
-   Int_t           fqmrifit2[1000];
-   Int_t           fqmrnring2[1000];
-   Int_t           fqmrpcflg2[1000];
-   Float_t         fqmrnll2[1000];
-   Float_t         fqmrtotmu2[1000];
-   Int_t           fqmrpid2[1000][6];
-   Float_t         fqmrmom2[1000][6];
-   Float_t         fqmrdconv2[1000][6];
-   Float_t         fqmreloss2[1000][6];
-   Float_t         fqmrt02[1000][6];
-   Float_t         fqmrpos2[1000][6][3];
-   Float_t         fqmrdir2[1000][6][3];
-
-   Int_t        fqpi0pcflg2[2];
-   Float_t      fqpi0mom12[2];
-   Float_t      fqpi0mom22[2];
-   Float_t      fqpi0momtot2[2];
-   Float_t      fqpi0dconv12[2];
-   Float_t      fqpi0dconv22[2];
-   Float_t      fqpi0t02[2];
-   Float_t      fqpi0totmu2[2];
-   Float_t      fqpi0nll2[2];
-   Float_t      fqpi0mass2[2];
-   Float_t      fqpi0photangle2[2];
-   Float_t      fqpi0pos2[2][3];
-   Float_t      fqpi0dir12[2][3];
-   Float_t      fqpi0dir22[2][3];
-   Float_t      fqpi0dirtot22[2][3];
-
-   TTree* theTree = (TTree*)input->Get("h1");
-  
-   theTree->Print(); 
-   theTree->SetBranchAddress( "fqpi0mom1", &fqpi0mom12 );
-   theTree->SetBranchAddress( "fqpi0mom2", &fqpi0mom22 );
-   theTree->SetBranchAddress( "fq1rnll", &fq1rnll2 );
-   theTree->SetBranchAddress( "fqpi0nll", &fqpi0nll2 );
-   theTree->SetBranchAddress( "fqpi0mass", &fqpi0mass2 );
-   theTree->SetBranchAddress( "fqpi0photangle", &fqpi0photangle2 );
-   theTree->SetBranchAddress( "fqpi0momtot", &fqpi0momtot2);
-   theTree->SetBranchAddress( "fq1rmom", &fq1rmom2 );
-   theTree->SetBranchAddress( "fqpi0dconv1", &fqpi0dconv12 );
-   theTree->SetBranchAddress( "fqpi0dconv2", &fqpi0dconv22 );
-   theTree->SetBranchAddress( "fqpi0t0", &fqpi0t02 );
-   theTree->SetBranchAddress( "fqpi0totmu", &fqpi0totmu2 );
-   theTree->SetBranchAddress( "fqpi0dirtot", &fqpi0dirtot22 );
-   theTree->SetBranchAddress("dirnu", dirnu);
-   theTree->SetBranchAddress("fq1rdir", fq1rdir);
-
-   double tmvaR;
-   //TBranch *tmvaAdd = theTree->Branch("tmva",&tmvaR,"tmva/D");
-
-/*
+   TTree* theTree = (TTree*)input->Get("TreeS");
    Float_t userVar1, userVar2;
    theTree->SetBranchAddress( "var1", &userVar1 );
    theTree->SetBranchAddress( "var2", &userVar2 );
    theTree->SetBranchAddress( "var3", &var3 );
    theTree->SetBranchAddress( "var4", &var4 );
-*/
+
    // Efficiency calculator for cut method
    Int_t    nSelCutsGA = 0;
    Double_t effS       = 0.7;
-
-   TFile* ff = TFile::Open(Form("outputTree_reinput%d.root", 0 /*atoi(gApplication->Argv(5))*/),"RECREATE");
-   TTree* tt = theTree->CloneTree(0);
-   //ff->Write();
-   //delete ff;
-   //delete tt;
-
-   //TFile* fff = new TFile("outputTree.root","update");
-   //TTree* ttt = (TTree*)fff->Get("h1");
-   tt->Branch(Form("tmvaMR%d", 0 /*atoi(gApplication->Argv(5))*/),&tmvaR,"tmvaMR/D");
 
    std::vector<Float_t> vecVar(4); // vector for EvaluateMVA tests
 
    std::cout << "--- Processing: " << theTree->GetEntries() << " events" << std::endl;
    TStopwatch sw;
    sw.Start();
-   for (Long64_t ievt=0; ievt< theTree->GetEntries();ievt++) {
+   for (Long64_t ievt=0; ievt<theTree->GetEntries();ievt++) {
 
       if (ievt%1000 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
 
       theTree->GetEntry(ievt);
 
-      fqpi0mom1      =  fqpi0mom12[0];
-      fqpi0mom2      =  fqpi0mom22[0] ;
-      fq1rnll        =  fq1rnll2[0][1] - fqpi0nll2[0] ;
-      fqpi0mass      =  fqpi0mass2[0] ;
-      fqpi0photangle =  fqpi0photangle2[0] ;
-      fqpi0momtot    =  fqpi0momtot2[0] ;
-      fq1rmom        =  fq1rmom2[0][1] ;
-      fqpi0dconv1    =  fqpi0dconv12[0] ;
-      fqpi0dconv2    =  fqpi0dconv22[0] ;
-      fqpi0t0        =  fqpi0t02[0] ;
-      fqpi0totmu     =  fqpi0totmu2[0] ;
-      fqpi0dirtot0   =  fqpi0dirtot22[0][0] ;
-      fqpi0dirtot1   =  fqpi0dirtot22[0][1] ;
-      fqpi0dirtot2   =  fqpi0dirtot22[0][2]; 
-      //var1 = userVar1 + userVar2;
-      //var2 = userVar1 - userVar2;
-
-      double lemu = fq1rnll2[0][2]-fq1rnll2[0][1];
-      double lpie = fq1rnll2[0][1]-fqpi0nll2[0];
-      double lpimu = fq1rnll2[0][2]-fq1rnll2[0][3];
-
-      double pe = fq1rmom;
-      double me = 0.5109989461;
-      double ee = sqrt(pe*pe+me*me);
-      double mp = 938.2720813;
-      double mn = 939.5654133;
-
-      double costhbeam = sqrt(fq1rdir[0][1][0]*dirnu[0][0]
-                              + fq1rdir[0][1][1]*dirnu[0][1]
-                              + fq1rdir[0][1][2]*dirnu[0][2]);
-
-      double erec = (me*me+mn*mn-mp*mp-2*mn*ee)/-2./(mn-ee+pe*costhbeam);
-      //cout<<me*me+mn*mn-mp*mp-2*mn*ee<<" "<<pe<<" "<<costhbeam<<" "<<erec<<endl;
+      var1 = userVar1 + userVar2;
+      var2 = userVar1 - userVar2;
 
       // Return the MVA outputs and fill into histograms
 
@@ -539,15 +341,7 @@ else {
       if (Use["TMlpANN"      ])   histNnT    ->Fill( reader->EvaluateMVA( "TMlpANN method"       ) );
       if (Use["DNN_GPU"]) histDnnGpu->Fill(reader->EvaluateMVA("DNN_GPU method"));
       if (Use["DNN_CPU"]) histDnnCpu->Fill(reader->EvaluateMVA("DNN_CPU method"));
-      if (Use["BDT"          ])   {
-				  histBdt    ->Fill( reader->EvaluateMVA( "BDT method"           ) );
- 				  //cout<<reader->EvaluateMVA( "BDT method"           )<<endl; 
-				  eff1->Fill(erec);
-				  tmvaR = reader->EvaluateMVA( "BDT method");
-				  //tmvaAdd -> Fill(); 
-				  tt->Fill();
-				  if(reader->EvaluateMVA( "BDT method"           ) < 0 ) eff2-> Fill(erec);
-				  }
+      if (Use["BDT"          ])   histBdt    ->Fill( reader->EvaluateMVA( "BDT method"           ) );
       if (Use["BDTG"         ])   histBdtG   ->Fill( reader->EvaluateMVA( "BDTG method"          ) );
       if (Use["BDTB"         ])   histBdtB   ->Fill( reader->EvaluateMVA( "BDTB method"          ) );
       if (Use["BDTD"         ])   histBdtD   ->Fill( reader->EvaluateMVA( "BDTD method"          ) );
@@ -575,9 +369,6 @@ else {
          probHistFi  ->Fill( reader->GetProba ( "Fisher method" ) );
          rarityHistFi->Fill( reader->GetRarity( "Fisher method" ) );
       }
-
-   //tmvaAdd -> Fill();
-
    }
 
    // Get elapsed time
@@ -613,16 +404,6 @@ else {
    }
 
    // Write histograms
-   
-   for(Int_t ii =0 ; ii< eff1->GetNbinsX();ii++){
-     if (eff1->GetBinContent(ii+1)) eff1->SetBinContent(ii+1, eff2->GetBinContent(ii+1)/ eff1->GetBinContent(ii+1));
-   }
-   new TCanvas();
-   eff1->GetXaxis()->SetTitle("Reconstructed electron energy (MeV)");
-   eff1->GetYaxis()->SetTitle("Efficiency");
-   eff1->Draw();
-      
-
 
    TFile *target  = new TFile( "TMVApp.root","RECREATE" );
    if (Use["Likelihood"   ])   histLk     ->Write();
@@ -671,11 +452,7 @@ else {
 
    delete reader;
 
-   std::cout << "==> TMVAClassificationApplication_gy is done!" << std::endl << std::endl;
-
-   tt->Write();
-   ff->Write();
-   //theTree->Print();
+   std::cout << "==> TMVAClassificationApplication is done!" << std::endl << std::endl;
 }
 
 int main( int argc, char** argv )
@@ -687,6 +464,6 @@ int main( int argc, char** argv )
       if (!methodList.IsNull()) methodList += TString(",");
       methodList += regMethod;
    }
-   TMVAClassificationApplication_gy(methodList);
+   TMVAClassificationApplication(methodList);
    return 0;
 }

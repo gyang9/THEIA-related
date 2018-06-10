@@ -68,8 +68,10 @@ void sklooper::Loop()
    const int nbins = 25;
    double binedges[nbins+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0,60.0};
 
+   std::cout<<"binned one out of two.. "<<std::endl;
    const int nbinsPost = 9;
-   double binedgesPost[nbinsPost+1] = {0.175, 0.6, 1.175, 1.75, 2.5, 3.5, 4.5, 7.5, 10.0, 60.0};
+   //double binedgesPost[nbinsPost+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
+   double binedgesPost[nbinsPost+1] = {0.175,0.6,1.175,1.75,2.5,3.5,4.5,7.5,10.0,60.0};
 
    for (int nt=0; nt<nnutypes; nt++) {
      TString hprefix1 = nunames[nt];
@@ -83,15 +85,15 @@ void sklooper::Loop()
        hname = hprefix + "_precut";
        hprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_precutrec";
-       hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       hprecutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
        hname = hprefix + "_postcutrec";
-       hpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedgesPost);
+       hpostcutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
        hname = hprefix + "_1rprecut";
        h1rprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_1rprecutrec";
-       h1rprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       h1rprecutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
        hname = hprefix + "_1rpostcutrec";
-       h1rpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedgesPost);
+       h1rpostcutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
        hname = hprefix + "_trueToreco";
        htrueToreco[nt][it] = new TH2D(hname,hname,nbins,binedges,nbins,binedges);
 
@@ -112,7 +114,7 @@ void sklooper::Loop()
 	     hname = hprefix + "_mr_precutrec" + hsuffix3;
 	     h2precutrec[nt][it][ide][ir][icomb] = new TH1D(hname,hname,nbins,binedges);
 	     hname = hprefix + "_mr_postcutrec" + hsuffix3;
-	     h2postcutrec[nt][it][ide][ir][icomb] = new TH1D(hname,hname,nbins,binedgesPost);
+	     h2postcutrec[nt][it][ide][ir][icomb] = new TH1D(hname,hname,nbinsPost,binedgesPost);
 	   }
 	 }
        }
@@ -125,7 +127,7 @@ void sklooper::Loop()
    TH1D* htruefvpi0 = new TH1D("htruefvpi0","NC pi0 momentum precut",10,0.,1000.);
    TH1D* hpostcutpi0 = new TH1D("hpostcutpi0","NC pi0 momentum postcut",10,0.,1000.);
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   Long64_t nentries = 100000; //fChain->GetEntriesFast();
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -204,7 +206,7 @@ void sklooper::Loop()
 
       // neutrinos in FV
       if (wallv>200) {
-	htruefv[nutype][inttype]->Fill(pnu[0]);
+	htruefv[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
       }
 
       // pi0 efficiency
@@ -242,7 +244,8 @@ void sklooper::Loop()
         hprecutrec[nutype][inttype]->Fill(erec, fluxWeight[1]);
         if ((inttype==0)&&(nutype==0)) heres->Fill((erec-pnu[0])/pnu[0]);
 
-	if(tmvaMR>0) {
+	//std::cout<<"tmva variable for nutype& inttype "<<nutype<<" "<<inttype<<" "<<tmvaMR<<std::endl;
+	if(tmvaMR>0.2) {
 	  htrueToreco[nutype][inttype]->Fill(pnu[0],erec, fluxWeight[1]);
 	  hpostcutrec[nutype][inttype]->Fill(erec, fluxWeight[1]);
 	}
