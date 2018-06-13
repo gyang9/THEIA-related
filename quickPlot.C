@@ -28,13 +28,18 @@
 
    TH1D* h1[10];
    TH2D* h2[10];
+   TH2D* h2D[10];
+   double c_ss[100][100]={};
+   double c_bb[100][100]={};
+    
    for(Int_t i=0;i<10;i++){ 
    h1[i] = new TH1D("","",100,0,10);
    h2[i] = new TH2D("","",100,0,10,100,0,10);
+   h2D[i]= new TH2D("","",100,0,10,100,-1,1);
    }
 
    Long64_t nbytes = 0, nb = 0;
-   NofEvent = 500000; //t->GetEntries();
+   NofEvent = 1500000; //t->GetEntries();
 
    for (Long64_t jentry=0; jentry<NofEvent;jentry++) {
       t->GetEntry(jentry);  
@@ -47,8 +52,28 @@
 	if(sigCategory>=0) h1[0]->Fill(erecmr, fluxWeight[1]);
 	if(bkgCategory>=0) h1[1]->Fill(erecmr, fluxWeight[1]);
 
+	if(sigCategory>=0) h2D[0]->Fill(erecmr,tmvaMR,fluxWeight[1]);
+        if(bkgCategory>=0) h2D[1]->Fill(erecmr,tmvaMR,fluxWeight[1]);
+
+        if(sigCategory>=0 && ((abs(mode)==1)||(abs(mode)==2)) ) h2D[2]->Fill(erecmr,tmvaMR,fluxWeight[1]);
+        if(bkgCategory>=0 && ((abs(mode)==1)||(abs(mode)==2)) ) h2D[3]->Fill(erecmr,tmvaMR,fluxWeight[1]);
+        if(sigCategory>=0 && ((abs(mode)==11)||(abs(mode)==13)||(abs(mode)==16))) h2D[4]->Fill(erecmr,tmvaMR,fluxWeight[1]);
+        if(bkgCategory>=0 && (abs(mode)>30)) h2D[5]->Fill(erecmr,tmvaMR,fluxWeight[1]);
+
+	for(Int_t ii=0;ii<60;ii++){
+		if(erecmr<1 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0) c_ss[0][ii]++; if(bkgCategory>=0) c_bb[0][ii]++;}
+		if(erecmr<2 && erecmr>1 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[1][ii]++; if(bkgCategory>=0)c_bb[1][ii]++;}
+		if(erecmr<3 && erecmr>2 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[2][ii]++; if(bkgCategory>=0)c_bb[2][ii]++;}
+	       	if(erecmr<4 && erecmr>3 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[3][ii]++; if(bkgCategory>=0)c_bb[3][ii]++;}
+	        if(erecmr<5 && erecmr>4 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[4][ii]++; if(bkgCategory>=0)c_bb[4][ii]++;}
+	        if(erecmr<6 && erecmr>5 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[5][ii]++; if(bkgCategory>=0)c_bb[5][ii]++;}
+	        if(erecmr<7 && erecmr>6 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[6][ii]++; if(bkgCategory>=0)c_bb[6][ii]++;}
+	        if(erecmr<8 && erecmr>7 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[7][ii]++; if(bkgCategory>=0)c_bb[7][ii]++;}
+	        if(erecmr>8 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[8][ii]++; if(bkgCategory>=0)c_bb[8][ii]++;}
+	}
+
 	//std::cout<<"tmva for ipnu[0] and mode "<<ipnu[0]<<" "<<mode<<" "<<tmvaMR<<std::endl;
-        if(tmvaMR > 0.2){
+        if(tmvaMR > 0.){
 
 	if((abs(mode)==1)||(abs(mode)==2)) {h2[0]->Fill(pnu[0],erecmr);}
 	if((abs(mode)==11)||(abs(mode)==13)||(abs(mode)==16)) {h2[1]->Fill(pnu[0],erecmr);}
@@ -62,6 +87,18 @@
 
    }
 	
+   double curr_sOb[8]={-100,-100,-100,-100,-100,-100,-100,-100};
+   double locTMVA[8]={};
+   std::cout<<"trying to see the results of tmva cuts.. "<<std::endl;
+   for(Int_t ii=0;ii<9;ii++){
+	for(Int_t jj=0;jj<60;jj++){
+		if(c_ss[ii][jj]/TMath::Sqrt(c_ss[ii][jj]+c_bb[ii][jj])>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/TMath::Sqrt(c_ss[ii][jj]+c_bb[ii][jj]); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/TMath::Sqrt(c_ss[ii][jj]+c_bb[ii][jj])<<std::endl; }
+	}
+   }
+   std::cout<<std::endl;
+   std::cout<<"locations of TMVAs for 0-1, 1-2, .... 7-8, >8 are:  ";
+   for(Int_t ii=0;ii<9;ii++){cout<< " "<< locTMVA[ii]*0.01 - 0.3 <<"  ";}
+   std::cout<<std::endl;
 
    THStack *hs = new THStack("hs","");
    h1[1]->SetFillColor(2);
@@ -80,6 +117,23 @@
    
    new TCanvas();
    hs2->Draw();
+
+   new TCanvas();
+   h2D[0]->GetXaxis()->SetTitle("erec [GeV]");
+   h2D[0]->GetYaxis()->SetTitle("TMVA");
+   h2D[0]->Draw("colz");
+
+   new TCanvas();
+   h2D[1]->GetXaxis()->SetTitle("erec [GeV]");
+   h2D[1]->GetYaxis()->SetTitle("TMVA");
+   h2D[1]->Draw("colz");
+
+   TCanvas* c2 = new TCanvas();
+   c2->Divide(2,2);
+   for(Int_t i=0;i<4;i++){
+   c2->cd(i+1);
+   h2D[i+2]->Draw("colz");
+   }
 
    TCanvas* c1 = new TCanvas();
    c1->Divide(2,2);

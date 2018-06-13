@@ -127,7 +127,7 @@ void sklooper::Loop()
    TH1D* htruefvpi0 = new TH1D("htruefvpi0","NC pi0 momentum precut",10,0.,1000.);
    TH1D* hpostcutpi0 = new TH1D("hpostcutpi0","NC pi0 momentum postcut",10,0.,1000.);
 
-   Long64_t nentries = 100000; //fChain->GetEntriesFast();
+   Long64_t nentries = 300000; //fChain->GetEntriesFast();
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -245,7 +245,17 @@ void sklooper::Loop()
         if ((inttype==0)&&(nutype==0)) heres->Fill((erec-pnu[0])/pnu[0]);
 
 	//std::cout<<"tmva variable for nutype& inttype "<<nutype<<" "<<inttype<<" "<<tmvaMR<<std::endl;
-	if(tmvaMR>0.2) {
+	if( 
+	(erec<1 && tmvaMR>-0.07) ||
+        (erec<2 && erec>1 && tmvaMR>-0.03) ||
+        (erec<3 && erec>2 && tmvaMR>+0.01) ||
+        (erec<4 && erec>3 && tmvaMR>-0.01) ||
+        (erec<5 && erec>4 && tmvaMR>-0.02) ||
+        (erec<6 && erec>5 && tmvaMR>-0.04) ||
+        (erec<7 && erec>6 && tmvaMR>-0.04) ||
+        (erec<8 && erec>7 && tmvaMR>-0.05) ||
+        (erec>8 && tmvaMR>-0.17)
+	) {
 	  htrueToreco[nutype][inttype]->Fill(pnu[0],erec, fluxWeight[1]);
 	  hpostcutrec[nutype][inttype]->Fill(erec, fluxWeight[1]);
 	}
