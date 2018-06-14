@@ -856,7 +856,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	erec1r = 0;
         eTOpre = TMath::Sqrt( (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0])* (fqtwnd_prftpos[0][0] - fq1rpos[0][1][0]) + (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1])* (fqtwnd_prftpos[0][1] - fq1rpos[0][1][1]) + (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2])* (fqtwnd_prftpos[0][2] - fq1rpos[0][1][2]));
 
-	// aarxiv. 1502.01550 eq. 11
+	// arxiv. 1502.01550 eq. 11
         double costhbeam = fq1rdir[0][1][0]*dirnu[0][0]
                               + fq1rdir[0][1][1]*dirnu[0][1]
                               + fq1rdir[0][1][2]*dirnu[0][2];

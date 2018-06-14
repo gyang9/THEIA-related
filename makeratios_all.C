@@ -10,6 +10,7 @@
   TH1D* hprecut [nnutypes][ninttypes];
   TH1D* hprecutrec [nnutypes][ninttypes];
   TH1D* hpostcutrec[nnutypes][ninttypes];
+  TH1D* hpostcutrecDB[nnutypes][ninttypes];
 
   TH1D* h1rprecut [nnutypes][ninttypes];
   TH1D* h1rprecutrec [nnutypes][ninttypes];
@@ -22,6 +23,8 @@
   TH1D* h2precut [nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
   TH1D* h2precutrec [nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
   TH1D* h2postcutrec[nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
+  TH2D* h2trueTOreco[nnutypes][ninttypes];
+  TH2D* h2trueTOrecoPRE[nnutypes][ninttypes];
 
   const int nbins = 25;
   TString sbinedges[nbins+1] = {"0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0", "15.0", "20.0", "40.0", "60"};
@@ -29,7 +32,7 @@
   const int nbinsPost = 9;
   TString sbinedgesPost[nbinsPost+1] = {"0.175", "0.6", "1.175", "1.75", "2.5", "3.5", "4.5", "7.5", "10.0", "60.0"};
 
-  TFile* tf = new TFile("outfilesk.root");
+  TFile* tf = new TFile(Form("outfilesk_%s.root", gApplication->Argv(4)  ));
   const int nbins = nue_ccqe_precut->GetNbinsX();
   double yvals[nbins];
   double xvals[nbins];
@@ -76,11 +79,22 @@
       gDirectory->GetObject(hname,hprecutrec[nt][it]);
       std::cout << hname << ": " << hprecutrec[nt][it]->GetEntries() << std::endl;
 //      hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
+
       hname = hprefix + "_postcutrec";
       gDirectory->GetObject(hname,hpostcutrec[nt][it]);
       std::cout << hname << ": " << hpostcutrec[nt][it]->GetEntries() << std::endl;
 //      hpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
 
+      hname = hprefix + "_trueToreco";
+      gDirectory->GetObject(hname,h2trueTOreco[nt][it]);
+      std::cout << hname << ": " << h2trueTOreco[nt][it]->GetEntries() << std::endl;
+      hname = hprefix + "_trueTorecoPRE";
+      gDirectory->GetObject(hname,h2trueTOrecoPRE[nt][it]);
+      std::cout << hname << ": " << h2trueTOrecoPRE[nt][it]->GetEntries() << std::endl;
+
+      hname = hprefix + "_postcutrecDB";
+      gDirectory->GetObject(hname,hpostcutrecDB[nt][it]);
+      std::cout << hname << ": " << hpostcutrecDB[nt][it]->GetEntries() << std::endl;
 
       hname = hprefix + "_1rprecut";
       gDirectory->GetObject(hname,h1rprecut[nt][it]);
@@ -107,8 +121,10 @@
   const int nccqenutypes = 2;
   const int nccqedecaye = 2;
   TH1D* repiccqe[nccqenutypes];
+  TH1D* repiccqePostDB[nccqenutypes];
   TGraph* tgepiccqe[nccqenutypes];
   TH1D* repiccqePost[nccqenutypes];
+  TH1D* repiccSignal;
   TGraph* tgepiccqePost[nccqenutypes];
   int combepi[nrings2] = {1,3};
   int iccqecolor[nccqenutypes] = {46,6};
@@ -138,6 +154,9 @@
   std::cout<<"... "<<std::endl;
   for (int inu=0; inu < nccqenutypes; inu++) {
 
+        repiccqePostDB[inu] = (TH1D*)hpostcutrecDB[inu][0]->Clone();
+        repiccqePostDB[inu]->SetName("repiccqePostDB");
+
         repiccqePost[inu] = (TH1D*)hpostcutrec[inu][0]->Clone();
         repiccqePost[inu]->SetName("repiccqePost");
         repiccqePost[inu]->Divide(hprecutrec[inu][0]);
@@ -166,6 +185,7 @@
   TH1D* repiccpip[nccpipnutypes];
   TGraph* tgepiccpip[nccpipnutypes];
   TH1D* repiccpipPost[nccpipnutypes];
+  TH1D* repiccpipPostDB[nccpipnutypes];
   TGraph* tgepiccpipPost[nccpipnutypes];
   int iccpipcolor[nccpipnutypes] = {28,25};
 
@@ -192,6 +212,9 @@
   }
 
   for (int inu=0; inu < nccpipnutypes; inu++) {
+
+        repiccpipPostDB[inu] = (TH1D*)hpostcutrecDB[inu][1]->Clone();
+        repiccpipPostDB[inu]->SetName("repiccpipPostDB");
 
         repiccpipPost[inu] = (TH1D*)hpostcutrec[inu][1]->Clone();
         repiccpipPost[inu]->SetName("repiccpipPost");
@@ -220,6 +243,7 @@
   TH1D* repiccother[nccothernutypes];
   TGraph* tgepiccother[nccothernutypes];
   TH1D* repiccotherPost[nccothernutypes];
+  TH1D* repiccotherPostDB[nccothernutypes];
   TGraph* tgepiccotherPost[nccothernutypes];
   int iccothercolor[nccothernutypes] = {8,3};
 
@@ -247,6 +271,9 @@
 
   for (int inu=0; inu < nccothernutypes; inu++) {
 
+        repiccotherPostDB[inu] = (TH1D*)hpostcutrecDB[inu][2]->Clone();
+        repiccotherPostDB[inu]->SetName("repiccotherPostDB");
+
         repiccotherPost[inu] = (TH1D*)hpostcutrec[inu][2]->Clone();
         repiccotherPost[inu]->SetName("repiccotherPost");
         repiccotherPost[inu]->Divide(hprecutrec[inu][2]);
@@ -273,10 +300,10 @@
   TH1D* repiccnumu;
   TGraph* tgepiccnumu;
   TH1D* repiccnumuPost;
+  TH1D* repiccnumuPostDB;
   TGraph* tgepiccnumuPost;
 
   {
-
       repiccnumu = (TH1D*)hprecut[2][0]->Clone();
       repiccnumu->Add(hprecut[2][1]);
       repiccnumu->Add(hprecut[2][2]);
@@ -309,6 +336,14 @@
   }
 
   {
+
+      repiccnumuPostDB = (TH1D*)hpostcutrecDB[2][0]->Clone();
+      repiccnumuPostDB->Add(hpostcutrecDB[2][1]);
+      repiccnumuPostDB->Add(hpostcutrecDB[2][2]);
+      repiccnumuPostDB->Add(hpostcutrecDB[3][0]);
+      repiccnumuPostDB->Add(hpostcutrecDB[3][1]);
+      repiccnumuPostDB->Add(hpostcutrecDB[3][2]);
+      repiccnumuPostDB->SetName("repiccnumuPostDB");
 
       repiccnumuPost = (TH1D*)hpostcutrec[2][0]->Clone();
       repiccnumuPost->Add(hpostcutrec[2][1]);
@@ -347,6 +382,7 @@
   TH1D* repinc;
   TGraph* tgepinc;
   TH1D* repincPost;
+  TH1D* repincPostDB;
   TGraph* tgepincPost;
 
   {
@@ -378,6 +414,12 @@
 
   }
   {
+      repincPostDB = (TH1D*)hpostcutrecDB[0][3]->Clone();
+      repincPostDB->Add(hpostcutrecDB[1][3]);
+      repincPostDB->Add(hpostcutrecDB[2][3]);
+      repincPostDB->Add(hpostcutrecDB[3][3]);
+      repincPostDB->SetName("repincPostDB");
+
       repincPost = (TH1D*)hpostcutrec[0][3]->Clone();
       repincPost->Add(hpostcutrec[1][3]);
       repincPost->Add(hpostcutrec[2][3]);
@@ -459,13 +501,13 @@
       tcan->Print(canname);
       
       legend = new TLegend(0.1, 0.6, 0.25, 0.9);
-      legend->SetHeader("The Legend Title");
-      legend->AddEntry(tgepiccqe[0],"NCCQE nu 1","l");
-      legend->AddEntry(tgepiccqe[1],"NCCQE nu 2","l");
+      legend->SetHeader("curves");
+      legend->AddEntry(tgepiccqe[0],"CCQE nu 1","l");
+      legend->AddEntry(tgepiccqe[1],"CCQE nu 2","l");
       legend->AddEntry(tgepiccpip[0],"CC pi+ 1","l");
       legend->AddEntry(tgepiccpip[1],"CC pi+ 2","l");
-      legend->AddEntry(tgepiccother[0],"NCC others 1","l");
-      legend->AddEntry(tgepiccother[1],"NCC others 2","l");
+      legend->AddEntry(tgepiccother[0],"CC others 1","l");
+      legend->AddEntry(tgepiccother[1],"CC others 2","l");
       legend->AddEntry(tgepiccnumu,"CC nu mu","l");
       legend->AddEntry(tgepinc,"NC","l");
       legend->Draw();
@@ -499,7 +541,7 @@
       if (maxeffPost < 0.01) {maxeffPost = 0.01;}
 
       TCanvas* tcanPost = new TCanvas(cannamePost,cannamePost);
-      TH2D* plotarea2Post = new TH2D("plotarea2Post","Postcut Ratios",1000,0.,25.,1000,0.,maxeffPost*1.1);
+      TH2D* plotarea2Post = new TH2D("plotarea2Post","Postcut Ratios",1000,0.,8.,1000,0.,maxeffPost*1.1);
       for (int ibin=0; ibin<nbinsPost; ibin++) {
         int index = plotarea2Post->GetXaxis()->FindBin(ibin);
         plotarea2Post->GetXaxis()->SetBinLabel(index,sbinedgesPost[ibin]);
@@ -521,17 +563,55 @@
       tcanPost->Print(cannamePost);
 
       legend = new TLegend(0.1, 0.6, 0.25, 0.9);
-      legend->SetHeader("The Legend Title");
-      legend->AddEntry(tgepiccqePost[0],"NCCQE nu 1","l");
-      legend->AddEntry(tgepiccqePost[1],"NCCQE nu 2","l");
+      legend->SetHeader("curves");
+      legend->AddEntry(tgepiccqePost[0],"CCQE nu 1","l");
+      legend->AddEntry(tgepiccqePost[1],"CCQE nu 2","l");
       legend->AddEntry(tgepiccpipPost[0],"CC pi+ 1","l");
       legend->AddEntry(tgepiccpipPost[1],"CC pi+ 2","l");
-      legend->AddEntry(tgepiccotherPost[0],"NCC others 1","l");
-      legend->AddEntry(tgepiccotherPost[1],"NCC others 2","l");
+      legend->AddEntry(tgepiccotherPost[0],"CC others 1","l");
+      legend->AddEntry(tgepiccotherPost[1],"CC others 2","l");
       legend->AddEntry(tgepiccnumuPost,"CC nu mu","l");
       legend->AddEntry(tgepincPost,"NC","l");
       legend->Draw();
     }
   }
+
+  TCanvas* c3 = new TCanvas();
+  c3->Divide(nnutypes,ninttypes);    
+  for (int nt=0; nt<nnutypes; nt++) {
+    for (int it=0; it<ninttypes; it++) {
+      c3->cd(ninttypes*nt + it +1);
+      h2trueTOrecoPRE[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
+      h2trueTOrecoPRE[nt][it]->Draw("colz");
+    }
+  }
+
+   THStack *hs = new THStack("hs","");
+
+   repiccnumuPostDB->SetFillColor(1);
+   repincPostDB->SetFillColor(2);
+
+   repiccSignal = (TH1D*)repiccqePostDB[0]->Clone();
+   repiccSignal->Add(repiccpipPostDB[0]);
+   repiccSignal->Add(repiccotherPostDB[0]);
+   //repiccSignal->Add(repiccqePost[1]);
+   //repiccSignal->Add(repiccpipPost[1]);
+   //repiccSignal->Add(repiccotherPost[1]);
+   repiccSignal->SetFillColor(4);
+
+   hs->Add(repiccnumuPostDB);
+   hs->Add(repincPostDB);   
+   hs->Add(repiccSignal);
+
+   new TCanvas();
+   hs->Draw();
+
+   legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+   legend->SetHeader("Stacked plot");
+   legend->AddEntry(repiccnumuPostDB,"numu","f");
+   legend->AddEntry(repincPostDB,"nc","f");
+   legend->AddEntry(repiccSignal,"nue CC (all)","f");
+   legend->Draw();
+
 
 }

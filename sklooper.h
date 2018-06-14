@@ -10,11 +10,20 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TApplication.h>
 
 class sklooper {
 public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
+
+   double curr_sOb[100];
+   double locTMVA[100];
+   double c_ss[100][100];
+   double c_bb[100][100];
+   double c_sss[100];
+   double c_bbb[100];
+   double curr_sEff[100];
 
    // Declaration of leaf types
    Int_t           nring;
@@ -395,6 +404,14 @@ public :
    Float_t         glat;
    Float_t         glong;
 
+   Float_t         erec1r;
+   Double_t         erecmr;
+
+   Float_t         tmvaMR0;
+   Float_t         tmvaSR0;
+   Double_t        tmvaMR;
+   Float_t         tmvaSR;
+
    // List of branches
    TBranch        *b_nring;   //!
    TBranch        *b_nrun;   //!
@@ -774,6 +791,9 @@ public :
    TBranch        *b_glat;   //!
    TBranch        *b_glong;   //!
 
+   Double_t fluxWeight[2];
+
+   virtual void     GetTMVACut();
    sklooper(TTree *tree=0);
    virtual ~sklooper();
    virtual Int_t    Cut(Long64_t entry);
@@ -811,7 +831,7 @@ sklooper::sklooper(TTree *tree)
       //      chain->Add("skatm/mar16sk4.reduc.*_fQv5r0.root");
       //      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
       //      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
-	chain->Add("/home/guang/work/root-6.12.06/builddir/tutorials/tmva/outputTree_reinput0.root");
+	chain->Add("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root");
       tree = chain;
 #endif // SINGLE_TREE
 
@@ -1237,6 +1257,12 @@ void sklooper::Init(TTree *tree)
    fChain->SetBranchAddress("dec", &dec, &b_dec);
    fChain->SetBranchAddress("glat", &glat, &b_glat);
    fChain->SetBranchAddress("glong", &glong, &b_glong);
+
+   fChain->SetBranchAddress("tmvaMR0", &tmvaMR);
+   fChain->SetBranchAddress("erecmr", &erecmr);
+   fChain->SetBranchAddress("erec1r", &erec1r);
+   fChain->SetBranchAddress("fluxWeight", &fluxWeight);
+
    Notify();
 }
 
