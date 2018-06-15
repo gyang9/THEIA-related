@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
    TString duneFlux("input/g4lbne_FHC_FD.root");
    TSpline5** duneSpline = sLoop->LoadDuneFlux(duneFlux);   
 
-   Long64_t nentries = tree->GetEntries();
+   Long64_t nentries = 100000; //tree->GetEntries();
 
    std::cout<<"ready to loop"<<std::endl;
 

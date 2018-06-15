@@ -414,10 +414,10 @@
 
   }
   {
-      repincPostDB = (TH1D*)hpostcutrecDB[0][3]->Clone();
-      repincPostDB->Add(hpostcutrecDB[1][3]);
-      repincPostDB->Add(hpostcutrecDB[2][3]);
-      repincPostDB->Add(hpostcutrecDB[3][3]);
+      repincPostDB = (TH1D*)hpostcutrecDB[2][3]->Clone();
+      //repincPostDB->Add(hpostcutrecDB[1][3]);
+      //repincPostDB->Add(hpostcutrecDB[2][3]);
+      //repincPostDB->Add(hpostcutrecDB[3][3]);
       repincPostDB->SetName("repincPostDB");
 
       repincPost = (TH1D*)hpostcutrec[0][3]->Clone();
@@ -594,9 +594,9 @@
    repiccSignal = (TH1D*)repiccqePostDB[0]->Clone();
    repiccSignal->Add(repiccpipPostDB[0]);
    repiccSignal->Add(repiccotherPostDB[0]);
-   //repiccSignal->Add(repiccqePost[1]);
-   //repiccSignal->Add(repiccpipPost[1]);
-   //repiccSignal->Add(repiccotherPost[1]);
+   repiccSignal->Add(repiccqePost[1]);
+   repiccSignal->Add(repiccpipPost[1]);
+   repiccSignal->Add(repiccotherPost[1]);
    repiccSignal->SetFillColor(4);
 
    hs->Add(repiccnumuPostDB);

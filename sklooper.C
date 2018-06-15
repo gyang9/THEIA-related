@@ -72,7 +72,7 @@ void sklooper::GetTMVACut()
    std::cout<<"trying to see the results of tmva cuts.. "<<std::endl;
    for(Int_t ii=0;ii<100;ii++){
         for(Int_t jj=0;jj<60;jj++){
-                //if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25)>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj])<<std::endl; }
+                //if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25)>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25)<<std::endl; }
 		//std::cout<<c_ss[ii][jj]/c_sss[ii]<<std::endl;
 		if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
         }
@@ -324,9 +324,15 @@ void sklooper::Loop()
           ) {
 
         //std::cout<<pnu[0]<<" "<<erecmr<<std::endl;
-        htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
-        hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);
-        hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+        if(nutype == 0 && inttype != 3) htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
+	else htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[0]);
+
+        if(nutype == 0 && inttype != 3) hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);
+	else hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[0]);
+
+        if(nutype == 0 && inttype != 3) hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	else hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[0]);
+
         if ((inttype==0)&&(nutype==0)) heres->Fill((erecmr-pnu[0])/pnu[0]);
 
 	//std::cout<<"tmva variable for nutype& inttype "<<nutype<<" "<<inttype<<" "<<tmvaMR<<std::endl;
@@ -337,9 +343,12 @@ void sklooper::Loop()
 	tmvaMR>locTMVA[innLoop]*0.01-0.3 
 	) 
 	  {
-	  htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
-	  hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
-          hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	  if(nutype == 0 && inttype != 3) htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
+	  else htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[0]);
+	  if(nutype == 0 && inttype != 3) hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	  else hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[0]);
+          if(nutype == 0 && inttype != 3) hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	  else hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[0]);
 	  }
 	}
 
