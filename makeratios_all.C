@@ -5,12 +5,19 @@
   const int ninttypes = 4;
   TString intnames[ninttypes] = {"ccqe","ccpip","ccother","nc"};
 
+  TH1D* hTMVA;
   TH1D* htruefv [nnutypes][ninttypes];
+  TH1D* htruefvOsc [nnutypes][ninttypes];
 
   TH1D* hprecut [nnutypes][ninttypes];
   TH1D* hprecutrec [nnutypes][ninttypes];
   TH1D* hpostcutrec[nnutypes][ninttypes];
+  TH1D* hprecutrecDB[nnutypes][ninttypes];
   TH1D* hpostcutrecDB[nnutypes][ninttypes];
+  TH1D* hpostcutrecNoFlux[nnutypes][ninttypes];
+  TH1D* hpostcutrecDBNoFlux[nnutypes][ninttypes];
+  TH1D* hprecutrecNoFlux[nnutypes][ninttypes];
+  TH1D* hprecutrecDBNoFlux[nnutypes][ninttypes];
 
   TH1D* h1rprecut [nnutypes][ninttypes];
   TH1D* h1rprecutrec [nnutypes][ninttypes];
@@ -24,6 +31,7 @@
   TH1D* h2precutrec [nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
   TH1D* h2postcutrec[nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
   TH2D* h2trueTOreco[nnutypes][ninttypes];
+  TH2D* h2trueTOrecoNoFlux[nnutypes][ninttypes];
   TH2D* h2trueTOrecoPRE[nnutypes][ninttypes];
 
   const int nbins = 25;
@@ -69,20 +77,24 @@
       TString hname = hprefix + "_truefv";
       gDirectory->GetObject(hname,htruefv[nt][it]);
       //      htruefv[nt][it] = new TH1D(hname,hname,nbins,binedges);
-      std::cout << hname << ": " << htruefv[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << htruefv[nt][it]->GetEntries() << " "<< htruefv[nt][it]->Integral()<< std::endl;
+      TString hname = hprefix + "_truefvOsc";
+      gDirectory->GetObject(hname,htruefvOsc[nt][it]);
+      //      htruefvOsc[nt][it] = new TH1D(hname,hname,nbins,binedges);
+      std::cout << hname << ": " << htruefvOsc[nt][it]->GetEntries() << " "<< htruefvOsc[nt][it]->Integral()<< std::endl;
 
       hname = hprefix + "_precut";
       gDirectory->GetObject(hname,hprecut[nt][it]);
       //      hprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
-      std::cout << hname << ": " << hprecut[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << hprecut[nt][it]->GetEntries() << " "<< hprecut[nt][it]->Integral()<<std::endl;
       hname = hprefix + "_precutrec";
       gDirectory->GetObject(hname,hprecutrec[nt][it]);
-      std::cout << hname << ": " << hprecutrec[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << hprecutrec[nt][it]->GetEntries() << " "<< hprecutrec[nt][it]->Integral()<<std::endl;
 //      hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
 
       hname = hprefix + "_postcutrec";
       gDirectory->GetObject(hname,hpostcutrec[nt][it]);
-      std::cout << hname << ": " << hpostcutrec[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << hpostcutrec[nt][it]->GetEntries() << " "<< hpostcutrec[nt][it]->Integral()<<std::endl;
 //      hpostcutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
 
       hname = hprefix + "_trueToreco";
@@ -94,19 +106,42 @@
 
       hname = hprefix + "_postcutrecDB";
       gDirectory->GetObject(hname,hpostcutrecDB[nt][it]);
-      std::cout << hname << ": " << hpostcutrecDB[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << hpostcutrecDB[nt][it]->GetEntries() << " "<< hpostcutrecDB[nt][it]->Integral()<<std::endl;
+
+      hname = hprefix + "_precutrecDB";
+      gDirectory->GetObject(hname,hprecutrecDB[nt][it]);
+      std::cout << hname << ": " << hprecutrecDB[nt][it]->GetEntries() << " "<< hprecutrecDB[nt][it]->Integral()<<std::endl;
+
+      hname = hprefix + "_trueTorecoNoFlux";
+      gDirectory->GetObject(hname,h2trueTOrecoNoFlux[nt][it]);
+      std::cout << hname << ": " << h2trueTOrecoNoFlux[nt][it]->GetEntries() << std::endl;
+      hname = hprefix + "_postcutrecDBNoFlux";
+      gDirectory->GetObject(hname,hpostcutrecDBNoFlux[nt][it]);
+      std::cout << hname << ": " << hpostcutrecDBNoFlux[nt][it]->GetEntries() << " "<< hpostcutrecDBNoFlux[nt][it]->Integral()<<std::endl;
+      hname = hprefix + "_postcutrecNoFlux";
+      gDirectory->GetObject(hname,hpostcutrecNoFlux[nt][it]);
+      std::cout << hname << ": " << hpostcutrecNoFlux[nt][it]->GetEntries() << " "<< hpostcutrecNoFlux[nt][it]->Integral()<<std::endl;
+
+      hname = hprefix + "_precutrecDBNoFlux";
+      gDirectory->GetObject(hname,hprecutrecDBNoFlux[nt][it]);
+      std::cout << hname << ": " << hprecutrecDBNoFlux[nt][it]->GetEntries() << " "<< hprecutrecDBNoFlux[nt][it]->Integral()<<std::endl;
+      hname = hprefix + "_precutrecNoFlux";
+      gDirectory->GetObject(hname,hprecutrecNoFlux[nt][it]);
+      std::cout << hname << ": " << hprecutrecNoFlux[nt][it]->GetEntries() << " "<< hprecutrecNoFlux[nt][it]->Integral()<<std::endl;
 
       hname = hprefix + "_1rprecut";
       gDirectory->GetObject(hname,h1rprecut[nt][it]);
       //      hprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
-      std::cout << hname << ": " << h1rprecut[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << h1rprecut[nt][it]->GetEntries() << " "<< h1rprecut[nt][it]->Integral()<<std::endl;
       hname = hprefix + "_1rprecutrec";
       gDirectory->GetObject(hname,h1rprecutrec[nt][it]);
-      std::cout << hname << ": " << h1rprecutrec[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << h1rprecutrec[nt][it]->GetEntries() << " "<< h1rprecutrec[nt][it]->Integral()<<std::endl;
 //      hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
       hname = hprefix + "_1rpostcutrec";
       gDirectory->GetObject(hname,h1rpostcutrec[nt][it]);
-      std::cout << hname << ": " << h1rpostcutrec[nt][it]->GetEntries() << std::endl;
+      std::cout << hname << ": " << h1rpostcutrec[nt][it]->GetEntries() << " "<< h1rpostcutrec[nt][it]->Integral()<<std::endl;
+
+      gDirectory->GetObject("TMVA_values",hTMVA);
 
     }
   }
@@ -121,10 +156,17 @@
   const int nccqenutypes = 2;
   const int nccqedecaye = 2;
   TH1D* repiccqe[nccqenutypes];
+  TH1D* repiccqePreDB[nccqenutypes];
   TH1D* repiccqePostDB[nccqenutypes];
   TGraph* tgepiccqe[nccqenutypes];
   TH1D* repiccqePost[nccqenutypes];
+  TH1D* repiccqePostNoFlux[nccqenutypes];
+  TH1D* repiccqePostDBNoFlux[nccqenutypes];
+  TH1D* repiccqePreNoFlux[nccqenutypes];
+  TH1D* repiccqePreDBNoFlux[nccqenutypes];
   TH1D* repiccSignal;
+  TH1D* repiccSignalNoFlux;
+  TH1D* repiccSignalNoFluxPRE;
   TGraph* tgepiccqePost[nccqenutypes];
   int combepi[nrings2] = {1,3};
   int iccqecolor[nccqenutypes] = {46,6};
@@ -134,7 +176,7 @@
 
 	repiccqe[inu] = (TH1D*)hprecut[inu][0]->Clone();
 	repiccqe[inu]->SetName("repiccqe");
-	repiccqe[inu]->Divide(htruefv[inu][0]);
+	repiccqe[inu]->Divide(htruefvOsc[inu][0]);
 
 	for (int ibin=0; ibin<nbins; ibin++) {
 	  yvals[ibin] = repiccqe[inu]->GetBinContent(ibin+1);
@@ -156,6 +198,13 @@
 
         repiccqePostDB[inu] = (TH1D*)hpostcutrecDB[inu][0]->Clone();
         repiccqePostDB[inu]->SetName("repiccqePostDB");
+        repiccqePreDB[inu] = (TH1D*)hprecutrecDB[inu][0]->Clone();
+        repiccqePreDB[inu]->SetName("repiccqePreDB");
+
+        repiccqePostDBNoFlux[inu] = (TH1D*)hpostcutrecDBNoFlux[inu][0]->Clone();
+        repiccqePostDBNoFlux[inu]->SetName("repiccqePostDBNoFlux");
+        repiccqePreDBNoFlux[inu] = (TH1D*)hprecutrecDBNoFlux[inu][0]->Clone();
+        repiccqePreDBNoFlux[inu]->SetName("repiccqePreDBNoFlux");
 
         repiccqePost[inu] = (TH1D*)hpostcutrec[inu][0]->Clone();
         repiccqePost[inu]->SetName("repiccqePost");
@@ -186,6 +235,11 @@
   TGraph* tgepiccpip[nccpipnutypes];
   TH1D* repiccpipPost[nccpipnutypes];
   TH1D* repiccpipPostDB[nccpipnutypes];
+  TH1D* repiccpipPreDB[nccpipnutypes];
+  TH1D* repiccpipPostNoFlux[nccpipnutypes];
+  TH1D* repiccpipPostDBNoFlux[nccpipnutypes];
+  TH1D* repiccpipPreNoFlux[nccpipnutypes];
+  TH1D* repiccpipPreDBNoFlux[nccpipnutypes];
   TGraph* tgepiccpipPost[nccpipnutypes];
   int iccpipcolor[nccpipnutypes] = {28,25};
 
@@ -193,7 +247,7 @@
 
 	repiccpip[inu] = (TH1D*)hprecut[inu][1]->Clone();
 	repiccpip[inu]->SetName("repiccpip");
-	repiccpip[inu]->Divide(htruefv[inu][1]);
+	repiccpip[inu]->Divide(htruefvOsc[inu][1]);
 
 	for (int ibin=0; ibin<nbins; ibin++) {
 	  yvals[ibin] = repiccpip[inu]->GetBinContent(ibin+1);
@@ -215,6 +269,13 @@
 
         repiccpipPostDB[inu] = (TH1D*)hpostcutrecDB[inu][1]->Clone();
         repiccpipPostDB[inu]->SetName("repiccpipPostDB");
+        repiccpipPreDB[inu] = (TH1D*)hprecutrecDB[inu][1]->Clone();
+        repiccpipPreDB[inu]->SetName("repiccpipPreDB");
+
+        repiccpipPostDBNoFlux[inu] = (TH1D*)hpostcutrecDBNoFlux[inu][1]->Clone();
+        repiccpipPostDBNoFlux[inu]->SetName("repiccpipPostDBNoFlux");
+        repiccpipPreDBNoFlux[inu] = (TH1D*)hprecutrecDBNoFlux[inu][1]->Clone();
+        repiccpipPreDBNoFlux[inu]->SetName("repiccpipPreDBNoFlux");
 
         repiccpipPost[inu] = (TH1D*)hpostcutrec[inu][1]->Clone();
         repiccpipPost[inu]->SetName("repiccpipPost");
@@ -244,6 +305,11 @@
   TGraph* tgepiccother[nccothernutypes];
   TH1D* repiccotherPost[nccothernutypes];
   TH1D* repiccotherPostDB[nccothernutypes];
+  TH1D* repiccotherPreDB[nccothernutypes];
+  TH1D* repiccotherPostNoFlux[nccothernutypes];
+  TH1D* repiccotherPostDBNoFlux[nccothernutypes];
+  TH1D* repiccotherPreNoFlux[nccothernutypes];
+  TH1D* repiccotherPreDBNoFlux[nccothernutypes];
   TGraph* tgepiccotherPost[nccothernutypes];
   int iccothercolor[nccothernutypes] = {8,3};
 
@@ -251,7 +317,7 @@
 
 	repiccother[inu] = (TH1D*)hprecut[inu][2]->Clone();
 	repiccother[inu]->SetName("repiccother");
-	repiccother[inu]->Divide(htruefv[inu][2]);
+	repiccother[inu]->Divide(htruefvOsc[inu][2]);
 
 	for (int ibin=0; ibin<nbins; ibin++) {
 	  yvals[ibin] = repiccother[inu]->GetBinContent(ibin+1);
@@ -273,6 +339,13 @@
 
         repiccotherPostDB[inu] = (TH1D*)hpostcutrecDB[inu][2]->Clone();
         repiccotherPostDB[inu]->SetName("repiccotherPostDB");
+        repiccotherPreDB[inu] = (TH1D*)hprecutrecDB[inu][2]->Clone();
+        repiccotherPreDB[inu]->SetName("repiccotherPreDB");
+
+        repiccotherPostDBNoFlux[inu] = (TH1D*)hpostcutrecDBNoFlux[inu][2]->Clone();
+        repiccotherPostDBNoFlux[inu]->SetName("repiccotherPostDBNoFlux");
+        repiccotherPreDBNoFlux[inu] = (TH1D*)hprecutrecDBNoFlux[inu][2]->Clone();
+        repiccotherPreDBNoFlux[inu]->SetName("repiccotherPreDBNoFlux");
 
         repiccotherPost[inu] = (TH1D*)hpostcutrec[inu][2]->Clone();
         repiccotherPost[inu]->SetName("repiccotherPost");
@@ -301,6 +374,11 @@
   TGraph* tgepiccnumu;
   TH1D* repiccnumuPost;
   TH1D* repiccnumuPostDB;
+  TH1D* repiccnumuPreDB;
+  TH1D* repiccnumuPostNoFlux;
+  TH1D* repiccnumuPostDBNoFlux;
+  TH1D* repiccnumuPreNoFlux;
+  TH1D* repiccnumuPreDBNoFlux;
   TGraph* tgepiccnumuPost;
 
   {
@@ -345,6 +423,30 @@
       repiccnumuPostDB->Add(hpostcutrecDB[3][2]);
       repiccnumuPostDB->SetName("repiccnumuPostDB");
 
+      repiccnumuPreDB = (TH1D*)hprecutrecDB[2][0]->Clone();
+      repiccnumuPreDB->Add(hprecutrecDB[2][1]);
+      repiccnumuPreDB->Add(hprecutrecDB[2][2]);
+      repiccnumuPreDB->Add(hprecutrecDB[3][0]);
+      repiccnumuPreDB->Add(hprecutrecDB[3][1]);
+      repiccnumuPreDB->Add(hprecutrecDB[3][2]);
+      repiccnumuPreDB->SetName("repiccnumuPreDB");
+
+      repiccnumuPreDBNoFlux = (TH1D*)hprecutrecDBNoFlux[2][0]->Clone();
+      repiccnumuPreDBNoFlux->Add(hprecutrecDBNoFlux[2][1]);
+      repiccnumuPreDBNoFlux->Add(hprecutrecDBNoFlux[2][2]);
+      repiccnumuPreDBNoFlux->Add(hprecutrecDBNoFlux[3][0]);
+      repiccnumuPreDBNoFlux->Add(hprecutrecDBNoFlux[3][1]);
+      repiccnumuPreDBNoFlux->Add(hprecutrecDBNoFlux[3][2]);
+      repiccnumuPreDBNoFlux->SetName("repiccnumuPreDBNoFlux");
+
+      repiccnumuPostDBNoFlux = (TH1D*)hpostcutrecDBNoFlux[2][0]->Clone();
+      repiccnumuPostDBNoFlux->Add(hpostcutrecDBNoFlux[2][1]);
+      repiccnumuPostDBNoFlux->Add(hpostcutrecDBNoFlux[2][2]);
+      repiccnumuPostDBNoFlux->Add(hpostcutrecDBNoFlux[3][0]);
+      repiccnumuPostDBNoFlux->Add(hpostcutrecDBNoFlux[3][1]);
+      repiccnumuPostDBNoFlux->Add(hpostcutrecDBNoFlux[3][2]);
+      repiccnumuPostDBNoFlux->SetName("repiccnumuPostDBNoFlux");
+
       repiccnumuPost = (TH1D*)hpostcutrec[2][0]->Clone();
       repiccnumuPost->Add(hpostcutrec[2][1]);
       repiccnumuPost->Add(hpostcutrec[2][2]);
@@ -383,6 +485,11 @@
   TGraph* tgepinc;
   TH1D* repincPost;
   TH1D* repincPostDB;
+  TH1D* repincPreDB;
+  TH1D* repincPostNoFLux;
+  TH1D* repincPostDBNoFlux;
+  TH1D* repincPreNoFLux;
+  TH1D* repincPreDBNoFlux;
   TGraph* tgepincPost;
 
   {
@@ -419,6 +526,24 @@
       //repincPostDB->Add(hpostcutrecDB[2][3]);
       //repincPostDB->Add(hpostcutrecDB[3][3]);
       repincPostDB->SetName("repincPostDB");
+
+      repincPreDB = (TH1D*)hprecutrecDB[2][3]->Clone();
+      //repincPreDB->Add(hprecutrecDB[1][3]);
+      //repincPreDB->Add(hprecutrecDB[2][3]);
+      //repincPreDB->Add(hprecutrecDB[3][3]);
+      repincPreDB->SetName("repincPreDB");
+
+      repincPreDBNoFlux = (TH1D*)hprecutrecDBNoFlux[2][3]->Clone();
+      //repincPreDBNoFlux->Add(hprecutrecDBNoFlux[1][3]);
+      //repincPreDBNoFlux->Add(hprecutrecDBNoFlux[2][3]);
+      //repincPreDBNoFlux->Add(hprecutrecDBNoFlux[3][3]);
+      repincPreDBNoFlux->SetName("repincPreDBNoFlux");
+
+      repincPostDBNoFlux = (TH1D*)hpostcutrecDBNoFlux[2][3]->Clone();
+      //repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[1][3]);
+      //repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[2][3]);
+      //repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[3][3]);
+      repincPostDBNoFlux->SetName("repincPostDBNoFlux");
 
       repincPost = (TH1D*)hpostcutrec[0][3]->Clone();
       repincPost->Add(hpostcutrec[1][3]);
@@ -576,13 +701,23 @@
     }
   }
 
+  TCanvas* c13 = new TCanvas();
+  c13->Divide(nnutypes,ninttypes);
+  for (int nt=0; nt<nnutypes; nt++) {
+    for (int it=0; it<ninttypes; it++) {
+      c13->cd(ninttypes*nt + it +1);
+      h2trueTOrecoPRE[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
+      h2trueTOrecoPRE[nt][it]->Draw("colz");
+    }
+  }
+
   TCanvas* c3 = new TCanvas();
   c3->Divide(nnutypes,ninttypes);    
   for (int nt=0; nt<nnutypes; nt++) {
     for (int it=0; it<ninttypes; it++) {
       c3->cd(ninttypes*nt + it +1);
-      h2trueTOrecoPRE[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
-      h2trueTOrecoPRE[nt][it]->Draw("colz");
+      h2trueTOreco[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
+      h2trueTOreco[nt][it]->Draw("colz");
     }
   }
 
@@ -594,10 +729,85 @@
    repiccSignal = (TH1D*)repiccqePostDB[0]->Clone();
    repiccSignal->Add(repiccpipPostDB[0]);
    repiccSignal->Add(repiccotherPostDB[0]);
-   repiccSignal->Add(repiccqePost[1]);
-   repiccSignal->Add(repiccpipPost[1]);
-   repiccSignal->Add(repiccotherPost[1]);
+   repiccSignal->Add(repiccqePostDB[1]);
+   repiccSignal->Add(repiccpipPostDB[1]);
+   repiccSignal->Add(repiccotherPostDB[1]);
    repiccSignal->SetFillColor(4);
+
+   repiccnumuPreDB->SetFillColor(1);
+   repincPreDB->SetFillColor(2);
+
+   repiccSignalPRE = (TH1D*)repiccqePreDB[0]->Clone();
+   repiccSignalPRE->Add(repiccpipPreDB[0]);
+   repiccSignalPRE->Add(repiccotherPreDB[0]);
+   repiccSignalPRE->Add(repiccqePreDB[1]);
+   repiccSignalPRE->Add(repiccpipPreDB[1]);
+   repiccSignalPRE->Add(repiccotherPreDB[1]);
+   repiccSignalPRE->SetFillColor(4);
+
+   repiccSignalNoFlux = (TH1D*)repiccqePostDBNoFlux[0]->Clone();
+   repiccSignalNoFlux->Add(repiccpipPostDBNoFlux[0]);
+   repiccSignalNoFlux->Add(repiccotherPostDBNoFlux[0]);
+   repiccSignalNoFlux->Add(repiccqePostDBNoFlux[1]);
+   repiccSignalNoFlux->Add(repiccpipPostDBNoFlux[1]);
+   repiccSignalNoFlux->Add(repiccotherPostDBNoFlux[1]);
+
+   repiccSignalNoFluxPRE = (TH1D*)repiccqePreDBNoFlux[0]->Clone();
+   repiccSignalNoFluxPRE->Add(repiccpipPreDBNoFlux[0]);
+   repiccSignalNoFluxPRE->Add(repiccotherPreDBNoFlux[0]);
+   repiccSignalNoFluxPRE->Add(repiccqePreDBNoFlux[1]);
+   repiccSignalNoFluxPRE->Add(repiccpipPreDBNoFlux[1]);
+   repiccSignalNoFluxPRE->Add(repiccotherPreDBNoFlux[1]);
+
+   //nue, nuebar, numu, numubar, nueOsc, nuebarOsc, numuOsc, numubarOsc
+   //integral for 0 7.42579e-12
+   //integral for 1 1.08954e-12
+   //integral for 2 9.00726e-10
+   //integral for 3 5.25208e-11
+   //integral for 4 5.45666e-11
+   //integral for 5 3.54513e-12
+   //integral for 6 2.71581e-10
+   //integral for 7 2.13211e-11
+
+   //realistic event rates:
+   double CCnue     = 1.79258e-21;
+   double CCnuebar  = 2.21332e-22;
+   double CCnumu    = 1.47427e-19;
+   double CCnumubar = 5.01898e-21;
+   double CCnutau   = 1.79258e-21;
+   double CCnutaubar= 2.21332e-22;
+   double NCnue     = 1.79258e-21;
+   double NCnuebar  = 2.21332e-22;
+   double NCnumu    = 1.47427e-19;
+   double NCnumubar = 5.01898e-21;
+   double NCnutau   = 1.79258e-21;
+   double NCnutaubar= 2.21332e-22;
+
+   // scale to single neutrino per kton per POT
+   //repiccnumuPostDB->Scale(1./repiccnumuPostDB->Integral() * (repiccnumuPostDBNoFlux->Integral()/ repiccnumuPreDBNoFlux->Integral() ) *(CCnumu));
+   //repincPostDB->Scale(1./repincPostDB->Integral() * (repincPostDBNoFlux->Integral()/ repincPreDBNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
+   //repiccSignal->Scale(1./repiccSignal->Integral() * (repiccSignalNoFlux->Integral()/ repiccSignalNoFluxPRE->Integral()) * (CCnue));
+
+
+   //repiccnumuPostDB->Scale(1./repiccnumuPostDB->Integral() * (repiccnumuPostDBNoFlux->Integral()/ 1500000 ) *(CCnumu));
+   //repincPostDB->Scale(1./repincPostDB->Integral() * (repincPostDBNoFlux->Integral()/ 1500000 ) *(NCnue+NCnumu+NCnutau));
+   //repiccSignal->Scale(1./repiccSignal->Integral() * (repiccSignalNoFlux->Integral()/ 1500000 ) * (CCnue));
+
+
+   repiccnumuPostDB->Scale(1./repiccnumuPostDB->Integral() * (repiccnumuPostDBNoFlux->Integral()/ repiccSignalNoFlux->Integral() ) *(CCnumu));
+   repincPostDB->Scale(1./repincPostDB->Integral() * (repincPostDBNoFlux->Integral()/ repiccSignalNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
+   repiccSignal->Scale(1./repiccSignal->Integral() * (1) * (CCnue));
+
+
+   std::cout<<"integral tests for numu, nc and signal:  "<<repiccnumuPostDB->Integral()<<" "<<repincPostDB->Integral()<<" "<<repiccSignal->Integral()<<std::endl;
+   std::cout<<"Integrated efficiencies for numu, nc and signal are: "<<repiccnumuPostDBNoFlux->Integral()/ repiccnumuPreDBNoFlux->Integral()<<std::endl;
+   std::cout<<"                                                     "<<repincPostDBNoFlux->Integral()/ repincPreDBNoFlux->Integral()<<std::endl;
+   std::cout<<"                                                     "<<repiccSignalNoFlux->Integral()/ repiccSignalNoFluxPRE->Integral()<<std::endl;
+
+   // scale to 3.5 years (1.47e21 * 3.5 * 40)
+   repiccnumuPostDB->Scale(1.47e21 * 3.5 * 50);
+   repincPostDB->Scale(1.47e21 * 3.5 * 50);
+   repiccSignal->Scale(1.47e21 * 3.5 * 50);
 
    hs->Add(repiccnumuPostDB);
    hs->Add(repincPostDB);   
@@ -613,5 +823,36 @@
    legend->AddEntry(repiccSignal,"nue CC (all)","f");
    legend->Draw();
 
+
+   // pre-cut stacked plot
+   THStack *hs2 = new THStack("hs2","");
+
+   repiccnumuPreDB->Scale(1./repiccnumuPreDB->Integral() * (repiccnumuPreDBNoFlux->Integral()/ repiccnumuPreDBNoFlux->Integral() ) *(CCnumu));
+   repincPreDB->Scale(1./repincPreDB->Integral() * (repincPreDBNoFlux->Integral()/ repincPreDBNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
+   repiccSignalPRE->Scale(1./repiccSignalPRE->Integral() * (repiccSignalNoFluxPRE->Integral()/ repiccSignalNoFluxPRE->Integral()) * (CCnue));
+
+   repiccnumuPreDB->Scale(1.47e21 * 3.5 * 50);
+   repincPreDB->Scale(1.47e21 * 3.5 * 50);
+   repiccSignalPRE->Scale(1.47e21 * 3.5 * 50);
+
+   hs2->Add(repiccnumuPreDB);
+   hs2->Add(repincPreDB);
+   hs2->Add(repiccSignalPRE);
+
+   new TCanvas();
+   hs2->Draw();
+
+   legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+   legend->SetHeader("Stacked plot");
+   legend->AddEntry(repiccnumuPreDB,"numu","f");
+   legend->AddEntry(repincPreDB,"nc","f");
+   legend->AddEntry(repiccSignalPRE,"nue CC (all)","f");
+   legend->Draw();
+
+
+   new TCanvas();
+   hTMVA->GetXaxis()->SetTitle("Reconstructed energy (GeV)");
+   hTMVA->GetYaxis()->SetTitle("TMVA cut value");
+   hTMVA->Draw();
 
 }

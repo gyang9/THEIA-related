@@ -37,7 +37,7 @@ void sklooper::GetTMVACut()
    t->SetBranchAddress("ipnu", &ipnu);
 
    Long64_t nbytes = 0, nb = 0;
-   Int_t NofEvent = 1500000; //t->GetEntries();
+   Int_t NofEvent = t->GetEntries();
 
    for(Int_t i=0;i<100;i++){
 	for(Int_t j=0;j<100;j++){
@@ -61,8 +61,8 @@ void sklooper::GetTMVACut()
       if(fqwall>200 && evis > 30 && nhitac < 16 && fqnse <= 2 ){
 	for(Int_t iii=0;iii<100;iii++){
 	  if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 ) {if(sigCategory>=0)c_sss[iii]++; if(bkgCategory>=0)c_bbb[iii]++;}
-          for(Int_t ii=0;ii<60;ii++){
-                if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 && tmvaMR > -0.3 + 0.01*ii) {if(sigCategory>=0)c_ss[iii][ii]++; if(bkgCategory>=0)c_bb[iii][ii]++;}
+          for(Int_t ii=0;ii<80;ii++){
+                if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 && tmvaMR > -0.4 + 0.01*ii) {if(sigCategory>=0)c_ss[iii][ii]++; if(bkgCategory>=0)c_bb[iii][ii]++;}
 	  }
         }
       }
@@ -71,15 +71,16 @@ void sklooper::GetTMVACut()
 
    std::cout<<"trying to see the results of tmva cuts.. "<<std::endl;
    for(Int_t ii=0;ii<100;ii++){
-        for(Int_t jj=0;jj<60;jj++){
-                //if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25)>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*25)<<std::endl; }
+        for(Int_t jj=0;jj<80;jj++){
+                if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*atof(gApplication->Argv(4)))>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*atof(gApplication->Argv(4)))<<std::endl; }
 		//std::cout<<c_ss[ii][jj]/c_sss[ii]<<std::endl;
-		if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
+		//if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
         }
    }
+
    std::cout<<std::endl;
    std::cout<<"locations of TMVAs for every 0.1 GeV are:  ";
-   for(Int_t ii=0;ii<100;ii++){cout<< " "<< locTMVA[ii]*0.01 - 0.3 <<"  ";}
+   for(Int_t ii=0;ii<100;ii++){cout<< " "<< locTMVA[ii]*0.01 - 0.4 <<"  ";}
    std::cout<<std::endl;
 
 }
@@ -124,11 +125,17 @@ void sklooper::Loop()
    TString intnames[ninttypes] = {"ccqe","ccpip","ccother","nc"};
 
    TH1D* htruefv [nnutypes][ninttypes];
+   TH1D* htruefvOsc [nnutypes][ninttypes];
 
    TH1D* hprecut [nnutypes][ninttypes];
    TH1D* hprecutrec [nnutypes][ninttypes];
    TH1D* hpostcutrec[nnutypes][ninttypes];
    TH1D* hpostcutrecDB[nnutypes][ninttypes];
+   TH1D* hprecutrecDB[nnutypes][ninttypes];
+   TH1D* hpostcutrecNoFlux[nnutypes][ninttypes];
+   TH1D* hpostcutrecDBNoFlux[nnutypes][ninttypes];
+   TH1D* hprecutrecNoFlux[nnutypes][ninttypes];
+   TH1D* hprecutrecDBNoFlux[nnutypes][ninttypes];
 
    TH1D* h1rprecut [nnutypes][ninttypes];
    TH1D* h1rprecutrec [nnutypes][ninttypes];
@@ -143,6 +150,7 @@ void sklooper::Loop()
 
    TH2D* htrueToreco [nnutypes][ninttypes];
    TH2D* htrueTorecoPRE [nnutypes][ninttypes];
+   TH2D* htrueTorecoNoFlux [nnutypes][ninttypes];
 
    const int nbins = 25;
    double binedges[nbins+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0,60.0};
@@ -161,14 +169,19 @@ void sklooper::Loop()
        TString hname = hprefix + "_truefv";
        htruefv[nt][it] = new TH1D(hname,hname,nbins,binedges);
 
+       hname = hprefix + "_truefvOsc";
+       htruefvOsc[nt][it] = new TH1D(hname,hname,nbins,binedges);
+
        hname = hprefix + "_precut";
        hprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_precutrec";
        hprecutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
        hname = hprefix + "_postcutrec";
        hpostcutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
+       hname = hprefix + "_precutrecDB";
+       hprecutrecDB[nt][it] = new TH1D(hname,hname,62,0.25,8);
        hname = hprefix + "_postcutrecDB";
-       hpostcutrecDB[nt][it] = new TH1D(hname,hname,100,0,10);
+       hpostcutrecDB[nt][it] = new TH1D(hname,hname,62,0.25,8);
        hname = hprefix + "_1rprecut";
        h1rprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
        hname = hprefix + "_1rprecutrec";
@@ -179,6 +192,17 @@ void sklooper::Loop()
        htrueToreco[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
        hname = hprefix + "_trueTorecoPRE";
        htrueTorecoPRE[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
+
+       hname = hprefix + "_precutrecNoFlux";
+       hprecutrecNoFlux[nt][it] = new TH1D(hname,hname,nbins,binedges);
+       hname = hprefix + "_precutrecDBNoFlux";
+       hprecutrecDBNoFlux[nt][it] = new TH1D(hname,hname,62,0.25,8);
+       hname = hprefix + "_postcutrecNoFlux";
+       hpostcutrecNoFlux[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
+       hname = hprefix + "_postcutrecDBNoFlux";
+       hpostcutrecDBNoFlux[nt][it] = new TH1D(hname,hname,62,0.25,8);
+       hname = hprefix + "_trueTorecoNoFlux";
+       htrueTorecoNoFlux[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
 
        int ncomb[nrings2] = {4,8};
        for (int ide=0; ide<ndecaye2; ide++) {
@@ -210,9 +234,13 @@ void sklooper::Loop()
    TH1D* htruefvpi0 = new TH1D("htruefvpi0","NC pi0 momentum precut",10,0.,1000.);
    TH1D* hpostcutpi0 = new TH1D("hpostcutpi0","NC pi0 momentum postcut",10,0.,1000.);
 
-   Long64_t nentries = 1500000; //fChain->GetEntriesFast();
+   TH1D* hTMVA = new TH1D("TMVA_values","TMVA_values",100,0,10);
+   for(Int_t ii=0;ii<hTMVA->GetNbinsX();ii++) {hTMVA -> SetBinContent(ii+1, locTMVA[ii+1]*0.01-0.4 );}
+
+   Long64_t nentries = fChain->GetEntriesFast();
 
    Long64_t nbytes = 0, nb = 0;
+   Int_t ccount[nnutypes][ninttypes]={};
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
@@ -290,6 +318,7 @@ void sklooper::Loop()
       // neutrinos in FV
       if (wallv>200) {
 	htruefv[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
+        htruefvOsc[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
       }
 
       // pi0 efficiency
@@ -320,35 +349,45 @@ void sklooper::Loop()
           //&& (fqmrnring[0] == 1)
           //&& (lemu > fq1rmom[0][1]*0.2)
           //&& (fq1rmom[0][1]>100.)
-                  && (fqnse < 2)
+                  && (fqnse < 3)
           ) {
 
         //std::cout<<pnu[0]<<" "<<erecmr<<std::endl;
         if(nutype == 0 && inttype != 3) htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
-	else htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[0]);
+	else htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 
         if(nutype == 0 && inttype != 3) hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);
-	else hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[0]);
+	else hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);
+
+	hprecutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 
         if(nutype == 0 && inttype != 3) hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
-	else hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[0]);
+	else hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 
         if ((inttype==0)&&(nutype==0)) heres->Fill((erecmr-pnu[0])/pnu[0]);
 
+        hprecutrecNoFlux[nutype][inttype]->Fill(erecmr);
+        hprecutrecDBNoFlux[nutype][inttype]->Fill(erecmr);
+
 	//std::cout<<"tmva variable for nutype& inttype "<<nutype<<" "<<inttype<<" "<<tmvaMR<<std::endl;
 	for(Int_t innLoop=0;innLoop<100;innLoop++){
-	//std::cout<<"testing locTMVA no."<<innLoop<<" "<<locTMVA[innLoop]*0.01-0.3<<std::endl;
+	//std::cout<<"testing locTMVA no."<<innLoop<<" "<<locTMVA[innLoop]*0.01-0.4<<std::endl;
 	if( 
         erecmr>0.1*innLoop && erecmr<0.1*(innLoop+1) && 
-	tmvaMR>locTMVA[innLoop]*0.01-0.3 
+	tmvaMR>locTMVA[innLoop]*0.01-0.4 
 	) 
 	  {
 	  if(nutype == 0 && inttype != 3) htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
-	  else htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[0]);
+	  else htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 	  if(nutype == 0 && inttype != 3) hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
-	  else hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[0]);
+	  else hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
           if(nutype == 0 && inttype != 3) hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
-	  else hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[0]);
+	  else hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	  ccount[nutype][inttype]++;
+
+          htrueTorecoNoFlux[nutype][inttype]->Fill(pnu[0],erecmr);
+          hpostcutrecNoFlux[nutype][inttype]->Fill(erecmr);
+          hpostcutrecDBNoFlux[nutype][inttype]->Fill(erecmr);
 	  }
 	}
 
@@ -377,7 +416,7 @@ void sklooper::Loop()
 	  && (fqmrnring[0] == 1)
 	  //&& (lemu > fq1rmom[0][1]*0.2)
 	  //&& (fq1rmom[0][1]>100.)
-	  	  && (fqnse < 2)
+	  	  && (fqnse < 3)
 	  ) {
 
 	h1rprecut[nutype][inttype]->Fill(pnu[0]);	

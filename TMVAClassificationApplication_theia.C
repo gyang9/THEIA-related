@@ -682,7 +682,9 @@ else {
    Double_t  angleee2;
    Double_t  anglepp2;
    Double_t  angleepi2;
-   Double_t  anglepie2;    
+   Double_t  anglepie2;   
+   Double_t  evis;
+   Double_t  nhitac; 
 
    TTree* theTree = (TTree*)input->Get("h1");
   
@@ -786,6 +788,9 @@ else {
    theTree->SetBranchAddress("momepp",&momepp);
    theTree->SetBranchAddress("mompep",&mompep);
    theTree->SetBranchAddress("momppe",&momppe);
+
+   theTree->SetBranchAddress("evis",&evis);
+   theTree->SetBranchAddress("nhitac",&nhitac);
 
    double tmvaR;
    //TBranch *tmvaAdd = theTree->Branch("tmva",&tmvaR,"tmva/D");
@@ -1128,7 +1133,10 @@ else {
 				  histBdt    ->Fill( reader->EvaluateMVA( "BDT method"           ) );
  				  //cout<<reader->EvaluateMVA( "BDT method"           )<<endl; 
 				  eff1->Fill(erecmr);
+				  //if(evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3){
 				  tmvaR = reader->EvaluateMVA( "BDT method");
+				  //}
+				  //else { tmvaR = -100; }
 				  //tmvaAdd -> Fill(); 
 				  tt->Fill();
 				  if(reader->EvaluateMVA( "BDT method"           ) < 0 ) eff2-> Fill(erecmr);

@@ -1,4 +1,5 @@
-root -q runsklooper.C 0.3
-root -q runsklooper.C 0.4
-root -q runsklooper.C 0.95
-
+root -q runsklooper.C 1
+root -q runsklooper.C 4
+root -q runsklooper.C 9
+root -q runsklooper.C 16
+root -q runsklooper.C 25

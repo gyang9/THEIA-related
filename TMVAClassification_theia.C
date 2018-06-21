@@ -452,8 +452,8 @@ else if(atoi(gApplication->Argv(4))==2){
    dataloader->SetBackgroundWeightExpression( "fluxWeight[1]" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = "sigCategory >= 0 && sigCategory <= 2   "; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2   "; // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) "; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) "; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // Tell the dataloader how to use the training and testing events
    //

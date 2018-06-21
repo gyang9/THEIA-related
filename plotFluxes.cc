@@ -35,25 +35,29 @@ int main(int argc, char* argv[])
    axesAtm->SetMaximum(30000);
    axesAtm->SetMinimum(10);
    
-   atmSpline[0]->SetLineColor(kRed);
+   atmSpline[0]->SetLineColor(1);
+   atmSpline[0]->SetLineWidth(2);
    atmSpline[0]->Draw("");
    
-   atmSpline[1]->SetLineColor(kRed+2);
+   atmSpline[1]->SetLineColor(2);
+   atmSpline[1]->SetLineWidth(2);
    atmSpline[1]->Draw("SAME");
    
-   atmSpline[2]->SetLineColor(kBlue);
+   atmSpline[2]->SetLineColor(3);
+   atmSpline[2]->SetLineWidth(2);
    atmSpline[2]->Draw("SAME");
    
-   atmSpline[3]->SetLineColor(kBlue+2);
+   atmSpline[3]->SetLineColor(4);
+   atmSpline[3]->SetLineWidth(2);
    atmSpline[3]->Draw("SAME");
    
    TLegend * atmLegend = new TLegend(0.5, 0.5, 0.9, 0.9);
    atmLegend->SetBorderSize(0);
    atmLegend->SetFillStyle(0);
-   atmLegend->AddEntry(atmSpline[0], "#nu_{e}", "l");
-   atmLegend->AddEntry(atmSpline[1], "anti-#nu_{e}", "l");
-   atmLegend->AddEntry(atmSpline[2], "#nu_{#mu}", "l");
-   atmLegend->AddEntry(atmSpline[3], "anti-#nu_{#mu}", "l");
+   atmLegend->AddEntry(duneSpline[4], "#nu_{e}", "l");
+   atmLegend->AddEntry(duneSpline[5], "anti-#nu_{e}", "l");
+   atmLegend->AddEntry(duneSpline[6], "#nu_{#mu}", "l");
+   atmLegend->AddEntry(duneSpline[7], "anti-#nu_{#mu}", "l");
    atmLegend->Draw();
    
    c1->SetLogy();
@@ -64,16 +68,20 @@ int main(int argc, char* argv[])
    axesDuneOsc->SetMaximum(0.2);
    axesDuneOsc->SetMinimum(0.);
    
-   duneSpline[6]->SetLineColor(kRed);
+   duneSpline[6]->SetLineColor(3);
+   duneSpline[6]->SetLineWidth(2);
    duneSpline[6]->Draw("");
    
-   duneSpline[5]->SetLineColor(kRed+2);
+   duneSpline[5]->SetLineColor(2);
+   duneSpline[5]->SetLineWidth(2);
    duneSpline[5]->Draw("SAME");
    
-   duneSpline[4]->SetLineColor(kBlue);
+   duneSpline[4]->SetLineColor(1);
+   duneSpline[4]->SetLineWidth(2);
    duneSpline[4]->Draw("SAME");
    
-   duneSpline[7]->SetLineColor(kBlue+2);
+   duneSpline[7]->SetLineColor(4);
+   duneSpline[7]->SetLineWidth(2);
    duneSpline[7]->Draw("SAME");
    
    TLegend * duneLegend = new TLegend(0.5, 0.5, 0.9, 0.9);

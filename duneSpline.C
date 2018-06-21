@@ -1,6 +1,6 @@
 {
 //=========Macro generated from canvas: c1_n2/c1_n2
-//=========  (Thu Jun 14 15:27:12 2018) by ROOT version5.34/30
+//=========  (Thu Jun 21 13:52:10 2018) by ROOT version5.34/30
    TCanvas *c1_n2 = new TCanvas("c1_n2", "c1_n2",0,0,700,500);
    gStyle->SetOptStat(0);
    c1_n2->SetHighLightColor(2);
@@ -15,11 +15,8 @@
    TSpline5 *spline5 = new TSpline5("numu_fluxosc",0.0625,117,(TF1*)0,137,"",3.316903e-12,0,3.547088e-12,0);
    spline5->SetName("numu_fluxosc");
    spline5->SetFillStyle(1);
-
-   Int_t ci;      // for color index setting
-   TColor *color; // for color definition with alpha
-   ci = TColor::GetColor("#ff0000");
-   spline5->SetLineColor(ci);
+   spline5->SetLineColor(3);
+   spline5->SetLineWidth(2);
    spline5->SetNpx(1000);
    spline5->SetPoint(0,0.0625,1.106136e-12);
    spline5->SetPointCoeff(0,3.557421e-11,-1.49797e-10,0,0,3.426473e-09);
@@ -300,9 +297,8 @@
    spline5 = new TSpline5("nuebar_fluxosc",0.0625,117,(TF1*)0,137,"",4.112493e-13,0,1.811003e-13,0);
    spline5->SetName("nuebar_fluxosc");
    spline5->SetFillStyle(1);
-
-   ci = TColor::GetColor("#990000");
-   spline5->SetLineColor(ci);
+   spline5->SetLineColor(2);
+   spline5->SetLineWidth(2);
    spline5->SetNpx(1000);
    spline5->SetPoint(0,0.0625,7.268228e-13);
    spline5->SetPointCoeff(0,-2.749543e-12,1.726381e-12,0,0,3.751141e-11);
@@ -583,9 +579,7 @@
    spline5 = new TSpline5("nue_fluxosc",0.0625,117,(TF1*)0,137,"",1.531557e-12,0,8.847661e-13,0);
    spline5->SetName("nue_fluxosc");
    spline5->SetFillStyle(1);
-
-   ci = TColor::GetColor("#0000ff");
-   spline5->SetLineColor(ci);
+   spline5->SetLineWidth(2);
    spline5->SetNpx(1000);
    spline5->SetPoint(0,0.0625,1.462862e-12);
    spline5->SetPointCoeff(0,5.086118e-12,-3.735683e-11,0,0,5.449685e-10);
@@ -866,9 +860,8 @@
    spline5 = new TSpline5("numubar_fluxosc",0.0625,117,(TF1*)0,137,"",6.631016e-13,0,5.6962e-13,0);
    spline5->SetName("numubar_fluxosc");
    spline5->SetFillStyle(1);
-
-   ci = TColor::GetColor("#000099");
-   spline5->SetLineColor(ci);
+   spline5->SetLineColor(4);
+   spline5->SetLineWidth(2);
    spline5->SetNpx(1000);
    spline5->SetPoint(0,0.0625,8.64442e-13);
    spline5->SetPointCoeff(0,-1.18023e-12,-4.040757e-12,0,0,3.055661e-10);
@@ -1154,41 +1147,33 @@
    leg->SetFillColor(0);
    leg->SetFillStyle(0);
    TLegendEntry *entry=leg->AddEntry("nue_fluxosc","#nu_{e}","l");
-
-   ci = TColor::GetColor("#0000ff");
-   entry->SetLineColor(ci);
+   entry->SetLineColor(1);
    entry->SetLineStyle(1);
-   entry->SetLineWidth(1);
+   entry->SetLineWidth(2);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
    entry=leg->AddEntry("nuebar_fluxosc","anti-#nu_{e}","l");
-
-   ci = TColor::GetColor("#990000");
-   entry->SetLineColor(ci);
+   entry->SetLineColor(2);
    entry->SetLineStyle(1);
-   entry->SetLineWidth(1);
+   entry->SetLineWidth(2);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
    entry=leg->AddEntry("numu_fluxosc","#nu_{#mu}","l");
-
-   ci = TColor::GetColor("#ff0000");
-   entry->SetLineColor(ci);
+   entry->SetLineColor(3);
    entry->SetLineStyle(1);
-   entry->SetLineWidth(1);
+   entry->SetLineWidth(2);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);
    entry->SetTextFont(42);
    entry=leg->AddEntry("numubar_fluxosc","anti-#nu_{#mu}","l");
-
-   ci = TColor::GetColor("#000099");
-   entry->SetLineColor(ci);
+   entry->SetLineColor(4);
    entry->SetLineStyle(1);
-   entry->SetLineWidth(1);
+   entry->SetLineWidth(2);
    entry->SetMarkerColor(1);
    entry->SetMarkerStyle(21);
    entry->SetMarkerSize(1);

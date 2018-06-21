@@ -493,6 +493,35 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
    nuebarOsc = (TH1D*)f1->Get("nuebar_fluxosc");
    numuOsc   = (TH1D*)f1->Get("numu_fluxosc");
    numubarOsc= (TH1D*)f1->Get("numubar_fluxosc");
+
+   TH1D* EvCCnue       = (TH1D*)f1->Get("nue_cceventrate");
+   TH1D* EvCCnuebar    = (TH1D*)f1->Get("nuebar_cceventrate");
+   TH1D* EvCCnumu      = (TH1D*)f1->Get("numu_cceventrate");
+   TH1D* EvCCnumubar   = (TH1D*)f1->Get("numubar_cceventrate");
+   TH1D* EvCCnutau     = (TH1D*)f1->Get("nue_cceventrate");
+   TH1D* EvCCnutaubar  = (TH1D*)f1->Get("nuebar_cceventrate");
+   TH1D* EvNCnue       = (TH1D*)f1->Get("nue_cceventrate");
+   TH1D* EvNCnuebar    = (TH1D*)f1->Get("nuebar_cceventrate");
+   TH1D* EvNCnumu      = (TH1D*)f1->Get("numu_cceventrate");
+   TH1D* EvNCnumubar   = (TH1D*)f1->Get("numubar_cceventrate");
+   TH1D* EvNCnutau     = (TH1D*)f1->Get("nue_cceventrate");
+   TH1D* EvNCnutaubar  = (TH1D*)f1->Get("nuebar_cceventrate");
+
+   std::cout<<"now recording event rates: "<<std::endl;
+   std::cout<<"CC nue "<< EvCCnue->Integral()<<std::endl;
+   std::cout<<"CC nuebar "<< EvCCnuebar->Integral()<<std::endl;
+   std::cout<<"CC numu "<< EvCCnumu->Integral()<<std::endl;
+   std::cout<<"CC numubar "<< EvCCnumubar->Integral()<<std::endl;
+   std::cout<<"CC nutau "<< EvCCnutau->Integral()<<std::endl;
+   std::cout<<"CC nutaubar "<< EvCCnutaubar->Integral()<<std::endl;
+
+   std::cout<<"NC nue "<< EvNCnue->Integral()<<std::endl;
+   std::cout<<"NC nuebar "<< EvNCnuebar->Integral()<<std::endl;
+   std::cout<<"NC numu "<< EvNCnumu->Integral()<<std::endl;
+   std::cout<<"NC numubar "<< EvNCnumubar->Integral()<<std::endl;
+   std::cout<<"NC nutau "<< EvNCnutau->Integral()<<std::endl;
+   std::cout<<"NC nutaubar "<< EvNCnutaubar->Integral()<<std::endl;
+
 /*
    //normalize to 1
    nue         ->Scale(1./nue->Integral());
@@ -509,11 +538,14 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
 
    // Divide by bin width first!
    for (int iHist = 0; iHist < 8; iHist++) {
+     std::cout<<"the integral for "<<iHist<<" "<<hists[iHist]->Integral()<<std::endl;
      for (int iBin = 1; iBin <= hists[iHist]->GetNbinsX(); iBin++)
        hists[iHist]->SetBinContent(iBin, hists[iHist]->GetBinContent(iBin)/hists[iHist]->GetBinWidth(iBin));
+       //std::cout<<"the integral for "<<iHist<<" "<<hists[iHist]->Integral()<<std::endl;
        //hists[iHist]->Scale(1./hists[iHist]->Integral()); // Why normalizing each component independently?!
    }
 
+/*
    TSpline5* duneNue       = new TSpline5( nue);
    TSpline5* duneNuebar    = new TSpline5( nuebar);
    TSpline5* duneNumu      = new TSpline5( numu);
@@ -522,6 +554,18 @@ TSpline5** THEIA::LoadDuneFlux(TString duneFlux)
    TSpline5* duneNuebarOsc = new TSpline5( nuebarOsc);
    TSpline5* duneNumuOsc   = new TSpline5( numuOsc);
    TSpline5* duneNumubarOsc= new TSpline5( numubarOsc);
+*/
+
+   TSpline5* duneNue       = new TSpline5( hists[0]);
+   TSpline5* duneNuebar    = new TSpline5( hists[1]);
+   TSpline5* duneNumu      = new TSpline5( hists[2]);
+   TSpline5* duneNumubar   = new TSpline5( hists[3]);
+   TSpline5* duneNueOsc    = new TSpline5( hists[4]);
+   TSpline5* duneNuebarOsc = new TSpline5( hists[5]);
+   TSpline5* duneNumuOsc   = new TSpline5( hists[6]);
+   TSpline5* duneNumubarOsc= new TSpline5( hists[7]);
+
+   //std::cout<<"dune flux integral tests: "<<duneNue->Integral()<<" "<<duneNuebar->Integral()<<" "<<duneNumu->Integral()<<" "<<duneNumubar->Integral()<<" "<<duneNueOsc->Integral()<<" "<<duneNuebarOsc->Integral()<<" "<<duneNumuOsc->Integral()<<" "<<duneNumubarOsc->Integral()<<std::endl;
 
    reTot2[0] = duneNue;
    reTot2[1] = duneNuebar;
@@ -576,19 +620,26 @@ TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
    TGraph * gAtmNumu    = new TGraph(atmFlux, "%lg %*lg %*lg %lg", "");
    TGraph * gAtmNumubar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg", "");
 
+   //double inteNue=0; double inteNuebar=0; double intNumu=0; double inteNumubar=0;
    double inteNue = gAtmNue->Integral();
+   //for (int iGra=0;iGra<gAtmNue->GetN();iGra++) inteNue += gAtmNue->GetY()[iGra]; 
    for (int iGra=0;iGra<gAtmNue->GetN();iGra++) gAtmNue->GetY()[iGra] /= inteNue;
    double inteNuebar = gAtmNuebar->Integral();
+   //for (int iGra=0;iGra<gAtmNuebar->GetN();iGra++) inteNuebar += gAtmNuebar->GetY()[iGra];
    for (int iGra=0;iGra<gAtmNuebar->GetN();iGra++) gAtmNuebar->GetY()[iGra] /= inteNuebar;
    double inteNumu = gAtmNumu->Integral();
+   //for (int iGra=0;iGra<gAtmNumu->GetN();iGra++) inteNumu += gAtmNumu->GetY()[iGra];
    for (int iGra=0;iGra<gAtmNumu->GetN();iGra++) gAtmNumu->GetY()[iGra] /= inteNumu;
    double inteNumubar = gAtmNumubar->Integral();
+   //for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) inteNumubar += gAtmNumubar->GetY()[iGra];
    for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) gAtmNumubar->GetY()[iGra] /= inteNumubar;
 
    TSpline5* atmNue    = new TSpline5("atmNue", gAtmNue);
    TSpline5* atmNuebar = new TSpline5("atmNuebar", gAtmNuebar);
    TSpline5* atmNumu   = new TSpline5("atmNumu", gAtmNumu);
    TSpline5* atmNumubar= new TSpline5("atmNumubar", gAtmNumubar);
+
+   //std::cout<<"atm flux integral tests: "<<atmNue->Integral()<<" "<<atmNuebar->Integral()<<" "<<atmNumu->Integral()<<" "<<atmNumubar->Integral()<<std::endl;
 
    reTot[0] = atmNue;
    reTot[1] = atmNuebar;
@@ -746,6 +797,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
         fluxWeight[1] = reTot2[7]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
         }
 
+	if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }
         //if(fluxWeight[0]>0.1) {fluxWeight[0] = 10e-22;}
         //if(fluxWeight[1]>0.1) {fluxWeight[1] = 10e-22;}
 

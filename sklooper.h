@@ -11,6 +11,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TApplication.h>
+#include <TH1.h>
 
 class sklooper {
 public :
