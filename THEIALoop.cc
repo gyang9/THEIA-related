@@ -615,11 +615,11 @@ TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
 */
 
    // Use TGraphs to read file directly, much easier
-   TGraph * gAtmNue     = new TGraph(atmFlux, "%lg %lg" , "");
-   TGraph * gAtmNuebar  = new TGraph(atmFlux, "%lg %*lg %lg", "");
-   TGraph * gAtmNumu    = new TGraph(atmFlux, "%lg %*lg %*lg %lg", "");
-   TGraph * gAtmNumubar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg", "");
-
+   TGraph * gAtmNumu     = new TGraph(atmFlux, "%lg %lg" , "");
+   TGraph * gAtmNumubar  = new TGraph(atmFlux, "%lg %*lg %lg", "");
+   TGraph * gAtmNue    = new TGraph(atmFlux, "%lg %*lg %*lg %lg", "");
+   TGraph * gAtmNuebar = new TGraph(atmFlux, "%lg %*lg %*lg %*lg %lg", "");
+/*
    //double inteNue=0; double inteNuebar=0; double intNumu=0; double inteNumubar=0;
    double inteNue = gAtmNue->Integral();
    //for (int iGra=0;iGra<gAtmNue->GetN();iGra++) inteNue += gAtmNue->GetY()[iGra]; 
@@ -633,7 +633,7 @@ TSpline5** THEIA::LoadAtmFlux(TString atmFlux)
    double inteNumubar = gAtmNumubar->Integral();
    //for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) inteNumubar += gAtmNumubar->GetY()[iGra];
    for (int iGra=0;iGra<gAtmNumubar->GetN();iGra++) gAtmNumubar->GetY()[iGra] /= inteNumubar;
-
+*/
    TSpline5* atmNue    = new TSpline5("atmNue", gAtmNue);
    TSpline5* atmNuebar = new TSpline5("atmNuebar", gAtmNuebar);
    TSpline5* atmNumu   = new TSpline5("atmNumu", gAtmNumu);
@@ -781,20 +781,20 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
       if (jentry % 100000 == 0) {std::cout << jentry << " events processed" << std::endl;}
 
         if(ipnu[0] == 12){
-        fluxWeight[0] = reTot2[0]->Eval(pnu[0])/ reTot[0]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[4]->Eval(pnu[0])/ reTot[0]->Eval(pnu[0]);
+        fluxWeight[0] = (reTot2[0]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[4]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
         }
         if(ipnu[0] == -12){
-        fluxWeight[0] = reTot2[1]->Eval(pnu[0])/ reTot[1]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[5]->Eval(pnu[0])/ reTot[1]->Eval(pnu[0]);
+        fluxWeight[0] = (reTot2[1]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[5]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
         }
         if(ipnu[0] == 14){
-        fluxWeight[0] = reTot2[2]->Eval(pnu[0])/ reTot[2]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[6]->Eval(pnu[0])/ reTot[2]->Eval(pnu[0]);
+        fluxWeight[0] = (reTot2[2]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[6]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
         }
         if(ipnu[0] == -14){
-        fluxWeight[0] = reTot2[3]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[7]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
+        fluxWeight[0] = (reTot2[3]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[7]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
         }
 
 	if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }

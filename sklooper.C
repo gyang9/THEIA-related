@@ -17,7 +17,7 @@ void sklooper::GetTMVACut()
    Int_t mode;
    Int_t fqnse;
    Int_t ipnu[50];
-
+   Int_t fqmrnring[50];
 
    TFile f("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root");
    TTree*t = (TTree*)f.Get("h1");
@@ -35,6 +35,7 @@ void sklooper::GetTMVACut()
    t->SetBranchAddress("mode", &mode);
    t->SetBranchAddress("fqnse",&fqnse);
    t->SetBranchAddress("ipnu", &ipnu);
+   t->SetBranchAddress("fqmrnring", &fqmrnring);
 
    Long64_t nbytes = 0, nb = 0;
    Int_t NofEvent = t->GetEntries();
@@ -58,7 +59,12 @@ void sklooper::GetTMVACut()
 
       //cout<<"erecmr sigCategory towall evis nhitac fluxWeight[0] fluxWeight[1] : "<<erecmr<<" "<<sigCategory<<" "<<fqwall<<" "<<evis<<" "<<nhitac<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<endl;
 
-      if(fqwall>200 && evis > 30 && nhitac < 16 && fqnse <= 2 ){
+      if(fqwall>200 
+	&& evis > 30 
+	&& nhitac < 16 
+	&& fqnse <= 2 
+	&& (fqmrnring[0] == 1)
+	){
 	for(Int_t iii=0;iii<100;iii++){
 	  if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 ) {if(sigCategory>=0)c_sss[iii]++; if(bkgCategory>=0)c_bbb[iii]++;}
           for(Int_t ii=0;ii<80;ii++){
@@ -346,7 +352,7 @@ void sklooper::Loop()
       if ((nhitac<16)
           && (fqwall > 200.)
           && (evis>30)
-          //&& (fqmrnring[0] == 1)
+          && (fqmrnring[0] == 1)
           //&& (lemu > fq1rmom[0][1]*0.2)
           //&& (fq1rmom[0][1]>100.)
                   && (fqnse < 3)
