@@ -1,9 +1,10 @@
-{
+#include "sklooper.h"
 
-  gROOT->ProcessLine(".L sklooper.C+");
+int main(){
+
+  //gROOT->ProcessLine(".L sklooper.C+");
   sklooper skl;
   skl.GetTMVACut();
   skl.Loop();
-
 
 }

@@ -10,14 +10,14 @@ void sklooper::GetTMVACut()
 {
 
    Double_t erecmr, fluxWeight[2], tmvaMR, fqwall, towall;
-   Float_t  pnu[50];
+   Float_t  pnu[100];
    Int_t sigCategory, bkgCategory;
    Float_t evis;
    UInt_t nhitac;
    Int_t mode;
    Int_t fqnse;
-   Int_t ipnu[50];
-   Int_t fqmrnring[50];
+   Int_t ipnu[100];
+   Int_t fqmrnring[100];
 
    TFile f("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root");
    TTree*t = (TTree*)f.Get("h1");
@@ -57,13 +57,13 @@ void sklooper::GetTMVACut()
 
       if (jentry % 100000 == 0) {std::cout << jentry << " events processed" << std::endl;}
 
-      //cout<<"erecmr sigCategory towall evis nhitac fluxWeight[0] fluxWeight[1] : "<<erecmr<<" "<<sigCategory<<" "<<fqwall<<" "<<evis<<" "<<nhitac<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<endl;
+      //std::cout<<"event : "<<jentry<<" erecmr sigCategory towall evis nhitac fluxWeight[0] fluxWeight[1] tmvaMR fqnse : "<<erecmr<<" "<<sigCategory<<" "<<fqwall<<" "<<evis<<" "<<nhitac<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<" "<<tmvaMR<<" "<<fqnse<<std::endl;
 
       if(fqwall>200 
 	&& evis > 30 
 	&& nhitac < 16 
 	&& fqnse <= 2 
-	&& (fqmrnring[0] == 1)
+//	&& (fqmrnring[0] == 1)
 	){
 	for(Int_t iii=0;iii<100;iii++){
 	  if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 ) {if(sigCategory>=0)c_sss[iii]++; if(bkgCategory>=0)c_bbb[iii]++;}
@@ -72,21 +72,20 @@ void sklooper::GetTMVACut()
 	  }
         }
       }
-
    }
 
    std::cout<<"trying to see the results of tmva cuts.. "<<std::endl;
    for(Int_t ii=0;ii<100;ii++){
         for(Int_t jj=0;jj<80;jj++){
-                if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*atof(gApplication->Argv(4)))>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]*atof(gApplication->Argv(4)))<<std::endl; }
+                //if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4)))>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4)))<<std::endl; }
 		//std::cout<<c_ss[ii][jj]/c_sss[ii]<<std::endl;
-		//if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
+		if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
         }
    }
 
    std::cout<<std::endl;
    std::cout<<"locations of TMVAs for every 0.1 GeV are:  ";
-   for(Int_t ii=0;ii<100;ii++){cout<< " "<< locTMVA[ii]*0.01 - 0.4 <<"  ";}
+   for(Int_t ii=0;ii<100;ii++){std::cout<< " "<< locTMVA[ii]*0.01 - 0.4 <<"  ";}
    std::cout<<std::endl;
 
 }
@@ -273,7 +272,7 @@ void sklooper::Loop()
       double ypos = fq1rpos[0][1][1];
       double zpos = fq1rpos[0][1][2];
       double rpos = sqrt(xpos*xpos+ypos*ypos);
-      double fqwall = min(1690.-rpos,min(1810.-zpos,1810.+zpos));
+      double fqwall = TMath::Min(1690.-rpos,TMath::Min(1810.-zpos,1810.+zpos));
       //      std::cout << "wall, fqwall, rpos, zpos, ypos, xpos = " << wall << ", " << fqwall << ", " << rpos << ", " << zpos << ", " << ypos << ", " << xpos << std::endl;
 
       hfqzvsr->Fill(rpos,zpos);
@@ -457,7 +456,7 @@ void sklooper::Loop()
       double ypos2 = fqmrpos[0][0][1];
       double zpos2 = fqmrpos[0][0][2];
       double rpos2 = sqrt(xpos2*xpos2+ypos2*ypos2);
-      double fqwall2 = min(1690.-rpos2,min(1810.-zpos2,1810.+zpos2));
+      double fqwall2 = TMath::Min(1690.-rpos2,TMath::Min(1810.-zpos2,1810.+zpos2));
 
       double md = 1232;
       double mN = (mp + mn) / 2.;
