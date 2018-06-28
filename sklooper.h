@@ -794,14 +794,14 @@ public :
 
    Double_t fluxWeight[2];
 
-   virtual void     GetTMVACut();
+   virtual void     GetTMVACut(double factor);
    sklooper(TTree *tree=0);
    virtual ~sklooper();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
+   virtual void     Loop(double factor);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };

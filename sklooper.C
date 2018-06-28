@@ -6,7 +6,7 @@
 #include <TH2D.h>
 #include <iostream>
 
-void sklooper::GetTMVACut()
+void sklooper::GetTMVACut(double factor)
 {
 
    Double_t erecmr, fluxWeight[2], tmvaMR, fqwall, towall;
@@ -19,6 +19,7 @@ void sklooper::GetTMVACut()
    Int_t ipnu[100];
    Int_t fqmrnring[100];
 
+   std::cout<<"factor input here is "<<factor<<std::endl;
    TFile f("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root");
    TTree*t = (TTree*)f.Get("h1");
 
@@ -74,12 +75,13 @@ void sklooper::GetTMVACut()
       }
    }
 
-   std::cout<<"trying to see the results of tmva cuts.. "<<std::endl;
+   std::cout<<"trying to see the results of tmva cuts with variable "<<factor<<" ... "<<std::endl;
    for(Int_t ii=0;ii<100;ii++){
         for(Int_t jj=0;jj<80;jj++){
+                if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor)>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor)<<std::endl; }
                 //if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4)))>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4)))<<std::endl; }
 		//std::cout<<c_ss[ii][jj]/c_sss[ii]<<std::endl;
-		if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
+		//if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
         }
    }
 
@@ -90,7 +92,7 @@ void sklooper::GetTMVACut()
 
 }
 
-void sklooper::Loop()
+void sklooper::Loop(double factor)
 {
 
   std::cout << "I am here!!!!" << std::endl;
@@ -120,7 +122,7 @@ void sklooper::Loop()
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   TFile* outfile = new TFile(Form("outfilesk_%s.root",gApplication->Argv(4)),"RECREATE");
+   TFile* outfile = new TFile(Form("outfilesk_%f.root", factor),"RECREATE");
    TH2D* hzvsr = new TH2D("hzvsr","True Z vs R",40,0.,4000.,80,-4000.,4000.);
    TH2D* hfqzvsr = new TH2D("hfqzvsr","FiTQun Z vs R",40,0.,4000.,80,-4000.,4000.);
 
