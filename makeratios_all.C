@@ -26,7 +26,7 @@
   const int ndecaye2 = 3;
   const int nrings2 = 2;
   const int maxcomb = 8;
-  int ncomb[nrings2] = {4,8};
+  const int ncomb[nrings2] = {4,8};
   TH1D* h2precut [nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
   TH1D* h2precutrec [nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
   TH1D* h2postcutrec[nnutypes][ninttypes][ndecaye2][nrings2][maxcomb];
@@ -34,20 +34,20 @@
   TH2D* h2trueTOrecoNoFlux[nnutypes][ninttypes];
   TH2D* h2trueTOrecoPRE[nnutypes][ninttypes];
 
-  const int nbins = 25;
-  TString sbinedges[nbins+1] = {"0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0", "15.0", "20.0", "40.0", "60"};
+  const int nnbins = 25;
+  TString sbinedges[nnbins+1] = {"0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0", "15.0", "20.0", "40.0", "60"};
 
-  const int nbinsPost = 9;
-  TString sbinedgesPost[nbinsPost+1] = {"0.175", "0.6", "1.175", "1.75", "2.5", "3.5", "4.5", "7.5", "10.0", "60.0"};
+  const int nnbinsPost = 9;
+  TString sbinedgesPost[nnbinsPost+1] = {"0.175", "0.6", "1.175", "1.75", "2.5", "3.5", "4.5", "7.5", "10.0", "60.0"};
 
   TFile* tf = new TFile(Form("outfilesk_%s.root", gApplication->Argv(4)  ));
-  const int nbins = nue_ccqe_precut->GetNbinsX();
-  double yvals[nbins];
-  double xvals[nbins];
+  int nbins = nue_ccqe_precut->GetNbinsX();
+  double yvals[100];
+  double xvals[100];
 
-  const int nbinsPost = nue_ccqe_postcutrec->GetNbinsX();
-  double yvalsPost[nbinsPost];
-  double xvalsPost[nbinsPost];
+  int nbinsPost = nue_ccqe_postcutrec->GetNbinsX();
+  double yvalsPost[100];
+  double xvalsPost[100];
 
 
   // precuts over all neutrinos
@@ -78,7 +78,7 @@
       gDirectory->GetObject(hname,htruefv[nt][it]);
       //      htruefv[nt][it] = new TH1D(hname,hname,nbins,binedges);
       std::cout << hname << ": " << htruefv[nt][it]->GetEntries() << " "<< htruefv[nt][it]->Integral()<< std::endl;
-      TString hname = hprefix + "_truefvOsc";
+      hname = hprefix + "_truefvOsc";
       gDirectory->GetObject(hname,htruefvOsc[nt][it]);
       //      htruefvOsc[nt][it] = new TH1D(hname,hname,nbins,binedges);
       std::cout << hname << ": " << htruefvOsc[nt][it]->GetEntries() << " "<< htruefvOsc[nt][it]->Integral()<< std::endl;
@@ -576,9 +576,10 @@
   // Draw!
 
   std::cout << "Begin Drawing" << std::endl;
-
+  TString canprefix;
+  TString canpostfix;
   for (int ide=0; ide<1; ide++) {
-    TString canprefix = "eff_mr_decaye";
+    canprefix = "eff_mr_decaye";
     canprefix += ide;
     for (int ir=0; ir<1; ir++) {
       TString canname = canprefix;
@@ -625,7 +626,7 @@
       canname += ".png";
       tcan->Print(canname);
       
-      legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+      TLegend* legend = new TLegend(0.1, 0.6, 0.25, 0.9);
       legend->SetHeader("curves");
       legend->AddEntry(tgepiccqe[0],"CCQE nu 1","l");
       legend->AddEntry(tgepiccqe[1],"CCQE nu 2","l");
@@ -687,7 +688,7 @@
       cannamePost += ".png";
       tcanPost->Print(cannamePost);
 
-      legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+      TLegend* legend = new TLegend(0.1, 0.6, 0.25, 0.9);
       legend->SetHeader("curves");
       legend->AddEntry(tgepiccqePost[0],"CCQE nu 1","l");
       legend->AddEntry(tgepiccqePost[1],"CCQE nu 2","l");
