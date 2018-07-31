@@ -22,8 +22,6 @@
   TH1D* h1rprecut [nnutypes][ninttypes];
   TH1D* h1rprecutrec [nnutypes][ninttypes];
   TH1D* h1rpostcutrec[nnutypes][ninttypes];
-  TH1D* h1rprecutrecDB [nnutypes][ninttypes];
-  TH1D* h1rpostcutrecDB[nnutypes][ninttypes];
 
   const int ndecaye2 = 3;
   const int nrings2 = 2;
@@ -142,13 +140,6 @@
       hname = hprefix + "_1rpostcutrec";
       gDirectory->GetObject(hname,h1rpostcutrec[nt][it]);
       std::cout << hname << ": " << h1rpostcutrec[nt][it]->GetEntries() << " "<< h1rpostcutrec[nt][it]->Integral()<<std::endl;
-      hname = hprefix + "_1rprecutrecDB";
-      gDirectory->GetObject(hname,h1rprecutrecDB[nt][it]);
-      std::cout << hname << ": " << h1rprecutrecDB[nt][it]->GetEntries() << " "<< h1rprecutrecDB[nt][it]->Integral()<<std::endl;
-//      hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
-      hname = hprefix + "_1rpostcutrecDB";
-      gDirectory->GetObject(hname,h1rpostcutrecDB[nt][it]);
-      std::cout << hname << ": " << h1rpostcutrecDB[nt][it]->GetEntries() << " "<< h1rpostcutrecDB[nt][it]->Integral()<<std::endl;
 
       gDirectory->GetObject("TMVA_values",hTMVA);
 
@@ -733,8 +724,8 @@
 
    THStack *hs = new THStack("hs","");
 
-   repiccnumuPostDB->SetFillColor(1);
-   repincPostDB->SetFillColor(2);
+   repiccnumuPostDB->SetLineColor(1);
+   repincPostDB->SetLineColor(2);
 
    repiccSignal = (TH1D*)repiccqePostDB[0]->Clone();
    repiccSignal->Add(repiccpipPostDB[0]);
@@ -742,10 +733,10 @@
    repiccSignal->Add(repiccqePostDB[1]);
    repiccSignal->Add(repiccpipPostDB[1]);
    repiccSignal->Add(repiccotherPostDB[1]);
-   repiccSignal->SetFillColor(4);
+   repiccSignal->SetLineColor(4);
 
-   repiccnumuPreDB->SetFillColor(1);
-   repincPreDB->SetFillColor(2);
+   repiccnumuPreDB->SetLineColor(1);
+   repincPreDB->SetLineColor(2);
 
    repiccSignalPRE = (TH1D*)repiccqePreDB[0]->Clone();
    repiccSignalPRE->Add(repiccpipPreDB[0]);
@@ -753,7 +744,7 @@
    repiccSignalPRE->Add(repiccqePreDB[1]);
    repiccSignalPRE->Add(repiccpipPreDB[1]);
    repiccSignalPRE->Add(repiccotherPreDB[1]);
-   repiccSignalPRE->SetFillColor(4);
+   repiccSignalPRE->SetLineColor(4);
 
    repiccSignalNoFlux = (TH1D*)repiccqePostDBNoFlux[0]->Clone();
    repiccSignalNoFlux->Add(repiccpipPostDBNoFlux[0]);
@@ -804,9 +795,9 @@
    //repiccSignal->Scale(1./repiccSignal->Integral() * (repiccSignalNoFlux->Integral()/ 1500000 ) * (CCnue));
 
 
-   //repiccnumuPostDB->Scale(1./repiccnumuPostDB->Integral() * (repiccnumuPostDBNoFlux->Integral()/ repiccSignalNoFlux->Integral() ) *(CCnumu));
-   //repincPostDB->Scale(1./repincPostDB->Integral() * (repincPostDBNoFlux->Integral()/ repiccSignalNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
-   //repiccSignal->Scale(1./repiccSignal->Integral() * (1) * (CCnue));
+   repiccnumuPostDB->Scale(1./repiccnumuPostDB->Integral() * (repiccnumuPostDBNoFlux->Integral()/ repiccSignalNoFlux->Integral() ) *(CCnumu));
+   repincPostDB->Scale(1./repincPostDB->Integral() * (repincPostDBNoFlux->Integral()/ repiccSignalNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
+   repiccSignal->Scale(1./repiccSignal->Integral() * (1) * (CCnue));
 
 
    std::cout<<"integral tests for numu, nc and signal:  "<<repiccnumuPostDB->Integral()<<" "<<repincPostDB->Integral()<<" "<<repiccSignal->Integral()<<std::endl;
@@ -815,16 +806,18 @@
    std::cout<<"                                                     "<<repiccSignalNoFlux->Integral()/ repiccSignalNoFluxPRE->Integral()<<std::endl;
 
    // scale to 3.5 years (1.47e21 * 3.5 * 40)
-   //repiccnumuPostDB->Scale(1.47e21 * 3.5 * 50);
-   //repincPostDB->Scale(1.47e21 * 3.5 * 50);
-   //repiccSignal->Scale(1.47e21 * 3.5 * 50);
+   repiccnumuPostDB->Scale(1.47e21 * 3.5 * 50);
+   repincPostDB->Scale(1.47e21 * 3.5 * 50);
+   repiccSignal->Scale(1.47e21 * 3.5 * 50);
 
    hs->Add(repiccnumuPostDB);
    hs->Add(repincPostDB);   
    hs->Add(repiccSignal);
 
    new TCanvas();
-   hs->Draw();
+   repiccSignal->Draw("hist");
+   repincPostDB->Draw("same");
+   repiccnumuPostDB->Draw("same");
 
    legend = new TLegend(0.1, 0.6, 0.25, 0.9);
    legend->SetHeader("Stacked plot");
@@ -850,7 +843,9 @@
    hs2->Add(repiccSignalPRE);
 
    new TCanvas();
-   hs2->Draw();
+   repiccnumuPreDB->Draw("hist");
+   repincPreDB->Draw("same");
+   repiccSignalPRE->Draw("same");
 
    legend = new TLegend(0.1, 0.6, 0.25, 0.9);
    legend->SetHeader("Stacked plot");

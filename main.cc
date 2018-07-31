@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
    THEIA* sLoop = new THEIA(tree);
    //sLoop->LoadFile(tree);     
    //sLoop->Init(tree);
-   sLoop->prepareOutput("outputTest.root");
+   sLoop->prepareOutput("outputTest_10e4.root");
 
    TString atmFlux("input/hondaFluxTruncated_new.txt");
    TSpline5** atmSpline = sLoop->LoadAtmFlux(atmFlux);
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
    std::cout<<"ready to loop"<<std::endl;
 
-   Int_t NofEvent = nentries;
+   Int_t NofEvent = 10e4; //nentries;
    sLoop->LoopAndWrite(NofEvent, true);   
 
 } 

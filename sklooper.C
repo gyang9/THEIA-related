@@ -20,7 +20,7 @@ void sklooper::GetTMVACut(double factor)
    Int_t fqmrnring[100];
 
    std::cout<<"factor input here is "<<factor<<std::endl;
-   TFile f("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root");
+   TFile f(Form("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput100.root"));
    TTree*t = (TTree*)f.Get("h1");
 
    t->SetBranchAddress("erecmr", &erecmr);
@@ -122,7 +122,7 @@ void sklooper::Loop(double factor)
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   TFile* outfile = new TFile(Form("outfilesk_%f.root", factor),"RECREATE");
+   TFile* outfile = new TFile(Form("outfilesk_%f_file100.root", factor),"RECREATE");
    TH2D* hzvsr = new TH2D("hzvsr","True Z vs R",40,0.,4000.,80,-4000.,4000.);
    TH2D* hfqzvsr = new TH2D("hfqzvsr","FiTQun Z vs R",40,0.,4000.,80,-4000.,4000.);
 
@@ -147,6 +147,13 @@ void sklooper::Loop(double factor)
    TH1D* h1rprecut [nnutypes][ninttypes];
    TH1D* h1rprecutrec [nnutypes][ninttypes];
    TH1D* h1rpostcutrec[nnutypes][ninttypes];
+   TH1D* h1rprecutDB [nnutypes][ninttypes];
+   TH1D* h1rprecutrecDB [nnutypes][ninttypes];
+   TH1D* h1rpostcutrecDB[nnutypes][ninttypes];
+
+   TH2D* hpi0precut[nnutypes][ninttypes];
+   TH2D* hpi0postcut[nnutypes][ninttypes];
+   TH2D* h1rpi0precut[nnutypes][ninttypes];
 
    const int ndecaye2 = 3;
    const int nrings2 = 2;
@@ -195,6 +202,10 @@ void sklooper::Loop(double factor)
        h1rprecutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
        hname = hprefix + "_1rpostcutrec";
        h1rpostcutrec[nt][it] = new TH1D(hname,hname,nbinsPost,binedgesPost);
+       hname = hprefix + "_1rprecutrecDB";
+       h1rprecutrecDB[nt][it] = new TH1D(hname,hname,62,0.25,8);
+       hname = hprefix + "_1rpostcutrecDB";
+       h1rpostcutrecDB[nt][it] = new TH1D(hname,hname,62,0.25,8);
        hname = hprefix + "_trueToreco";
        htrueToreco[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
        hname = hprefix + "_trueTorecoPRE";
@@ -210,6 +221,13 @@ void sklooper::Loop(double factor)
        hpostcutrecDBNoFlux[nt][it] = new TH1D(hname,hname,62,0.25,8);
        hname = hprefix + "_trueTorecoNoFlux";
        htrueTorecoNoFlux[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
+
+       hname = hprefix + "_hpi0precut";
+       hpi0precut[nt][it] = new TH2D(hname,hname,30,0,300,40,0,400);
+       hname = hprefix + "_hpi0postcut";
+       hpi0postcut[nt][it] = new TH2D(hname,hname,30,0,300,40,0,400);
+       hname = hprefix + "_h1rpi0precut";
+       h1rpi0precut[nt][it] = new TH2D(hname,hname,30,0,300,40,0,400);
 
        int ncomb[nrings2] = {4,8};
        for (int ide=0; ide<ndecaye2; ide++) {
@@ -316,7 +334,7 @@ void sklooper::Loop(double factor)
 	inttype = 0;
       } else if ((abs(mode)==11)||(abs(mode)==13)||(abs(mode)==16)) { // CCpi+
 	inttype = 1;
-      } else if ((abs(mode)<30)) { // CCother
+      } else if (abs(mode)<30) { // CCother
 	inttype = 2;
       } else if ((abs(mode)>30)) { // NC
 	inttype = 3;
@@ -359,6 +377,7 @@ void sklooper::Loop(double factor)
                   && (fqnse < 3)
           ) {
 
+        //erecmr = pnu[0];
         //std::cout<<pnu[0]<<" "<<erecmr<<std::endl;
         if(nutype == 0 && inttype != 3) htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 	else htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
@@ -376,6 +395,8 @@ void sklooper::Loop(double factor)
         hprecutrecNoFlux[nutype][inttype]->Fill(erecmr);
         hprecutrecDBNoFlux[nutype][inttype]->Fill(erecmr);
 
+        hpi0precut[nutype][inttype]->Fill(fqpi0mass[0],lpie,fluxWeight[1]);
+
 	//std::cout<<"tmva variable for nutype& inttype "<<nutype<<" "<<inttype<<" "<<tmvaMR<<std::endl;
 	for(Int_t innLoop=0;innLoop<100;innLoop++){
 	//std::cout<<"testing locTMVA no."<<innLoop<<" "<<locTMVA[innLoop]*0.01-0.4<<std::endl;
@@ -391,6 +412,8 @@ void sklooper::Loop(double factor)
           if(nutype == 0 && inttype != 3) hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 	  else hpostcutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 	  ccount[nutype][inttype]++;
+
+       	  hpi0postcut[nutype][inttype]->Fill(fqpi0mass[0],lpie,fluxWeight[1]);
 
           htrueTorecoNoFlux[nutype][inttype]->Fill(pnu[0],erecmr);
           hpostcutrecNoFlux[nutype][inttype]->Fill(erecmr);
@@ -415,42 +438,47 @@ void sklooper::Loop(double factor)
       }
 
 
-
       // 1-ring e-like preselection
       if ((nhitac<16)
 	  && (fqwall > 200.)
 	  && (evis>30)
 	  && (fqmrnring[0] == 1)
-	  //&& (lemu > fq1rmom[0][1]*0.2)
+	  && (lemu > fq1rmom[0][1]*0.2)
 	  //&& (fq1rmom[0][1]>100.)
 	  	  && (fqnse < 3)
 	  ) {
 
-	h1rprecut[nutype][inttype]->Fill(pnu[0]);	
-	h1rprecutrec[nutype][inttype]->Fill(erec);	
+	h1rprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);	
+	h1rprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);	
+        h1rprecutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 
 	//if ((inttype==0)&&(nutype==0)) heres->Fill((erec-pnu[0])/pnu[0]);
 
-        if(tmvaMR>0) {
-          h1rpostcutrec[nutype][inttype]->Fill(erec);
-        }
+        //if(tmvaMR>0) {
+        //  h1rpostcutrec[nutype][inttype]->Fill(erec);
+        //}
 
-	//if (fq1rmom[0][1]<500.) {
-	//  if (lpie < 125 - 0.875*fqpi0mass[0]) {
-	//    hpostcutrec[nutype][inttype]->Fill(erec);
-	//  }
-	//} else if (fq1rmom[0][1]<1000.) {
-	//  if (lpie < 150 - 0.6*fqpi0mass[0]) {
-	//    hpostcutrec[nutype][inttype]->Fill(erec);
-	//  }
-	//} else if (fq1rmom[0][1]>=1000.) {
-	//  if (lpie < 100) {
-	//    hpostcutrec[nutype][inttype]->Fill(erec);
-	//  }
-	//}
+	//std::cout<<"testing lpie fqpi0mass[0] and fq1rmom[0][1] "<<lpie<<" "<< fqpi0mass[0] <<" "<< fq1rmom[0][1]<<std::endl;
+	h1rpi0precut[nutype][inttype]->Fill(fqpi0mass[0],lpie,fluxWeight[1]);	
+
+	if (fq1rmom[0][1]<500.) {
+	  if (lpie < 125 - 0.875*fqpi0mass[0]) {
+	    h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+            h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	  }
+	} else if (fq1rmom[0][1]<1000.) {
+	  if (lpie < 150 - 0.6*fqpi0mass[0]) {
+	    h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+            h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	  }
+	} else if (fq1rmom[0][1]>=1000.) {
+	  if (lpie < 100) {
+	    h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+            h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	  }
+	}
 
       }
-
 
       // Multi-ring
 

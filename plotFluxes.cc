@@ -54,10 +54,10 @@ int main(int argc, char* argv[])
    TLegend * atmLegend = new TLegend(0.5, 0.5, 0.9, 0.9);
    atmLegend->SetBorderSize(0);
    atmLegend->SetFillStyle(0);
-   atmLegend->AddEntry(duneSpline[4], "#nu_{e}", "l");
-   atmLegend->AddEntry(duneSpline[5], "anti-#nu_{e}", "l");
-   atmLegend->AddEntry(duneSpline[6], "#nu_{#mu}", "l");
-   atmLegend->AddEntry(duneSpline[7], "anti-#nu_{#mu}", "l");
+   atmLegend->AddEntry(duneSpline[0], "#nu_{e}", "l");
+   atmLegend->AddEntry(duneSpline[1], "anti-#nu_{e}", "l");
+   atmLegend->AddEntry(duneSpline[2], "#nu_{#mu}", "l");
+   atmLegend->AddEntry(duneSpline[3], "anti-#nu_{#mu}", "l");
    atmLegend->Draw();
    
    c1->SetLogy();
@@ -68,29 +68,29 @@ int main(int argc, char* argv[])
    axesDuneOsc->SetMaximum(0.2);
    axesDuneOsc->SetMinimum(0.);
    
-   duneSpline[6]->SetLineColor(3);
-   duneSpline[6]->SetLineWidth(2);
-   duneSpline[6]->Draw("");
+   duneSpline[2]->SetLineColor(3);
+   duneSpline[2]->SetLineWidth(2);
+   duneSpline[2]->Draw("");
    
-   duneSpline[5]->SetLineColor(2);
-   duneSpline[5]->SetLineWidth(2);
-   duneSpline[5]->Draw("SAME");
+   duneSpline[1]->SetLineColor(2);
+   duneSpline[1]->SetLineWidth(2);
+   duneSpline[1]->Draw("SAME");
    
-   duneSpline[4]->SetLineColor(1);
-   duneSpline[4]->SetLineWidth(2);
-   duneSpline[4]->Draw("SAME");
+   duneSpline[0]->SetLineColor(1);
+   duneSpline[0]->SetLineWidth(2);
+   duneSpline[0]->Draw("SAME");
    
-   duneSpline[7]->SetLineColor(4);
-   duneSpline[7]->SetLineWidth(2);
-   duneSpline[7]->Draw("SAME");
+   duneSpline[3]->SetLineColor(4);
+   duneSpline[3]->SetLineWidth(2);
+   duneSpline[3]->Draw("SAME");
    
    TLegend * duneLegend = new TLegend(0.5, 0.5, 0.9, 0.9);
    duneLegend->SetBorderSize(0);
    duneLegend->SetFillStyle(0);
-   duneLegend->AddEntry(duneSpline[4], "#nu_{e}", "l");
-   duneLegend->AddEntry(duneSpline[5], "anti-#nu_{e}", "l");
-   duneLegend->AddEntry(duneSpline[6], "#nu_{#mu}", "l");
-   duneLegend->AddEntry(duneSpline[7], "anti-#nu_{#mu}", "l");
+   duneLegend->AddEntry(duneSpline[0], "#nu_{e}", "l");
+   duneLegend->AddEntry(duneSpline[1], "anti-#nu_{e}", "l");
+   duneLegend->AddEntry(duneSpline[2], "#nu_{#mu}", "l");
+   duneLegend->AddEntry(duneSpline[3], "anti-#nu_{#mu}", "l");
    duneLegend->Draw();
   
    c2->SetLogy();  

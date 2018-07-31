@@ -19,11 +19,15 @@
   TH1D* hprecutrecNoFlux[nnutypes][ninttypes];
   TH1D* hprecutrecDBNoFlux[nnutypes][ninttypes];
 
-  TH1D* h1rprecut [nnutypes][ninttypes];
-  TH1D* h1rprecutrec [nnutypes][ninttypes];
-  TH1D* h1rpostcutrec[nnutypes][ninttypes];
-  TH1D* h1rprecutrecDB [nnutypes][ninttypes];
-  TH1D* h1rpostcutrecDB[nnutypes][ninttypes];
+  TH1D* hprecut1r[nnutypes][ninttypes];
+  TH1D* hprecutrec1r[nnutypes][ninttypes];
+  TH1D* hpostcutrec1r[nnutypes][ninttypes];
+  TH1D* hprecutrecDB1r[nnutypes][ninttypes];
+  TH1D* hpostcutrecDB1r[nnutypes][ninttypes];
+
+  TH2D* hpi0precut[nnutypes][ninttypes];
+  TH2D* hpi0postcut[nnutypes][ninttypes];
+  TH2D* h1rpi0precut[nnutypes][ninttypes];
 
   const int ndecaye2 = 3;
   const int nrings2 = 2;
@@ -132,23 +136,30 @@
       std::cout << hname << ": " << hprecutrecNoFlux[nt][it]->GetEntries() << " "<< hprecutrecNoFlux[nt][it]->Integral()<<std::endl;
 
       hname = hprefix + "_1rprecut";
-      gDirectory->GetObject(hname,h1rprecut[nt][it]);
-      //      hprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
-      std::cout << hname << ": " << h1rprecut[nt][it]->GetEntries() << " "<< h1rprecut[nt][it]->Integral()<<std::endl;
+      gDirectory->GetObject(hname,hprecut1r[nt][it]);
+//      hprecut[nt][it] = new TH1D(hname,hname,nbins,binedges);
+      std::cout << hname << ": " << hprecut1r[nt][it]->GetEntries() << " "<< hprecut1r[nt][it]->Integral()<<std::endl;
       hname = hprefix + "_1rprecutrec";
-      gDirectory->GetObject(hname,h1rprecutrec[nt][it]);
-      std::cout << hname << ": " << h1rprecutrec[nt][it]->GetEntries() << " "<< h1rprecutrec[nt][it]->Integral()<<std::endl;
+      gDirectory->GetObject(hname,hprecutrec1r[nt][it]);
+      std::cout << hname << ": " << hprecutrec1r[nt][it]->GetEntries() << " "<< hprecutrec1r[nt][it]->Integral()<<std::endl;
 //      hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
       hname = hprefix + "_1rpostcutrec";
-      gDirectory->GetObject(hname,h1rpostcutrec[nt][it]);
-      std::cout << hname << ": " << h1rpostcutrec[nt][it]->GetEntries() << " "<< h1rpostcutrec[nt][it]->Integral()<<std::endl;
+      gDirectory->GetObject(hname,hpostcutrec1r[nt][it]);
+      std::cout << hname << ": " << hpostcutrec1r[nt][it]->GetEntries() << " "<< hpostcutrec1r[nt][it]->Integral()<<std::endl;
       hname = hprefix + "_1rprecutrecDB";
-      gDirectory->GetObject(hname,h1rprecutrecDB[nt][it]);
-      std::cout << hname << ": " << h1rprecutrecDB[nt][it]->GetEntries() << " "<< h1rprecutrecDB[nt][it]->Integral()<<std::endl;
+      gDirectory->GetObject(hname,hprecutrecDB1r[nt][it]);
+      std::cout << hname << ": " << hprecutrecDB1r[nt][it]->GetEntries() << " "<< hprecutrecDB1r[nt][it]->Integral()<<std::endl;
 //      hprecutrec[nt][it] = new TH1D(hname,hname,nbins,binedges);
       hname = hprefix + "_1rpostcutrecDB";
-      gDirectory->GetObject(hname,h1rpostcutrecDB[nt][it]);
-      std::cout << hname << ": " << h1rpostcutrecDB[nt][it]->GetEntries() << " "<< h1rpostcutrecDB[nt][it]->Integral()<<std::endl;
+      gDirectory->GetObject(hname,hpostcutrecDB1r[nt][it]);
+      std::cout << hname << ": " << hpostcutrecDB1r[nt][it]->GetEntries() << " "<< hpostcutrecDB1r[nt][it]->Integral()<<std::endl;
+
+      hname = hprefix + "_h1rpi0precut";
+      gDirectory->GetObject(hname,h1rpi0precut[nt][it]);
+      hname = hprefix + "_hpi0precut";
+      gDirectory->GetObject(hname,hpi0precut[nt][it]);
+      hname = hprefix + "_hpi0postcut";
+      gDirectory->GetObject(hname,hpi0postcut[nt][it]);
 
       gDirectory->GetObject("TMVA_values",hTMVA);
 
@@ -177,6 +188,21 @@
   TH1D* repiccSignalNoFlux;
   TH1D* repiccSignalNoFluxPRE;
   TGraph* tgepiccqePost[nccqenutypes];
+
+  TH1D* repiccqe1r[nccqenutypes];
+  TH1D* repiccqePreDB1r[nccqenutypes];
+  TH1D* repiccqePostDB1r[nccqenutypes];
+  TGraph* tgepiccqe1r[nccqenutypes];
+  TH1D* repiccqePost1r[nccqenutypes];
+  TH1D* repiccqePostNoFlux1r[nccqenutypes];
+  TH1D* repiccqePostDBNoFlux1r[nccqenutypes];
+  TH1D* repiccqePreNoFlux1r[nccqenutypes];
+  TH1D* repiccqePreDBNoFlux1r[nccqenutypes];
+  TH1D* repiccSignal1r;
+  TH1D* repiccSignalNoFlux1r;
+  TH1D* repiccSignalNoFluxPRE1r;
+  TGraph* tgepiccqePost1r[nccqenutypes];
+
   int combepi[nrings2] = {1,3};
   int iccqecolor[nccqenutypes] = {46,6};
 
@@ -201,6 +227,26 @@
 	tgepiccqe[inu]->GetXaxis()->SetTitleOffset(1.4);
 	tgepiccqe[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
 	tgepiccqe[inu]->GetYaxis()->SetTitle("Efficiency");
+
+        repiccqe1r[inu] = (TH1D*)hprecut1r[inu][0]->Clone();
+        repiccqe1r[inu]->SetName("repiccqe1r");
+        repiccqe1r[inu]->Divide(htruefvOsc[inu][0]);
+
+        for (int ibin=0; ibin<nbins; ibin++) {
+          yvals[ibin] = repiccqe1r[inu]->GetBinContent(ibin+1);
+          xvals[ibin] = ibin;
+        }
+
+        tgepiccqe1r[inu] = new TGraph(nbins,xvals,yvals);
+        tgepiccqe1r[inu]->SetLineColor(iccqecolor[inu]);
+        tgepiccqe1r[inu]->SetLineWidth(4);
+        tgepiccqe1r[inu]->SetMarkerColor(iccqecolor[inu]);
+        tgepiccqe1r[inu]->SetMarkerSize(1.5);
+        tgepiccqe1r[inu]->SetMarkerStyle(21);
+        tgepiccqe1r[inu]->GetXaxis()->SetTitleOffset(1.4);
+        tgepiccqe1r[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
+        tgepiccqe1r[inu]->GetYaxis()->SetTitle("Efficiency");
+
   }
   std::cout<<"... "<<std::endl;
   for (int inu=0; inu < nccqenutypes; inu++) {
@@ -233,6 +279,31 @@
         tgepiccqePost[inu]->GetXaxis()->SetTitleOffset(1.4);
         tgepiccqePost[inu]->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
         tgepiccqePost[inu]->GetYaxis()->SetTitle("Efficiency");
+
+        repiccqePostDB1r[inu] = (TH1D*)hpostcutrecDB1r[inu][0]->Clone();
+        repiccqePostDB1r[inu]->SetName("repiccqePostDB1r");
+        repiccqePreDB1r[inu] = (TH1D*)hprecutrecDB1r[inu][0]->Clone();
+        repiccqePreDB1r[inu]->SetName("repiccqePreDB1r");
+
+        repiccqePost1r[inu] = (TH1D*)hpostcutrec1r[inu][0]->Clone();
+        repiccqePost1r[inu]->SetName("repiccqePost1r");
+        repiccqePost1r[inu]->Divide(hprecutrec1r[inu][0]);
+
+        for (int ibin=0; ibin<nbinsPost; ibin++) {
+          yvalsPost[ibin] = repiccqePost1r[inu]->GetBinContent(ibin+1);
+          xvalsPost[ibin] = ibin;
+        }
+
+        tgepiccqePost1r[inu] = new TGraph(nbinsPost,xvalsPost,yvalsPost);
+        tgepiccqePost1r[inu]->SetLineColor(iccqecolor[inu]);
+        tgepiccqePost1r[inu]->SetLineWidth(4);
+        tgepiccqePost1r[inu]->SetMarkerColor(iccqecolor[inu]);
+        tgepiccqePost1r[inu]->SetMarkerSize(1.5);
+        tgepiccqePost1r[inu]->SetMarkerStyle(21);
+        tgepiccqePost1r[inu]->GetXaxis()->SetTitleOffset(1.4);
+        tgepiccqePost1r[inu]->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
+        tgepiccqePost1r[inu]->GetYaxis()->SetTitle("Efficiency");
+
   }
 
 
@@ -250,6 +321,18 @@
   TH1D* repiccpipPreNoFlux[nccpipnutypes];
   TH1D* repiccpipPreDBNoFlux[nccpipnutypes];
   TGraph* tgepiccpipPost[nccpipnutypes];
+
+  TH1D* repiccpip1r[nccpipnutypes];
+  TGraph* tgepiccpip1r[nccpipnutypes];
+  TH1D* repiccpipPost1r[nccpipnutypes];
+  TH1D* repiccpipPostDB1r[nccpipnutypes];
+  TH1D* repiccpipPreDB1r[nccpipnutypes];
+  TH1D* repiccpipPostNoFlux1r[nccpipnutypes];
+  TH1D* repiccpipPostDBNoFlux1r[nccpipnutypes];
+  TH1D* repiccpipPreNoFlux1r[nccpipnutypes];
+  TH1D* repiccpipPreDBNoFlux1r[nccpipnutypes];
+  TGraph* tgepiccpipPost1r[nccpipnutypes];
+
   int iccpipcolor[nccpipnutypes] = {28,25};
 
   for (int inu=0; inu < nccpipnutypes; inu++) {
@@ -272,6 +355,26 @@
 	tgepiccpip[inu]->GetXaxis()->SetTitleOffset(1.4);
 	tgepiccpip[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
 	tgepiccpip[inu]->GetYaxis()->SetTitle("Efficiency");
+
+        repiccpip1r[inu] = (TH1D*)hprecut1r[inu][1]->Clone();
+        repiccpip1r[inu]->SetName("repiccpip1r");
+        repiccpip1r[inu]->Divide(htruefvOsc[inu][1]);
+
+        for (int ibin=0; ibin<nbins; ibin++) {
+          yvals[ibin] = repiccpip1r[inu]->GetBinContent(ibin+1);
+          xvals[ibin] = ibin;
+        }
+
+        tgepiccpip1r[inu] = new TGraph(nbins,xvals,yvals);
+        tgepiccpip1r[inu]->SetLineColor(iccpipcolor[inu]);
+        tgepiccpip1r[inu]->SetLineWidth(4);
+        tgepiccpip1r[inu]->SetMarkerColor(iccpipcolor[inu]);
+        tgepiccpip1r[inu]->SetMarkerSize(1.5);
+        tgepiccpip1r[inu]->SetMarkerStyle(21);
+        tgepiccpip1r[inu]->GetXaxis()->SetTitleOffset(1.4);
+        tgepiccpip1r[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
+        tgepiccpip1r[inu]->GetYaxis()->SetTitle("Efficiency");
+
   }
 
   for (int inu=0; inu < nccpipnutypes; inu++) {
@@ -304,6 +407,32 @@
         tgepiccpipPost[inu]->GetXaxis()->SetTitleOffset(1.4);
         tgepiccpipPost[inu]->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
         tgepiccpipPost[inu]->GetYaxis()->SetTitle("Efficiency");
+
+        repiccpipPostDB1r[inu] = (TH1D*)hpostcutrecDB1r[inu][1]->Clone();
+        repiccpipPostDB1r[inu]->SetName("repiccpipPostDB1r");
+        repiccpipPreDB1r[inu] = (TH1D*)hprecutrecDB1r[inu][1]->Clone();
+        repiccpipPreDB1r[inu]->SetName("repiccpipPreDB1r");
+
+        repiccpipPost1r[inu] = (TH1D*)hpostcutrec1r[inu][1]->Clone();
+        repiccpipPost1r[inu]->SetName("repiccpipPost1r");
+        repiccpipPost1r[inu]->Divide(hprecutrec1r[inu][1]);
+
+        for (int ibin=0; ibin<nbinsPost; ibin++) {
+          yvalsPost[ibin] = repiccpipPost1r[inu]->GetBinContent(ibin+1);
+          xvalsPost[ibin] = ibin;
+        }
+
+        tgepiccpipPost1r[inu] = new TGraph(nbinsPost,xvalsPost,yvalsPost);
+        tgepiccpipPost1r[inu]->SetLineColor(iccpipcolor[inu]);
+        tgepiccpipPost1r[inu]->SetLineWidth(4);
+        tgepiccpipPost1r[inu]->SetMarkerColor(iccpipcolor[inu]);
+        tgepiccpipPost1r[inu]->SetMarkerSize(1.5);
+        tgepiccpipPost1r[inu]->SetMarkerStyle(21);
+        tgepiccpipPost1r[inu]->GetXaxis()->SetTitleOffset(1.4);
+        tgepiccpipPost1r[inu]->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
+        tgepiccpipPost1r[inu]->GetYaxis()->SetTitle("Efficiency");
+
+
   }
 
   // CCOther
@@ -320,6 +449,18 @@
   TH1D* repiccotherPreNoFlux[nccothernutypes];
   TH1D* repiccotherPreDBNoFlux[nccothernutypes];
   TGraph* tgepiccotherPost[nccothernutypes];
+
+  TH1D* repiccother1r[nccothernutypes];
+  TGraph* tgepiccother1r[nccothernutypes];
+  TH1D* repiccotherPost1r[nccothernutypes];
+  TH1D* repiccotherPostDB1r[nccothernutypes];
+  TH1D* repiccotherPreDB1r[nccothernutypes];
+  TH1D* repiccotherPostNoFlux1r[nccothernutypes];
+  TH1D* repiccotherPostDBNoFlux1r[nccothernutypes];
+  TH1D* repiccotherPreNoFlux1r[nccothernutypes];
+  TH1D* repiccotherPreDBNoFlux1r[nccothernutypes];
+  TGraph* tgepiccotherPost1r[nccothernutypes];
+
   int iccothercolor[nccothernutypes] = {8,3};
 
   for (int inu=0; inu < nccothernutypes; inu++) {
@@ -342,6 +483,26 @@
 	tgepiccother[inu]->GetXaxis()->SetTitleOffset(1.4);
 	tgepiccother[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
 	tgepiccother[inu]->GetYaxis()->SetTitle("Efficiency");
+
+        repiccother1r[inu] = (TH1D*)hprecut1r[inu][2]->Clone();
+        repiccother1r[inu]->SetName("repiccother1r");
+        repiccother1r[inu]->Divide(htruefvOsc[inu][2]);
+
+        for (int ibin=0; ibin<nbins; ibin++) {
+          yvals[ibin] = repiccother1r[inu]->GetBinContent(ibin+1);
+          xvals[ibin] = ibin;
+        }
+
+        tgepiccother1r[inu] = new TGraph(nbins,xvals,yvals);
+        tgepiccother1r[inu]->SetLineColor(iccothercolor[inu]);
+        tgepiccother1r[inu]->SetLineWidth(4);
+        tgepiccother1r[inu]->SetMarkerColor(iccothercolor[inu]);
+        tgepiccother1r[inu]->SetMarkerSize(1.5);
+        tgepiccother1r[inu]->SetMarkerStyle(21);
+        tgepiccother1r[inu]->GetXaxis()->SetTitleOffset(1.4);
+        tgepiccother1r[inu]->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
+        tgepiccother1r[inu]->GetYaxis()->SetTitle("Efficiency");
+
   }
 
   for (int inu=0; inu < nccothernutypes; inu++) {
@@ -374,6 +535,30 @@
         tgepiccotherPost[inu]->GetXaxis()->SetTitleOffset(1.4);
         tgepiccotherPost[inu]->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
         tgepiccotherPost[inu]->GetYaxis()->SetTitle("Efficiency");
+
+        repiccotherPostDB1r[inu] = (TH1D*)hpostcutrecDB1r[inu][2]->Clone();
+        repiccotherPostDB1r[inu]->SetName("repiccotherPostDB1r");
+        repiccotherPreDB1r[inu] = (TH1D*)hprecutrecDB1r[inu][2]->Clone();
+        repiccotherPreDB1r[inu]->SetName("repiccotherPreDB1r");
+
+        repiccotherPost1r[inu] = (TH1D*)hpostcutrec1r[inu][2]->Clone();
+        repiccotherPost1r[inu]->SetName("repiccotherPost1r");
+        repiccotherPost1r[inu]->Divide(hprecutrec1r[inu][2]);
+
+        for (int ibin=0; ibin<nbinsPost; ibin++) {
+          yvalsPost[ibin] = repiccotherPost1r[inu]->GetBinContent(ibin+1);
+          xvalsPost[ibin] = ibin;
+        }
+
+        tgepiccotherPost1r[inu] = new TGraph(nbinsPost,xvalsPost,yvalsPost);
+        tgepiccotherPost1r[inu]->SetLineColor(iccothercolor[inu]);
+        tgepiccotherPost1r[inu]->SetLineWidth(4);
+        tgepiccotherPost1r[inu]->SetMarkerColor(iccothercolor[inu]);
+        tgepiccotherPost1r[inu]->SetMarkerSize(1.5);
+        tgepiccotherPost1r[inu]->SetMarkerStyle(21);
+        tgepiccotherPost1r[inu]->GetXaxis()->SetTitleOffset(1.4);
+        tgepiccotherPost1r[inu]->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
+        tgepiccotherPost1r[inu]->GetYaxis()->SetTitle("Efficiency");
   }
 
   // CCnumu
@@ -389,6 +574,17 @@
   TH1D* repiccnumuPreNoFlux;
   TH1D* repiccnumuPreDBNoFlux;
   TGraph* tgepiccnumuPost;
+
+  TH1D* repiccnumu1r;
+  TGraph* tgepiccnumu1r;
+  TH1D* repiccnumuPost1r;
+  TH1D* repiccnumuPostDB1r;
+  TH1D* repiccnumuPreDB1r;
+  TH1D* repiccnumuPostNoFlux1r;
+  TH1D* repiccnumuPostDBNoFlux1r;
+  TH1D* repiccnumuPreNoFlux1r;
+  TH1D* repiccnumuPreDBNoFlux1r;
+  TGraph* tgepiccnumuPost1r;
 
   {
       repiccnumu = (TH1D*)hprecut[2][0]->Clone();
@@ -420,6 +616,36 @@
       tgepiccnumu->GetXaxis()->SetTitleOffset(1.4);
       tgepiccnumu->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
       tgepiccnumu->GetYaxis()->SetTitle("Efficiency");
+
+      repiccnumu1r = (TH1D*)hprecut1r[2][0]->Clone();
+      repiccnumu1r->Add(hprecut1r[2][1]);
+      repiccnumu1r->Add(hprecut1r[2][2]);
+      repiccnumu1r->Add(hprecut1r[3][0]);
+      repiccnumu1r->Add(hprecut1r[3][1]);
+      repiccnumu1r->Add(hprecut1r[3][2]);
+      repiccnumu1r->SetName("repiccnumu1r");
+      TH1D* denom1r = (TH1D*)htruefv[2][0]->Clone();
+      denom1r->Add(htruefv[2][1]);
+      denom1r->Add(htruefv[2][2]);
+      denom1r->Add(htruefv[3][0]);
+      denom1r->Add(htruefv[3][1]);
+      denom1r->Add(htruefv[3][2]);
+      repiccnumu1r->Divide(denom1r);
+
+      for (int ibin=0; ibin<nbins; ibin++) {
+        yvals[ibin] = repiccnumu1r->GetBinContent(ibin+1);
+        xvals[ibin] = ibin;
+      }
+
+      tgepiccnumu1r = new TGraph(nbins,xvals,yvals);
+      tgepiccnumu1r->SetLineColor(7);
+      tgepiccnumu1r->SetLineWidth(4);
+      tgepiccnumu1r->SetMarkerColor(7);
+      tgepiccnumu1r->SetMarkerSize(1.5);
+      tgepiccnumu1r->SetMarkerStyle(21);
+      tgepiccnumu1r->GetXaxis()->SetTitleOffset(1.4);
+      tgepiccnumu1r->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
+      tgepiccnumu1r->GetYaxis()->SetTitle("Efficiency");
   }
 
   {
@@ -485,6 +711,54 @@
       tgepiccnumuPost->GetXaxis()->SetTitleOffset(1.4);
       tgepiccnumuPost->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
       tgepiccnumuPost->GetYaxis()->SetTitle("Efficiency");
+
+
+      repiccnumuPostDB1r = (TH1D*)hpostcutrecDB1r[2][0]->Clone();
+      repiccnumuPostDB1r->Add(hpostcutrecDB1r[2][1]);
+      repiccnumuPostDB1r->Add(hpostcutrecDB1r[2][2]);
+      repiccnumuPostDB1r->Add(hpostcutrecDB1r[3][0]);
+      repiccnumuPostDB1r->Add(hpostcutrecDB1r[3][1]);
+      repiccnumuPostDB1r->Add(hpostcutrecDB1r[3][2]);
+      repiccnumuPostDB1r->SetName("repiccnumuPostDB1r");
+
+      repiccnumuPreDB1r = (TH1D*)hprecutrecDB1r[2][0]->Clone();
+      repiccnumuPreDB1r->Add(hprecutrecDB1r[2][1]);
+      repiccnumuPreDB1r->Add(hprecutrecDB1r[2][2]);
+      repiccnumuPreDB1r->Add(hprecutrecDB1r[3][0]);
+      repiccnumuPreDB1r->Add(hprecutrecDB1r[3][1]);
+      repiccnumuPreDB1r->Add(hprecutrecDB1r[3][2]);
+      repiccnumuPreDB1r->SetName("repiccnumuPreDB1r");
+
+      repiccnumuPost1r = (TH1D*)hpostcutrec1r[2][0]->Clone();
+      repiccnumuPost1r->Add(hpostcutrec1r[2][1]);
+      repiccnumuPost1r->Add(hpostcutrec1r[2][2]);
+      repiccnumuPost1r->Add(hpostcutrec1r[3][0]);
+      repiccnumuPost1r->Add(hpostcutrec1r[3][1]);
+      repiccnumuPost1r->Add(hpostcutrec1r[3][2]);
+      repiccnumuPost1r->SetName("repiccnumuPost1r");
+      TH1D* denomPost1r = (TH1D*)hprecutrec1r[2][0]->Clone();
+      denomPost1r->Add(hprecutrec1r[2][1]);
+      denomPost1r->Add(hprecutrec1r[2][2]);
+      denomPost1r->Add(hprecutrec1r[3][0]);
+      denomPost1r->Add(hprecutrec1r[3][1]);
+      denomPost1r->Add(hprecutrec1r[3][2]);
+      repiccnumuPost1r->Divide(denomPost1r);
+
+      for (int ibin=0; ibin<nbinsPost; ibin++) {
+        yvalsPost[ibin] = repiccnumuPost1r->GetBinContent(ibin+1);
+        xvalsPost[ibin] = ibin;
+      }
+
+      tgepiccnumuPost1r = new TGraph(nbinsPost,xvalsPost,yvalsPost);
+      tgepiccnumuPost1r->SetLineColor(7);
+      tgepiccnumuPost1r->SetLineWidth(4);
+      tgepiccnumuPost1r->SetMarkerColor(7);
+      tgepiccnumuPost1r->SetMarkerSize(1.5);
+      tgepiccnumuPost1r->SetMarkerStyle(21);
+      tgepiccnumuPost1r->GetXaxis()->SetTitleOffset(1.4);
+      tgepiccnumuPost1r->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
+      tgepiccnumuPost1r->GetYaxis()->SetTitle("Efficiency");
+
   }
 
   // NC
@@ -500,6 +774,17 @@
   TH1D* repincPreNoFLux;
   TH1D* repincPreDBNoFlux;
   TGraph* tgepincPost;
+
+  TH1D* repinc1r;
+  TGraph* tgepinc1r;
+  TH1D* repincPost1r;
+  TH1D* repincPostDB1r;
+  TH1D* repincPreDB1r;
+  TH1D* repincPostNoFLux1r;
+  TH1D* repincPostDBNoFlux1r;
+  TH1D* repincPreNoFLux1r;
+  TH1D* repincPreDBNoFlux1r;
+  TGraph* tgepincPost1r;
 
   {
       repinc = (TH1D*)hprecut[0][3]->Clone();
@@ -528,6 +813,31 @@
       tgepinc->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
       tgepinc->GetYaxis()->SetTitle("Efficiency");
 
+      repinc1r = (TH1D*)hprecut1r[0][3]->Clone();
+      repinc1r->Add(hprecut1r[1][3]);
+      repinc1r->Add(hprecut1r[2][3]);
+      repinc1r->Add(hprecut1r[3][3]);
+      repinc1r->SetName("repincPost1r");
+      TH1D* denom1r = (TH1D*)htruefv[0][3]->Clone();
+      denom1r->Add(htruefv[1][3]);
+      denom1r->Add(htruefv[2][3]);
+      denom1r->Add(htruefv[3][3]);
+      repinc1r->Divide(denom);
+
+      for (int ibin=0; ibin<nbins; ibin++) {
+        yvals[ibin] = repinc1r->GetBinContent(ibin+1);
+        xvals[ibin] = ibin;
+      }
+
+      tgepinc1r = new TGraph(nbins,xvals,yvals);
+      tgepinc1r->SetLineColor(42);
+      tgepinc1r->SetLineWidth(4);
+      tgepinc1r->SetMarkerColor(42);
+      tgepinc1r->SetMarkerSize(1.5);
+      tgepinc1r->SetMarkerStyle(21);
+      tgepinc1r->GetXaxis()->SetTitleOffset(1.4);
+      tgepinc1r->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
+      tgepinc1r->GetYaxis()->SetTitle("Efficiency");
   }
   {
       repincPostDB = (TH1D*)hpostcutrecDB[2][3]->Clone();
@@ -579,6 +889,45 @@
       tgepincPost->GetXaxis()->SetTitleOffset(1.4);
       tgepincPost->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
       tgepincPost->GetYaxis()->SetTitle("Efficiency");
+
+
+      repincPostDB1r = (TH1D*)hpostcutrecDB1r[2][3]->Clone();
+      //repincPostDB1r->Add(hpostcutrecDB1r[1][3]);
+      //repincPostDB1r->Add(hpostcutrecDB1r[2][3]);
+      //repincPostDB1r->Add(hpostcutrecDB1r[3][3]);
+      repincPostDB1r->SetName("repincPostDB1r");
+
+      repincPreDB1r = (TH1D*)hprecutrecDB1r[2][3]->Clone();
+      //repincPreDB1r->Add(hprecutrecDB1r[1][3]);
+      //repincPreDB1r->Add(hprecutrecDB1r[2][3]);
+      //repincPreDB1r->Add(hprecutrecDB1r[3][3]);
+      repincPreDB1r->SetName("repincPreDB1r");
+
+      repincPost1r = (TH1D*)hpostcutrec1r[0][3]->Clone();
+      repincPost1r->Add(hpostcutrec1r[1][3]);
+      repincPost1r->Add(hpostcutrec1r[2][3]);
+      repincPost1r->Add(hpostcutrec1r[3][3]);
+      repincPost1r->SetName("repincPost1r");
+      TH1D* denomPost1r = (TH1D*)hprecutrec1r[0][3]->Clone();
+      denomPost1r->Add(hprecutrec1r[1][3]);
+      denomPost1r->Add(hprecutrec1r[2][3]);
+      denomPost1r->Add(hprecutrec1r[3][3]);
+      repincPost1r->Divide(denomPost1r);
+
+      for (int ibin=0; ibin<nbinsPost; ibin++) {
+        yvalsPost[ibin] = repincPost1r->GetBinContent(ibin+1);
+        xvalsPost[ibin] = ibin;
+      }
+
+      tgepincPost1r = new TGraph(nbinsPost,xvalsPost,yvalsPost);
+      tgepincPost1r->SetLineColor(42);
+      tgepincPost1r->SetLineWidth(4);
+      tgepincPost1r->SetMarkerColor(42);
+      tgepincPost1r->SetMarkerSize(1.5);
+      tgepincPost1r->SetMarkerStyle(21);
+      tgepincPost1r->GetXaxis()->SetTitleOffset(1.4);
+      tgepincPost1r->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
+      tgepincPost1r->GetYaxis()->SetTitle("Efficiency");
 
   }
 
@@ -708,6 +1057,64 @@
       legend->AddEntry(tgepiccnumuPost,"CC nu mu","l");
       legend->AddEntry(tgepincPost,"NC","l");
       legend->Draw();
+
+
+
+      TString cannamePost1r = canprefix;
+      cannamePost1r += "_post1r_nrings";
+      cannamePost1r += (ir+2);
+
+      double maxeffPost1r = 0.;
+      const int ncurvesPost1r = 8;
+      double maxvalsPost1r[ncurvesPost1r] = {
+        repiccqePost1r[0]->GetMaximum(),
+        repiccqePost1r[1]->GetMaximum(),
+        repiccpipPost1r[0]->GetMaximum(),
+        repiccpipPost1r[1]->GetMaximum(),
+        repiccotherPost1r[0]->GetMaximum(),
+        repiccotherPost1r[1]->GetMaximum(),
+        repiccnumuPost1r->GetMaximum(),
+        repincPost1r->GetMaximum()};
+
+      for (int ival=0; ival<ncurvesPost1r; ival++) {
+        if (maxvalsPost1r[ival] > maxeffPost1r) {maxeffPost1r = maxvalsPost1r[ival];}
+      }
+      if (maxeffPost1r < 0.01) {maxeffPost1r = 0.01;}
+
+      TCanvas* tcanPost1r = new TCanvas(cannamePost1r,cannamePost1r);
+      TH2D* plotarea2Post1r = new TH2D("plotarea2Post1r","Postcut Ratios1r",1000,0.,8.,1000,0.,maxeffPost1r*1.1);
+      for (int ibin=0; ibin<nbinsPost; ibin++) {
+        int index1r = plotarea2Post1r->GetXaxis()->FindBin(ibin);
+        plotarea2Post1r->GetXaxis()->SetBinLabel(index1r,sbinedgesPost[ibin]);
+      }
+      plotarea2Post1r->GetXaxis()->SetTitleOffset(1.4);
+      plotarea2Post1r->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
+      plotarea2Post1r->GetYaxis()->SetTitle("Efficiency");
+      plotarea2Post1r->Draw();
+
+      tgepiccqePost1r[0]->Draw("same LP");
+      tgepiccqePost1r[1]->Draw("same LP");
+      tgepiccpipPost1r[0]->Draw("same LP");
+      tgepiccpipPost1r[1]->Draw("same LP");
+      tgepiccotherPost1r[0]->Draw("same LP");
+      tgepiccotherPost1r[1]->Draw("same LP");
+      tgepiccnumuPost1r->Draw("same LP");
+      tgepincPost1r->Draw("same LP");
+      cannamePost1r += ".png";
+      tcanPost1r->Print(cannamePost1r);
+
+      TLegend* legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+      legend->SetHeader("curves");
+      legend->AddEntry(tgepiccqePost1r[0],"CCQE nu 1","l");
+      legend->AddEntry(tgepiccqePost1r[1],"CCQE nu 2","l");
+      legend->AddEntry(tgepiccpipPost1r[0],"CC pi+ 1","l");
+      legend->AddEntry(tgepiccpipPost1r[1],"CC pi+ 2","l");
+      legend->AddEntry(tgepiccotherPost1r[0],"CC others 1","l");
+      legend->AddEntry(tgepiccotherPost1r[1],"CC others 2","l");
+      legend->AddEntry(tgepiccnumuPost1r,"CC nu mu","l");
+      legend->AddEntry(tgepincPost1r,"NC","l");
+      legend->Draw();
+
     }
   }
 
@@ -746,6 +1153,22 @@
 
    repiccnumuPreDB->SetFillColor(1);
    repincPreDB->SetFillColor(2);
+
+
+   repiccnumuPostDB1r->SetFillColor(1);
+   repincPostDB1r->SetFillColor(2);
+
+   repiccSignal1r = (TH1D*)repiccqePostDB[0]->Clone();
+   repiccSignal1r->Add(repiccpipPostDB[0]);
+   repiccSignal1r->Add(repiccotherPostDB[0]);
+   repiccSignal1r->Add(repiccqePostDB[1]);
+   repiccSignal1r->Add(repiccpipPostDB[1]);
+   repiccSignal1r->Add(repiccotherPostDB[1]);
+   repiccSignal1r->SetFillColor(4);
+
+   repiccnumuPreDB1r->SetFillColor(1);
+   repincPreDB1r->SetFillColor(2);
+
 
    repiccSignalPRE = (TH1D*)repiccqePreDB[0]->Clone();
    repiccSignalPRE->Add(repiccpipPreDB[0]);
@@ -833,17 +1256,34 @@
    legend->AddEntry(repiccSignal,"nue CC (all)","f");
    legend->Draw();
 
+   // with old method to cut pi0
+   THStack *hs3 = new THStack("hs3","old method stacked");
+
+   hs3->Add(repiccnumuPostDB1r);
+   hs3->Add(repincPostDB1r);
+   hs3->Add(repiccSignal1r);
+
+   new TCanvas();
+   hs3->Draw();
+
+   legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+   legend->SetHeader("Stacked plot");
+   legend->AddEntry(repiccnumuPostDB,"numu","f");
+   legend->AddEntry(repincPostDB,"nc","f");
+   legend->AddEntry(repiccSignal,"nue CC (all)","f");
+   legend->Draw();
+
 
    // pre-cut stacked plot
    THStack *hs2 = new THStack("hs2","");
 
-   repiccnumuPreDB->Scale(1./repiccnumuPreDB->Integral() * (repiccnumuPreDBNoFlux->Integral()/ repiccnumuPreDBNoFlux->Integral() ) *(CCnumu));
-   repincPreDB->Scale(1./repincPreDB->Integral() * (repincPreDBNoFlux->Integral()/ repincPreDBNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
-   repiccSignalPRE->Scale(1./repiccSignalPRE->Integral() * (repiccSignalNoFluxPRE->Integral()/ repiccSignalNoFluxPRE->Integral()) * (CCnue));
+   //repiccnumuPreDB->Scale(1./repiccnumuPreDB->Integral() * (repiccnumuPreDBNoFlux->Integral()/ repiccnumuPreDBNoFlux->Integral() ) *(CCnumu));
+   //repincPreDB->Scale(1./repincPreDB->Integral() * (repincPreDBNoFlux->Integral()/ repincPreDBNoFlux->Integral() ) *(NCnue+NCnumu+NCnutau));
+   //repiccSignalPRE->Scale(1./repiccSignalPRE->Integral() * (repiccSignalNoFluxPRE->Integral()/ repiccSignalNoFluxPRE->Integral()) * (CCnue));
 
-   repiccnumuPreDB->Scale(1.47e21 * 3.5 * 50);
-   repincPreDB->Scale(1.47e21 * 3.5 * 50);
-   repiccSignalPRE->Scale(1.47e21 * 3.5 * 50);
+   //repiccnumuPreDB->Scale(1.47e21 * 3.5 * 50);
+   //repincPreDB->Scale(1.47e21 * 3.5 * 50);
+   //repiccSignalPRE->Scale(1.47e21 * 3.5 * 50);
 
    hs2->Add(repiccnumuPreDB);
    hs2->Add(repincPreDB);
@@ -864,5 +1304,29 @@
    hTMVA->GetXaxis()->SetTitle("Reconstructed energy (GeV)");
    hTMVA->GetYaxis()->SetTitle("TMVA cut value");
    hTMVA->Draw();
+
+
+   TH2D* hpi0postcutT;
+   hpi0postcutT = (TH2D*)hpi0postcut[2][0]->Clone();
+   hpi0postcutT->Add(hpi0postcut[2][1]);
+   hpi0postcutT->Add(hpi0postcut[2][2]);
+   hpi0postcutT->SetMarkerColor(2);
+
+   TH2D* h1rpi0precutT;
+   h1rpi0precutT = (TH2D*)h1rpi0precut[2][0]->Clone();
+   h1rpi0precutT->Add(h1rpi0precut[2][1]);
+   h1rpi0precutT->Add(h1rpi0precut[2][2]);
+   h1rpi0precutT->SetMarkerColor(4);
+
+   TCanvas* h2D_1 = new TCanvas();
+   h2D_1->Divide(2,2);
+   h2D_1->cd(1);
+   hpi0postcutT->Draw("colz");
+   h2D_1->cd(2);
+   hpi0postcut[2][3]->Draw("colz");
+   h2D_1->cd(3);
+   h1rpi0precutT->Draw("colz");
+   h2D_1->cd(4);
+   h1rpi0precut[2][3]->Draw("colz");
 
 }
