@@ -46,7 +46,9 @@
   const int nnbinsPost = 9;
   TString sbinedgesPost[nnbinsPost+1] = {"0.175", "0.6", "1.175", "1.75", "2.5", "3.5", "4.5", "7.5", "10.0", "60.0"};
 
-  TFile* tf = new TFile(Form("outfilesk_%s_file%s.root", gApplication->Argv(4), gApplication->Argv(5)  ));
+  std::cout<<gApplication->Argv(4)<<" "<< atoi(gApplication->Argv(5))<<" "<< atoi(gApplication->Argv(6))<<std::endl;
+
+  TFile* tf = new TFile(Form("outfilesk_%s_file_step%drun%d.root", gApplication->Argv(4), atoi(gApplication->Argv(5)), atoi(gApplication->Argv(6))  ));
   int nbins = 25; //nue_ccqe_precut->GetNbinsX();
   double yvals[100];
   double xvals[100];
@@ -840,28 +842,28 @@
       tgepinc1r->GetYaxis()->SetTitle("Efficiency");
   }
   {
-      repincPostDB = (TH1D*)hpostcutrecDB[2][3]->Clone();
-      //repincPostDB->Add(hpostcutrecDB[1][3]);
-      //repincPostDB->Add(hpostcutrecDB[2][3]);
-      //repincPostDB->Add(hpostcutrecDB[3][3]);
+      repincPostDB = (TH1D*)hpostcutrecDB[0][3]->Clone();
+      repincPostDB->Add(hpostcutrecDB[1][3]);
+      repincPostDB->Add(hpostcutrecDB[2][3]);
+      repincPostDB->Add(hpostcutrecDB[3][3]);
       repincPostDB->SetName("repincPostDB");
 
-      repincPreDB = (TH1D*)hprecutrecDB[2][3]->Clone();
-      //repincPreDB->Add(hprecutrecDB[1][3]);
-      //repincPreDB->Add(hprecutrecDB[2][3]);
-      //repincPreDB->Add(hprecutrecDB[3][3]);
+      repincPreDB = (TH1D*)hprecutrecDB[0][3]->Clone();
+      repincPreDB->Add(hprecutrecDB[1][3]);
+      repincPreDB->Add(hprecutrecDB[2][3]);
+      repincPreDB->Add(hprecutrecDB[3][3]);
       repincPreDB->SetName("repincPreDB");
 
-      repincPreDBNoFlux = (TH1D*)hprecutrecDBNoFlux[2][3]->Clone();
-      //repincPreDBNoFlux->Add(hprecutrecDBNoFlux[1][3]);
-      //repincPreDBNoFlux->Add(hprecutrecDBNoFlux[2][3]);
-      //repincPreDBNoFlux->Add(hprecutrecDBNoFlux[3][3]);
+      repincPreDBNoFlux = (TH1D*)hprecutrecDBNoFlux[0][3]->Clone();
+      repincPreDBNoFlux->Add(hprecutrecDBNoFlux[1][3]);
+      repincPreDBNoFlux->Add(hprecutrecDBNoFlux[2][3]);
+      repincPreDBNoFlux->Add(hprecutrecDBNoFlux[3][3]);
       repincPreDBNoFlux->SetName("repincPreDBNoFlux");
 
-      repincPostDBNoFlux = (TH1D*)hpostcutrecDBNoFlux[2][3]->Clone();
-      //repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[1][3]);
-      //repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[2][3]);
-      //repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[3][3]);
+      repincPostDBNoFlux = (TH1D*)hpostcutrecDBNoFlux[0][3]->Clone();
+      repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[1][3]);
+      repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[2][3]);
+      repincPostDBNoFlux->Add(hpostcutrecDBNoFlux[3][3]);
       repincPostDBNoFlux->SetName("repincPostDBNoFlux");
 
       repincPost = (TH1D*)hpostcutrec[0][3]->Clone();
@@ -891,16 +893,16 @@
       tgepincPost->GetYaxis()->SetTitle("Efficiency");
 
 
-      repincPostDB1r = (TH1D*)hpostcutrecDB1r[2][3]->Clone();
-      //repincPostDB1r->Add(hpostcutrecDB1r[1][3]);
-      //repincPostDB1r->Add(hpostcutrecDB1r[2][3]);
-      //repincPostDB1r->Add(hpostcutrecDB1r[3][3]);
+      repincPostDB1r = (TH1D*)hpostcutrecDB1r[0][3]->Clone();
+      repincPostDB1r->Add(hpostcutrecDB1r[1][3]);
+      repincPostDB1r->Add(hpostcutrecDB1r[2][3]);
+      repincPostDB1r->Add(hpostcutrecDB1r[3][3]);
       repincPostDB1r->SetName("repincPostDB1r");
 
-      repincPreDB1r = (TH1D*)hprecutrecDB1r[2][3]->Clone();
-      //repincPreDB1r->Add(hprecutrecDB1r[1][3]);
-      //repincPreDB1r->Add(hprecutrecDB1r[2][3]);
-      //repincPreDB1r->Add(hprecutrecDB1r[3][3]);
+      repincPreDB1r = (TH1D*)hprecutrecDB1r[0][3]->Clone();
+      repincPreDB1r->Add(hprecutrecDB1r[1][3]);
+      repincPreDB1r->Add(hprecutrecDB1r[2][3]);
+      repincPreDB1r->Add(hprecutrecDB1r[3][3]);
       repincPreDB1r->SetName("repincPreDB1r");
 
       repincPost1r = (TH1D*)hpostcutrec1r[0][3]->Clone();
@@ -1158,12 +1160,12 @@
    repiccnumuPostDB1r->SetFillColor(1);
    repincPostDB1r->SetFillColor(2);
 
-   repiccSignal1r = (TH1D*)repiccqePostDB[0]->Clone();
-   repiccSignal1r->Add(repiccpipPostDB[0]);
-   repiccSignal1r->Add(repiccotherPostDB[0]);
-   repiccSignal1r->Add(repiccqePostDB[1]);
-   repiccSignal1r->Add(repiccpipPostDB[1]);
-   repiccSignal1r->Add(repiccotherPostDB[1]);
+   repiccSignal1r = (TH1D*)repiccqePostDB1r[0]->Clone();
+   repiccSignal1r->Add(repiccpipPostDB1r[0]);
+   repiccSignal1r->Add(repiccotherPostDB1r[0]);
+   repiccSignal1r->Add(repiccqePostDB1r[1]);
+   repiccSignal1r->Add(repiccpipPostDB1r[1]);
+   repiccSignal1r->Add(repiccotherPostDB1r[1]);
    repiccSignal1r->SetFillColor(4);
 
    repiccnumuPreDB1r->SetFillColor(1);
@@ -1242,6 +1244,10 @@
    //repincPostDB->Scale(1.47e21 * 3.5 * 50);
    //repiccSignal->Scale(1.47e21 * 3.5 * 50);
 
+   repiccnumuPostDB->Rebin(2);
+   repincPostDB->Rebin(2);
+   repiccSignal->Rebin(2);
+
    hs->Add(repiccnumuPostDB);
    hs->Add(repincPostDB);   
    hs->Add(repiccSignal);
@@ -1258,6 +1264,10 @@
 
    // with old method to cut pi0
    THStack *hs3 = new THStack("hs3","old method stacked");
+
+   repiccnumuPostDB1r->Rebin(2);
+   repincPostDB1r->Rebin(2);
+   repiccSignal1r->Rebin(2);
 
    hs3->Add(repiccnumuPostDB1r);
    hs3->Add(repincPostDB1r);

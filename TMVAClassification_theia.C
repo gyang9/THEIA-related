@@ -294,7 +294,7 @@ int TMVAClassification_theia( TString myMethodList = "" )
    dataloader->AddVariable( "var86:=fq3rPEP-fq2rPE", "fq3rPEP-fq2rPE", "units", 'F' );
    dataloader->AddVariable( "var87:=fq3rPPE-fq2rPP", "fq3rPPE-fq2rPP", "units", 'F' );
 
-   dataloader->AddVariable( "var88:=fqnse", "fqnse", "units", 'I' );
+   //dataloader->AddVariable( "var88:=fqnse", "fqnse", "units", 'I' );
 
 /*
 if(atoi(gApplication->Argv(4))==1){
@@ -452,8 +452,13 @@ else if(atoi(gApplication->Argv(4))==2){
    dataloader->SetBackgroundWeightExpression( "fluxWeight[1]" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) "; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) "; // for example: TCut mycutb = "abs(var1)<0.5";
+   //TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) && !((fqmrnring[0]==1 && fqnse == 1) || (fqmrnring[0]==1 && fqnse == 2) || (fqmrnring[0]==2 && fqnse == 2)) "; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   //TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) && !((fqmrnring[0]==1 && fqnse == 1) || (fqmrnring[0]==1 && fqnse == 2) || (fqmrnring[0]==2 && fqnse == 2)) "; // for example: TCut mycutb = "abs(var1)<0.5";
+
+   // fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2
+   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 3 && fqnse == 2";
+   TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  " && myCommonCut;
+   TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  " && myCommonCut;
 
    // Tell the dataloader how to use the training and testing events
    //
@@ -466,7 +471,7 @@ else if(atoi(gApplication->Argv(4))==2){
    //
    //    dataloader->PrepareTrainingAndTestTree( mycut,
    //         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
-   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"nTest_Signal=50000:nTest_Background=50000:SplitMode=Random:NormMode=NumEvents:!V" );
+   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"nTest_Signal=1000:nTest_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
                                         //"nTrain_Signal=1000:nTrain_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
 
 

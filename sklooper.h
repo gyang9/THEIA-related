@@ -266,7 +266,7 @@ public :
    Int_t           fqn50[10];   //[fqnse]
    Float_t         fqq50[10];   //[fqnse]
    Int_t           fq1rpcflg[10][7];   //[fqnse]
-   Float_t         fq1rmom[10][7];   //[fqnse]
+   Float_t         fq1rmom[20][7];   //[fqnse]
    Float_t         fq1rt0[10][7];   //[fqnse]
    Float_t         fq1rtotmu[10][7];   //[fqnse]
    Float_t         fq1rnll[10][7];   //[fqnse]
@@ -283,7 +283,7 @@ public :
    Float_t         fqpi0t0[2];
    Float_t         fqpi0totmu[2];
    Float_t         fqpi0nll[2];
-   Float_t         fqpi0mass[2];
+   Float_t         fqpi0mass[10];
    Float_t         fqpi0photangle[2];
    Float_t         fqpi0pos[2][3];
    Float_t         fqpi0dir1[2][3];
@@ -794,28 +794,34 @@ public :
 
    Double_t fluxWeight[2];
 
-   virtual void     GetTMVACut(double factor);
+   virtual void     GetTMVACut(double factor, int stepN, int runN);
+   //virtual void     GetTMVACut(double factor, int fileID);
    sklooper(TTree *tree=0);
+   sklooper(TString filename);
+   //sklooper(int fileID = 0, TTree *tree=0);
    virtual ~sklooper();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop(double factor);
+   virtual void     Loop(double factor, int stepN, int runN);
+   //virtual void     Loop(double factor, int fileID);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+
+   int fileID;
 };
 
 #endif
 
 #ifdef sklooper_cxx
-sklooper::sklooper(TTree *tree)
+sklooper::sklooper(TString filename)
 {
+/*
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-
-#ifdef SINGLE_TREE
+//#ifdef SINGLE_TREE
       // The following code should be used if you want this class to access
       // a single tree instead of a chain
       TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("Memory Directory");
@@ -823,8 +829,8 @@ sklooper::sklooper(TTree *tree)
          f = new TFile("Memory Directory");
       }
       f->GetObject("h1",tree);
-
-#else // SINGLE_TREE
+*/
+//#else // SINGLE_TREE
 
       // The following code should be used if you want this class to access a chain
       // of trees.
@@ -832,11 +838,12 @@ sklooper::sklooper(TTree *tree)
       //      chain->Add("skatm/mar16sk4.reduc.*_fQv5r0.root");
       //      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
       //      chain->Add("/storage/shared/cvilela/SK_IV_16c_MC/mar16sk4.reduc.00*_fQv5r0.root");
-	chain->Add("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root");
-      tree = chain;
-#endif // SINGLE_TREE
+      //      chain->Add(Form("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput0.root"));
+      chain->Add(filename);
+      TTree* tree = chain;
+//#endif // SINGLE_TREE
 
-   }
+   //}
    Init(tree);
 }
 

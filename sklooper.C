@@ -6,7 +6,7 @@
 #include <TH2D.h>
 #include <iostream>
 
-void sklooper::GetTMVACut(double factor)
+void sklooper::GetTMVACut(double factor, int stepN, int runN)
 {
 
    Double_t erecmr, fluxWeight[2], tmvaMR, fqwall, towall;
@@ -19,8 +19,8 @@ void sklooper::GetTMVACut(double factor)
    Int_t ipnu[100];
    Int_t fqmrnring[100];
 
-   std::cout<<"factor input here is "<<factor<<std::endl;
-   TFile f(Form("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput100.root"));
+   std::cout<<"factor input here is "<<factor<<" "<<stepN<<" "<<runN<<std::endl;
+   TFile f(Form("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput_step%drun%d.root",stepN,runN));
    TTree*t = (TTree*)f.Get("h1");
 
    t->SetBranchAddress("erecmr", &erecmr);
@@ -92,7 +92,7 @@ void sklooper::GetTMVACut(double factor)
 
 }
 
-void sklooper::Loop(double factor)
+void sklooper::Loop(double factor, int stepN, int runN)
 {
 
   std::cout << "I am here!!!!" << std::endl;
@@ -122,7 +122,7 @@ void sklooper::Loop(double factor)
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   TFile* outfile = new TFile(Form("outfilesk_%f_file100.root", factor),"RECREATE");
+   TFile* outfile = new TFile(Form("outfilesk_%f_file_step%drun%d.root", factor,stepN,runN),"RECREATE");
    TH2D* hzvsr = new TH2D("hzvsr","True Z vs R",40,0.,4000.,80,-4000.,4000.);
    TH2D* hfqzvsr = new TH2D("hfqzvsr","FiTQun Z vs R",40,0.,4000.,80,-4000.,4000.);
 
@@ -366,19 +366,60 @@ void sklooper::Loop(double factor)
 	}
       }
 
+      bool passed = false;
+      bool passed1r = false;
+      switch(stepN){
+	case 1: 
+		if(nhitac<16 && wall > 200 && evis > 100 && nring == 1 && ip[0] == 2 && nmue == 0) {passed = true; passed1r = true;}
+		break;
+	case 2: 
+		if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse < 3) {passed = true; passed1r = true;}
+		break;
+	case 3:
+		switch(runN){
+		  case 1:
+			if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 1) {passed = true; passed1r = true;}
+			break;
+		  case 2:
+			if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 2) {passed = true; passed1r = true;}
+			break;
+		}
+		break;
+        case 4:
+                switch(runN){
+                  case 1:
+                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fqnse == 1) {passed = true; passed1r = true;}
+			break;
+                  case 2:
+                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fqnse == 2) {passed = true; passed1r = true;}
+			break;
+		}
+		break;
+        case 5:
+                switch(runN){
+                  case 1:
+                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 2 && fqnse == 1) {passed = true; passed1r = true;}
+			break;
+                  case 2:
+                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 2 && fqnse == 2) {passed = true; passed1r = true;}
+			break;
+                  case 3:
+                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 3 && fqnse == 1) {passed = true; passed1r = true;}
+			break;
+                  case 4:
+                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 3 && fqnse == 2) {passed = true; passed1r = true;}
+			break;
+		}
+		break;
+      }
+
 
       // all included
-      if ((nhitac<16)
-          && (fqwall > 200.)
-          && (evis>30)
-          && (fqmrnring[0] == 1)
-          //&& (lemu > fq1rmom[0][1]*0.2)
-          //&& (fq1rmom[0][1]>100.)
-                  && (fqnse < 3)
-          ) {
+      if (passed) {
 
         //erecmr = pnu[0];
         //std::cout<<pnu[0]<<" "<<erecmr<<std::endl;
+	/*
         if(nutype == 0 && inttype != 3) htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 	else htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 
@@ -389,6 +430,11 @@ void sklooper::Loop(double factor)
 
         if(nutype == 0 && inttype != 3) hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 	else hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	*/
+	htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
+	hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);
+	hprecutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
+	hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 
         if ((inttype==0)&&(nutype==0)) heres->Fill((erecmr-pnu[0])/pnu[0]);
 
@@ -439,14 +485,7 @@ void sklooper::Loop(double factor)
 
 
       // 1-ring e-like preselection
-      if ((nhitac<16)
-	  && (fqwall > 200.)
-	  && (evis>30)
-	  && (fqmrnring[0] == 1)
-	  && (lemu > fq1rmom[0][1]*0.2)
-	  //&& (fq1rmom[0][1]>100.)
-	  	  && (fqnse < 3)
-	  ) {
+      if (passed1r) {
 
 	h1rprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);	
 	h1rprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);	

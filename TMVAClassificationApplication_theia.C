@@ -358,7 +358,7 @@ void TMVAClassificationApplication_theia( TString myMethodList = "" )
    reader->AddVariable( "fq3rPEP-fq2rPE",&fq3rPEP_fq2rPE );
    reader->AddVariable( "fq3rPPE-fq2rPP",&fq3rPPE_fq2rPP);
 
-   reader->AddVariable( "fqnse", &fqnse );
+   //reader->AddVariable( "fqnse", &fqnse );
 
 /*
    reader->AddVariable( "fqpi0mom1[0]", &fqpi0mom1 );
@@ -441,9 +441,11 @@ else {
       if (it->second) {
          TString methodName = TString(it->first) + TString(" method");
          TString weightfile = dir + prefix + TString("_") + TString(it->first) + TString(".weights.xml");
-         reader->BookMVA( methodName,  "dataset/weights/TMVAClassification_BDT.weights.xml" );
+         reader->BookMVA( methodName,  Form("dataset/weights/TMVAClassification_BDT.weights.step%drun%d.xml",atoi(gApplication->Argv(4)),atoi(gApplication->Argv(5)) ) );
       }
    }
+
+   std::cout<<"inputs check: "<<atoi(gApplication->Argv(4))<<" "<<atoi(gApplication->Argv(5))<<std::endl;
 
    // Book output histograms
    UInt_t nbin = 100;
@@ -806,7 +808,7 @@ else {
    Int_t    nSelCutsGA = 0;
    Double_t effS       = 0.7;
 
-   TFile* ff = TFile::Open(Form("outputTree_reinput%d.root", 0 /*atoi(gApplication->Argv(5))*/),"RECREATE");
+   TFile* ff = TFile::Open(Form("outputTree_reinput_step%drun%d.root",  atoi(gApplication->Argv(4)),atoi(gApplication->Argv(5))  ),"RECREATE");
    TTree* tt = theTree->CloneTree(0);
    //ff->Write();
    //delete ff;
