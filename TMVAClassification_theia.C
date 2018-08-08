@@ -188,7 +188,7 @@ int TMVAClassification_theia( TString myMethodList = "" )
    //TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
    //                                            "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
-                                               "!V:!Silent:Color:DrawProgressBar:Transformations=D:AnalysisType=Classification" );
+                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
 
    TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
    // If you wish to modify default settings
@@ -456,7 +456,7 @@ else if(atoi(gApplication->Argv(4))==2){
    //TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) && !((fqmrnring[0]==1 && fqnse == 1) || (fqmrnring[0]==1 && fqnse == 2) || (fqmrnring[0]==2 && fqnse == 2)) "; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2
-   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 3 && fqnse == 2";
+   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse < 3 && evis < 1500";
    TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  " && myCommonCut;
    TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  " && myCommonCut;
 
@@ -675,7 +675,7 @@ else if(atoi(gApplication->Argv(4))==2){
 
    if (Use["BDT"])  // Adaptive Boost
       factory->BookMethod( dataloader, TMVA::Types::kBDT, "BDT",
-                           "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" );
+                           "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=SDivSqrtSPlusB:nCuts=20" );
 
    if (Use["BDTB"]) // Bagging
       factory->BookMethod( dataloader, TMVA::Types::kBDT, "BDTB",
@@ -683,7 +683,7 @@ else if(atoi(gApplication->Argv(4))==2){
 
    if (Use["BDTD"]) // Decorrelation + Adaptive Boost
       factory->BookMethod( dataloader, TMVA::Types::kBDT, "BDTD",
-                           "!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=20:VarTransform=Decorrelate" );
+                           "!H:!V:NTrees=400:MinNodeSize=5%:MaxDepth=3:BoostType=AdaBoost:SeparationType=SDivSqrtSPlusB:nCuts=20:VarTransform=Decorrelate" );
 
    if (Use["BDTF"])  // Allow Using Fisher discriminant in node splitting for (strong) linearly correlated variables
       factory->BookMethod( dataloader, TMVA::Types::kBDT, "BDTF",
