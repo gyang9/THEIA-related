@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
    std::cout<<"preparing.."<<std::endl;
    THEIA* sLoop = new THEIA(tree);
 
-   TString atmFlux("input/hondaFluxTruncated.txt");
+   TString atmFlux("input/hondaFluxTruncated_new.txt");
    TSpline5** atmSpline = sLoop->LoadAtmFlux(atmFlux);
 
    TString duneFlux("input/g4lbne_FHC_FD.root");

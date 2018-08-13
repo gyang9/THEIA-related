@@ -28,15 +28,16 @@ int main(int argc, char* argv[])
 
    //TChain * chain = new TChain("h1","");
    //chain->Add("input/combined.root");
-   TFile* f = new TFile("input/combined_extra.root");
-   //TTree* tree = chain;   
-   TTree* tree = (TTree*)f->Get("h1");
+   TChain tree("h1"); 
+   tree.Add("input/001*.root");
+   //TFile* f = new TFile("input/combined_extra.root");
+   //TTree* tree = (TTree*)f->Get("h1");
 
    std::cout<<"preparing.."<<std::endl;
-   THEIA* sLoop = new THEIA(tree);
+   THEIA* sLoop = new THEIA(&tree);
    //sLoop->LoadFile(tree);     
    //sLoop->Init(tree);
-   sLoop->prepareOutput("outputTest_10e4.root");
+   sLoop->prepareOutput("outputTest_temp.root");
 
    TString atmFlux("input/hondaFluxTruncated_new.txt");
    TSpline5** atmSpline = sLoop->LoadAtmFlux(atmFlux);
@@ -44,12 +45,12 @@ int main(int argc, char* argv[])
    TString duneFlux("input/g4lbne_FHC_FD.root");
    TSpline5** duneSpline = sLoop->LoadDuneFlux(duneFlux);   
 
-   Long64_t nentries = tree->GetEntries();
+   Long64_t nentries = tree.GetEntries();
 
    std::cout<<"ready to loop"<<std::endl;
 
-   Int_t NofEvent = 10e4; //nentries;
-   sLoop->LoopAndWrite(NofEvent, true);   
+   Int_t NofEvent = nentries;
+   sLoop->LoopAndWrite(NofEvent);   
 
 } 
 

@@ -717,23 +717,24 @@ TTree* THEIA:: LoopAndWrite(Int_t NofEvent){
 
       //std::cout<<"neutrino ip and energy : "<<ipnu[0]<<" "<<pnu[0]<<std::endl;
 
-        if(ipnu[0] == 12){
-        fluxWeight[0] = reTot2[0]->Eval(pnu[0])/ reTot[0]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[4]->Eval(pnu[0])/ reTot[0]->Eval(pnu[0]);
-        }
-        if(ipnu[0] == -12){
-        fluxWeight[0] = reTot2[1]->Eval(pnu[0])/ reTot[1]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[5]->Eval(pnu[0])/ reTot[1]->Eval(pnu[0]);
-        }
-        if(ipnu[0] == 14){
-        fluxWeight[0] = reTot2[2]->Eval(pnu[0])/ reTot[2]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[6]->Eval(pnu[0])/ reTot[2]->Eval(pnu[0]);
-        }
-        if(ipnu[0] == -14){
-        fluxWeight[0] = reTot2[3]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
-        fluxWeight[1] = reTot2[7]->Eval(pnu[0])/ reTot[3]->Eval(pnu[0]);
-        }
+      if(ipnu[0] == 12){
+        fluxWeight[0] = (reTot2[0]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[4]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
+      }
+      if(ipnu[0] == -12){
+        fluxWeight[0] = (reTot2[1]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[5]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
+      }
+      if(ipnu[0] == 14){
+        fluxWeight[0] = (reTot2[2]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[6]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
+      }
+      if(ipnu[0] == -14){
+        fluxWeight[0] = (reTot2[3]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[7]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
+      }
 
+      if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }
         //if(fluxWeight[0]>0.1) {fluxWeight[0] = 10e-22;}
         //if(fluxWeight[1]>0.1) {fluxWeight[1] = 10e-22;}
 
@@ -780,24 +781,24 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
       if (jentry % 100000 == 0) {std::cout << jentry << " events processed" << std::endl;}
 
-        if(ipnu[0] == 12){
+      if(ipnu[0] == 12){
         fluxWeight[0] = (reTot2[0]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
         fluxWeight[1] = (reTot2[4]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
-        }
-        if(ipnu[0] == -12){
+      }
+      if(ipnu[0] == -12){
         fluxWeight[0] = (reTot2[1]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
         fluxWeight[1] = (reTot2[5]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
-        }
-        if(ipnu[0] == 14){
+      }
+      if(ipnu[0] == 14){
         fluxWeight[0] = (reTot2[2]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
         fluxWeight[1] = (reTot2[6]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
-        }
-        if(ipnu[0] == -14){
+      }
+      if(ipnu[0] == -14){
         fluxWeight[0] = (reTot2[3]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
         fluxWeight[1] = (reTot2[7]->Eval(pnu[0])*1.47e21*3.5)/ (500.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
-        }
+      }
 
-	if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }
+      if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }
         //if(fluxWeight[0]>0.1) {fluxWeight[0] = 10e-22;}
         //if(fluxWeight[1]>0.1) {fluxWeight[1] = 10e-22;}
 
