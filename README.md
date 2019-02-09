@@ -48,16 +48,16 @@ Compile:
 
 Run:
 
-- for ESTEP in 0.25 0.1
-- do
--   for TSTEP in 0.01
--   do
--     for VAR in 0.12
--     do
--         #./runsklooper 0.25 FHC 2 1 $VAR $ESTEP $TSTEP
--     done
--   done
-- done
+- 	for ESTEP in 0.25 0.1
+- 	do
+-   	  for TSTEP in 0.01
+-   	  do
+-     	    for VAR in 0.12
+-           do
+-             ./runsklooper 0.25 FHC 2 1 $VAR $ESTEP $TSTEP
+-           done
+-         done
+-       done
 
 First arguement 0.25 is the background fraction, 0.25 means 50% background assumed. Second arguement FHC is the horn current, third and fourth indicate the ring and decay numbers.
 
