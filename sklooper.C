@@ -6,7 +6,7 @@
 #include <TH2D.h>
 #include <iostream>
 
-void sklooper::GetTMVACut(double factor, int stepN, int runN)
+void sklooper::GetTMVACut(double factor, std::string horn, int stepN, int runN, double eStep, double tStep)
 {
 
    Double_t erecmr, fluxWeight[2], tmvaMR, fqwall, towall;
@@ -18,9 +18,10 @@ void sklooper::GetTMVACut(double factor, int stepN, int runN)
    Int_t fqnse;
    Int_t ipnu[100];
    Int_t fqmrnring[100];
+   Float_t fq1rmom[10][10],fq1rnll[10][10];
 
    std::cout<<"factor input here is "<<factor<<" "<<stepN<<" "<<runN<<std::endl;
-   TFile f(Form("/home/gyang/Downloads/root/builddir/tutorials/tmva/outputTree_reinput_step%drun%d.root",stepN,runN));
+   TFile f(Form("/home/guang/Downloads/root-6.14.02/builddir/tutorials/tmva/outputTree_reinput_%s_step%drun%d.root",horn.c_str(),stepN,runN));
    TTree*t = (TTree*)f.Get("h1");
 
    t->SetBranchAddress("erecmr", &erecmr);
@@ -37,21 +38,78 @@ void sklooper::GetTMVACut(double factor, int stepN, int runN)
    t->SetBranchAddress("fqnse",&fqnse);
    t->SetBranchAddress("ipnu", &ipnu);
    t->SetBranchAddress("fqmrnring", &fqmrnring);
+   t->SetBranchAddress("fq1rmom", &fq1rmom);
+   t->SetBranchAddress("fq1rnll", &fq1rnll);
 
    Long64_t nbytes = 0, nb = 0;
    Int_t NofEvent = t->GetEntries();
 
    for(Int_t i=0;i<100;i++){
 	for(Int_t j=0;j<100;j++){
-        c_ss[i][j]=0;
-        c_bb[i][j]=0;
+          c_ss[i][j]=0;
+          c_bb[i][j]=0;
 	}
-   curr_sOb[i]=-100;
-   curr_sEff[i]=100;
-   locTMVA[i]=0;
-   c_sss[i] = 0;
-   c_bbb[i] = 0;
+     curr_sOb[i]=-100;
+     curr_sEff[i]=100;
+     locTMVA[i]=0;
+     c_sss[i] = 0;
+     c_bbb[i] = 0;
    }
+
+   int ringRequire, decayRequire1, decayRequire2;
+   if(stepN == 2 || runN == 1) 
+   {
+       ringRequire   = 1;
+       decayRequire1 = 1;
+       decayRequire2 = 2;   
+   }
+   else if (stepN == 3 || runN == 1)
+   {
+       ringRequire   = 1;
+       decayRequire1 = 1;
+       decayRequire2 = 1;
+   }
+   else if (stepN == 3 || runN == 2)
+   {
+       ringRequire   = 1;
+       decayRequire1 = 2;
+       decayRequire2 = 2;
+   }
+   else if (stepN == 5 || runN == 1)
+   {
+       ringRequire   = 2;
+       decayRequire1 = 1;
+       decayRequire2 = 1;
+   }
+   else if (stepN == 5 || runN == 2)
+   {
+       ringRequire   = 2;
+       decayRequire1 = 2;
+       decayRequire2 = 2;
+   }
+   else if (stepN == 5 || runN == 3)
+   {
+       ringRequire   = 3;
+       decayRequire1 = 1;
+       decayRequire2 = 1;
+   }   
+   else if (stepN == 5 || runN == 4)
+   {
+       ringRequire   = 3;
+       decayRequire1 = 2;
+       decayRequire2 = 2;
+   }
+   else
+   {
+       std::cout<<"no data can be loaded and set with this stepN and runN, come to sklooper.C line 103 "<<std::endl;
+       exit(1);
+   }
+
+   enerStep = eStep;  // was 0.1 for 0 - 10 GeV  100 in total
+   tmvaStep = tStep;  // was 0.01 for -0.4 - 0.4  80 in total
+   enerSize = 10./eStep;
+   tmvaSize = 0.8/tmvaStep;
+   std::cout<<"energy step, tmva step, energy size and tmva size are : "<<enerStep<<" "<<tmvaStep<<" "<<enerSize<<" "<<tmvaSize<<std::endl;
 
    for (Long64_t jentry=0; jentry<NofEvent;jentry++) {
       t->GetEntry(jentry);
@@ -61,24 +119,25 @@ void sklooper::GetTMVACut(double factor, int stepN, int runN)
       //std::cout<<"event : "<<jentry<<" erecmr sigCategory towall evis nhitac fluxWeight[0] fluxWeight[1] tmvaMR fqnse : "<<erecmr<<" "<<sigCategory<<" "<<fqwall<<" "<<evis<<" "<<nhitac<<" "<<fluxWeight[0]<<" "<<fluxWeight[1]<<" "<<tmvaMR<<" "<<fqnse<<std::endl;
 
       if(fqwall>200 
-	&& evis > 30 
+	&& fq1rmom[0][1] > 30 
 	&& nhitac < 16 
-	&& fqnse <= 2 
-//	&& (fqmrnring[0] == 1)
+	&& (fqnse == decayRequire1 || fqnse == decayRequire2)
+	&& (fqmrnring[0] == ringRequire)
+	&& fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2
 	){
-	for(Int_t iii=0;iii<100;iii++){
-	  if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 ) {if(sigCategory>=0)c_sss[iii]++; if(bkgCategory>=0)c_bbb[iii]++;}
-          for(Int_t ii=0;ii<80;ii++){
-                if(erecmr>iii*0.1 && erecmr<(iii+1)*0.1 && tmvaMR > -0.4 + 0.01*ii) {if(sigCategory>=0)c_ss[iii][ii]++; if(bkgCategory>=0)c_bb[iii][ii]++;}
+	for(Int_t iii=0;iii<enerSize;iii++){
+	  if(erecmr>iii*enerStep && erecmr<(iii+1)*enerStep ) {if(sigCategory>=0)c_sss[iii]++; if(bkgCategory>=0)c_bbb[iii]++;}
+          for(Int_t ii=0;ii<tmvaSize;ii++){
+                if(erecmr>iii*enerStep && erecmr<(iii+1)*enerStep && tmvaMR > -0.4 + tmvaStep*ii) {if(sigCategory>=0)c_ss[iii][ii]++; if(bkgCategory>=0)c_bb[iii][ii]++;}
 	  }
         }
       }
    }
 
    std::cout<<"trying to see the results of tmva cuts with variable "<<factor<<" ... "<<std::endl;
-   for(Int_t ii=0;ii<100;ii++){
-        for(Int_t jj=0;jj<80;jj++){
-                if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor)>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor)<<std::endl; }
+   for(Int_t ii=0;ii<enerSize;ii++){
+        for(Int_t jj=0;jj<tmvaSize;jj++){
+                if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor)>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor); locTMVA[ii] = jj; /* std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*factor)<<std::endl;*/ }
                 //if(c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4)))>curr_sOb[ii] ) {curr_sOb[ii] = c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<c_ss[ii][jj]/sqrt(c_ss[ii][jj]+c_bb[ii][jj]+c_bb[ii][jj]*c_bb[ii][jj]*atof(gApplication->Argv(4)))<<std::endl; }
 		//std::cout<<c_ss[ii][jj]/c_sss[ii]<<std::endl;
 		//if(TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)) ) <curr_sEff[ii] ) {curr_sEff[ii] = TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4))); locTMVA[ii] = jj; std::cout<<ii<<" "<<TMath::Abs(c_ss[ii][jj]/c_sss[ii] - atof(gApplication->Argv(4)))<<std::endl; }
@@ -87,15 +146,16 @@ void sklooper::GetTMVACut(double factor, int stepN, int runN)
 
    std::cout<<std::endl;
    std::cout<<"locations of TMVAs for every 0.1 GeV are:  ";
-   for(Int_t ii=0;ii<100;ii++){std::cout<< " "<< locTMVA[ii]*0.01 - 0.4 <<"  ";}
+   for(Int_t ii=0;ii<100;ii++){std::cout<< " "<< locTMVA[ii]*tmvaStep - 0.4 <<"  ";}
    std::cout<<std::endl;
 
 }
 
-void sklooper::Loop(double factor, int stepN, int runN)
+void sklooper::Loop(double factor, std::string horn, int stepN, int runN, double fluxCut)
 {
 
   std::cout << "I am here!!!!" << std::endl;
+  std::cout<<"energy step, tmva step, energy size and tmva size are : "<<enerStep<<" "<<tmvaStep<<" "<<enerSize<<" "<<tmvaSize<<std::endl;
 
   //   In a ROOT session, you can do:
 //      Root > .L sklooper.C
@@ -122,7 +182,7 @@ void sklooper::Loop(double factor, int stepN, int runN)
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   TFile* outfile = new TFile(Form("outfilesk_%f_file_step%drun%d.root", factor,stepN,runN),"RECREATE");
+   TFile* outfile = new TFile(Form("outfilesk_%f_file_%s_step%drun%d_fluxCut_%f_enerStep_%f_tmvaStep_%f.root", factor,horn.c_str(), stepN,runN, fluxCut, enerStep, tmvaStep),"RECREATE");
    TH2D* hzvsr = new TH2D("hzvsr","True Z vs R",40,0.,4000.,80,-4000.,4000.);
    TH2D* hfqzvsr = new TH2D("hfqzvsr","FiTQun Z vs R",40,0.,4000.,80,-4000.,4000.);
 
@@ -155,6 +215,11 @@ void sklooper::Loop(double factor, int stepN, int runN)
    TH2D* hpi0postcut[nnutypes][ninttypes];
    TH2D* h1rpi0precut[nnutypes][ninttypes];
 
+   TH2D* h2preFluxErec[nnutypes][ninttypes];
+   TH2D* h2preFluxEnu[nnutypes][ninttypes];
+   TH2D* h2postFluxErec[nnutypes][ninttypes];
+   TH2D* h2postFluxEnu[nnutypes][ninttypes];
+
    const int ndecaye2 = 3;
    const int nrings2 = 2;
    const int maxcomb = 8;
@@ -164,15 +229,36 @@ void sklooper::Loop(double factor, int stepN, int runN)
 
    TH2D* htrueToreco [nnutypes][ninttypes];
    TH2D* htrueTorecoPRE [nnutypes][ninttypes];
+   TH2D* htrueTorecoPRENoFlux [nnutypes][ninttypes];
    TH2D* htrueTorecoNoFlux [nnutypes][ninttypes];
 
-   const int nbins = 25;
-   double binedges[nbins+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0,60.0};
+   const int nbins = 26;
+   double binedges[nbins+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0, 40.0, 60.0, 100.0};
+   //double binedges[nbins+1] = {0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.7, 1.9, 2.25, 2.75, 3.25, 3.75, 4.25, 4.75, 5.5, 6.5, 7.5, 8.5, 9.5, 12.5, 17.5, 30.0, 50.0, 100.0};
 
    std::cout<<"binned one out of two.. "<<std::endl;
-   const int nbinsPost = 9;
+   const int nbinsPost = 10;
    //double binedgesPost[nbinsPost+1] = {0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
-   double binedgesPost[nbinsPost+1] = {0.175,0.6,1.175,1.75,2.5,3.5,4.5,7.5,10.0,60.0};
+   //double binedgesPost[nbinsPost+1] = {0.175,0.6,1.175,1.75,2.5,3.5,4.5,7.5,10.0,60.0, !!!100.0};
+   //double binedgesPost[nbinsPost+1] = {0. , (0.6+0.175)/2. ,(1.175+0.6)/2. , (1.75+1.175)/2.,(2.5+1.75)/2., (3.5+2.5)/2., (4.5+3.5)/2. , (7.5+4.5)/2., (10.0+7.5)/2. , (60.0+10.0)/2., 100.0};
+   double binedgesPost[nbinsPost+1] = {0, 0.35, 0.85, 1.5, 2.0, 3.0, 4.0, 5.0, 10.0, 15.0, 100.0};
+
+   int smearingPostNbins = 0, smearingPreNbins = 0;
+   double smearingPostbinsTemp[200] = {0.5, 0.625, 0.75, 0.875, 1, 1.125, 1.25, 1.375, 1.5, 1.625, 1.75, 1.875, 2, 2.125, 2.25, 2.375, 2.5, 2.625, 2.75, 2.875, 3, 3.125, 3.25, 3.375, 3.5, 3.625, 3.75, 3.875, 4, 4.125, 4.25, 4.375, 4.5, 4.625, 4.75, 4.875, 5, 5.125, 5.25, 5.375, 5.5, 5.625, 5.75, 5.875, 6, 6.125, 6.25, 6.375, 6.5, 6.625, 6.75, 6.875, 7, 7.125, 7.25, 7.375, 7.5, 7.625, 7.75, 7.875, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60};
+   double smearingPrebinsTemp[200] = {0.5, 0.625, 0.75, 0.875, 1, 1.125, 1.25, 1.375, 1.5, 1.625, 1.75, 1.875, 2, 2.125, 2.25, 2.375, 2.5, 2.625, 2.75, 2.875, 3, 3.125, 3.25, 3.375, 3.5, 3.625, 3.75, 3.875, 4, 4.125, 4.25, 4.375, 4.5, 4.625, 4.75, 4.875, 5, 5.125, 5.25, 5.375, 5.5, 5.625, 5.75, 5.875, 6, 6.125, 6.25, 6.375, 6.5, 6.625, 6.75, 6.875, 7, 7.125, 7.25, 7.375, 7.5, 7.625, 7.75, 7.875, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60 };
+   for(Int_t i = 0; i < 200; i++)
+   {
+     if( smearingPostbinsTemp[i] != 0) {smearingPostNbins++;} 
+     if( smearingPrebinsTemp[i] != 0) {smearingPreNbins++;}
+   }
+
+   double smearingPostbins[smearingPostNbins];
+   double smearingPrebins[smearingPreNbins];
+   for(Int_t i = 0; i < smearingPreNbins; i++)
+   {
+     if( smearingPostbinsTemp[i] != 0) {smearingPostbins[i] = smearingPostbinsTemp[i];}
+     if( smearingPrebinsTemp[i] != 0) {smearingPrebins[i] = smearingPrebinsTemp[i];}     
+   }
 
    for (int nt=0; nt<nnutypes; nt++) {
      TString hprefix1 = nunames[nt];
@@ -207,9 +293,11 @@ void sklooper::Loop(double factor, int stepN, int runN)
        hname = hprefix + "_1rpostcutrecDB";
        h1rpostcutrecDB[nt][it] = new TH1D(hname,hname,62,0.25,8);
        hname = hprefix + "_trueToreco";
-       htrueToreco[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
+       htrueToreco[nt][it] = new TH2D(hname,hname,smearingPreNbins-1,smearingPrebins, smearingPreNbins-1,smearingPrebins);
        hname = hprefix + "_trueTorecoPRE";
-       htrueTorecoPRE[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
+       htrueTorecoPRE[nt][it] = new TH2D(hname,hname,smearingPreNbins-1,smearingPrebins, smearingPreNbins-1,smearingPrebins);
+       hname = hprefix + "_trueTorecoPRENoFlux";
+       htrueTorecoPRENoFlux[nt][it] = new TH2D(hname,hname,smearingPreNbins-1,smearingPrebins, smearingPreNbins-1,smearingPrebins);
 
        hname = hprefix + "_precutrecNoFlux";
        hprecutrecNoFlux[nt][it] = new TH1D(hname,hname,nbins,binedges);
@@ -220,7 +308,7 @@ void sklooper::Loop(double factor, int stepN, int runN)
        hname = hprefix + "_postcutrecDBNoFlux";
        hpostcutrecDBNoFlux[nt][it] = new TH1D(hname,hname,62,0.25,8);
        hname = hprefix + "_trueTorecoNoFlux";
-       htrueTorecoNoFlux[nt][it] = new TH2D(hname,hname,100,0,10,100,0,10);
+       htrueTorecoNoFlux[nt][it] = new TH2D(hname,hname,smearingPreNbins-1,smearingPrebins, smearingPreNbins-1,smearingPrebins);
 
        hname = hprefix + "_hpi0precut";
        hpi0precut[nt][it] = new TH2D(hname,hname,30,0,300,40,0,400);
@@ -228,6 +316,7 @@ void sklooper::Loop(double factor, int stepN, int runN)
        hpi0postcut[nt][it] = new TH2D(hname,hname,30,0,300,40,0,400);
        hname = hprefix + "_h1rpi0precut";
        h1rpi0precut[nt][it] = new TH2D(hname,hname,30,0,300,40,0,400);
+
 
        int ncomb[nrings2] = {4,8};
        for (int ide=0; ide<ndecaye2; ide++) {
@@ -259,19 +348,78 @@ void sklooper::Loop(double factor, int stepN, int runN)
    TH1D* htruefvpi0 = new TH1D("htruefvpi0","NC pi0 momentum precut",10,0.,1000.);
    TH1D* hpostcutpi0 = new TH1D("hpostcutpi0","NC pi0 momentum postcut",10,0.,1000.);
 
-   TH1D* hTMVA = new TH1D("TMVA_values","TMVA_values",100,0,10);
-   for(Int_t ii=0;ii<hTMVA->GetNbinsX();ii++) {hTMVA -> SetBinContent(ii+1, locTMVA[ii+1]*0.01-0.4 );}
+   TH1D* hTMVA = new TH1D("TMVA_values","TMVA_values",enerSize,0,10);
+   for(Int_t ii=0;ii<hTMVA->GetNbinsX();ii++) {hTMVA -> SetBinContent(ii+1, locTMVA[ii+1]*tmvaStep-0.4 );}
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   std::cout<<"in Loop, tmvaStep and enerStep are " << tmvaStep<<"  "<< enerStep<<std::endl;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   TFile fVec(Form("outputTest_vector_%s.root",horn.c_str()) );
+   TTree* tVec = (TTree*)fVec.Get("h1");
+
+   tVec->SetBranchAddress("erecmr", &erecmr);
+   tVec->SetBranchAddress("fluxWeight", &fluxWeight);
+   tVec->SetBranchAddress("evis", &evis);
+   tVec->SetBranchAddress("nhitac", &nhitac);
+   tVec->SetBranchAddress("pnu", &pnu);
+   tVec->SetBranchAddress("mode", &mode);
+   tVec->SetBranchAddress("fqnse",&fqnse);
+   tVec->SetBranchAddress("ipnu", &ipnu);
+   tVec->SetBranchAddress("wallv", &wallv);
+
+   Int_t NofEvent = tVec->GetEntries();
+
+   for (Long64_t jentry=0; jentry<NofEvent;jentry++) {
+      tVec->GetEntry(jentry);
+
+      if (jentry % 100000 == 0) {std::cout << jentry << " events processed" << std::endl;}
+
+      int nutype = -1;
+      if (ipnu[0] == 12) { // nue
+        nutype = 0;
+      } else if (ipnu[0] == -12) { // nuebar
+        nutype = 1;
+      } else if (ipnu[0] == 14) { // numu
+        nutype = 2;
+      } else if (ipnu[0] == -14) { // numubar
+        nutype = 3;
+      }
+
+      // interaction type
+      int inttype = -1;
+      if ((abs(mode)==1) /*||(abs(mode)==2)*/) { // CCQE
+        inttype = 0;
+      } else if ((abs(mode)==11)||(abs(mode)==13)||(abs(mode)==16)) { // CCpi+
+        inttype = 1;
+      } else if (abs(mode)<30) { // CCother
+        inttype = 2;
+      } else if ((abs(mode)>30)) { // NC
+        inttype = 3;
+      }
+
+      // neutrinos in FV
+      if (wallv>200) {
+        htruefv[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
+        htruefvOsc[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
+      }
+
+   }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+   //Long64_t nentries = fChain->GetEntriesFast()/1000;
+   Int_t nentries = fChain->GetEntries();
 
    Long64_t nbytes = 0, nb = 0;
    Int_t ccount[nnutypes][ninttypes]={};
+
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-      if (jentry % 100000 == 0) {std::cout << jentry << " events processed" << std::endl;}
+      if (jentry % 100000 == 0) {std::cout << jentry << " events processed in last loop" << std::endl;}
 
       double ppi0 = -1.;
       int ntpi0 = 0;
@@ -330,7 +478,7 @@ void sklooper::Loop(double factor, int stepN, int runN)
 
       // interaction type
       int inttype = -1;
-      if ((abs(mode)==1)||(abs(mode)==2)) { // CCQE
+      if ((abs(mode)==1) /* ||(abs(mode)==2) */) { // CCQE
 	inttype = 0;
       } else if ((abs(mode)==11)||(abs(mode)==13)||(abs(mode)==16)) { // CCpi+
 	inttype = 1;
@@ -341,10 +489,10 @@ void sklooper::Loop(double factor, int stepN, int runN)
       }
 
       // neutrinos in FV
-      if (wallv>200) {
-	htruefv[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
-        htruefvOsc[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
-      }
+      //if (wallv>200) {
+	//htruefv[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
+        //htruefvOsc[nutype][inttype]->Fill(pnu[0],fluxWeight[1]);
+      //}
 
       // pi0 efficiency
       if ((nhitac<16)
@@ -374,14 +522,15 @@ void sklooper::Loop(double factor, int stepN, int runN)
 		break;
 	case 2: 
 		if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse < 3) {passed = true; passed1r = true;}
+                //if(nhitac<16 && wall > 200 && evis > 100 && nring == 1 && ip[0] == 2 && nmue == 0) {passed = true; passed1r = true;}
 		break;
 	case 3:
 		switch(runN){
 		  case 1:
-			if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 1) {passed = true; passed1r = true;}
+			if(fluxWeight[1]<fluxCut && nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 1) {passed = true; passed1r = true;}
 			break;
 		  case 2:
-			if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 2) {passed = true; passed1r = true;}
+			if(fluxWeight[1]<fluxCut && nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 2) {passed = true; passed1r = true;}
 			break;
 		}
 		break;
@@ -398,16 +547,16 @@ void sklooper::Loop(double factor, int stepN, int runN)
         case 5:
                 switch(runN){
                   case 1:
-                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 2 && fqnse == 1) {passed = true; passed1r = true;}
+                        if(fluxWeight[1]<fluxCut && nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 2 && fqnse == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 ) {passed = true; passed1r = true;}
 			break;
                   case 2:
-                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 2 && fqnse == 2) {passed = true; passed1r = true;}
+                        if(fluxWeight[1]<fluxCut && nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 2 && fqnse == 2 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 ) {passed = true; passed1r = true;}
 			break;
                   case 3:
-                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 3 && fqnse == 1) {passed = true; passed1r = true;}
+                        if(fluxWeight[1]<fluxCut && nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 3 && fqnse == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 ) {passed = true; passed1r = true;}
 			break;
                   case 4:
-                        if(nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 3 && fqnse == 2) {passed = true; passed1r = true;}
+                        if(fluxWeight[1]<fluxCut && nhitac<16 && fqwall > 200 && fq1rmom[0][1] > 30 && fqmrnring[0] == 3 && fqnse == 2 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 ) {passed = true; passed1r = true;}
 			break;
 		}
 		break;
@@ -432,6 +581,8 @@ void sklooper::Loop(double factor, int stepN, int runN)
 	else hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 	*/
 	htrueTorecoPRE[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
+        htrueTorecoPRENoFlux[nutype][inttype]->Fill(pnu[0],erecmr);
+
 	hprecut[nutype][inttype]->Fill(pnu[0], fluxWeight[1]);
 	hprecutrecDB[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
 	hprecutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
@@ -444,13 +595,14 @@ void sklooper::Loop(double factor, int stepN, int runN)
         hpi0precut[nutype][inttype]->Fill(fqpi0mass[0],lpie,fluxWeight[1]);
 
 	//std::cout<<"tmva variable for nutype& inttype "<<nutype<<" "<<inttype<<" "<<tmvaMR<<std::endl;
-	for(Int_t innLoop=0;innLoop<100;innLoop++){
+	for(Int_t innLoop=0;innLoop<enerSize;innLoop++){
 	//std::cout<<"testing locTMVA no."<<innLoop<<" "<<locTMVA[innLoop]*0.01-0.4<<std::endl;
 	if( 
-        erecmr>0.1*innLoop && erecmr<0.1*(innLoop+1) && 
-	tmvaMR>locTMVA[innLoop]*0.01-0.4 
+        erecmr>enerStep*innLoop && erecmr<enerStep*(innLoop+1) && 
+	tmvaMR>locTMVA[innLoop]*tmvaStep-0.4 
 	) 
 	  {
+ 	  //std::cout<<"printing out of event number, innLoop and erecmr : "<<jentry<<" "<<innLoop<<" "<<erecmr<<std::endl;
 	  if(nutype == 0 && inttype != 3) htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 	  else htrueToreco[nutype][inttype]->Fill(pnu[0],erecmr, fluxWeight[1]);
 	  if(nutype == 0 && inttype != 3) hpostcutrec[nutype][inttype]->Fill(erecmr, fluxWeight[1]);
@@ -471,8 +623,6 @@ void sklooper::Loop(double factor, int stepN, int runN)
         //  if (lpie < 125 - 0.875*fqpi0mass[0]) {
         //    hpostcutrec[nutype][inttype]->Fill(erec);
         //  }
-        //} else if (fq1rmom[0][1]<1000.) {
-        //  if (lpie < 150 - 0.6*fqpi0mass[0]) {
         //    hpostcutrec[nutype][inttype]->Fill(erec);
         //  }
         //} else if (fq1rmom[0][1]>=1000.) {
@@ -493,27 +643,28 @@ void sklooper::Loop(double factor, int stepN, int runN)
 
 	//if ((inttype==0)&&(nutype==0)) heres->Fill((erec-pnu[0])/pnu[0]);
 
-        //if(tmvaMR>0) {
-        //  h1rpostcutrec[nutype][inttype]->Fill(erec);
-        //}
+        if(tmvaMR>0) {
+          h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+          h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	}
 
 	//std::cout<<"testing lpie fqpi0mass[0] and fq1rmom[0][1] "<<lpie<<" "<< fqpi0mass[0] <<" "<< fq1rmom[0][1]<<std::endl;
 	h1rpi0precut[nutype][inttype]->Fill(fqpi0mass[0],lpie,fluxWeight[1]);	
 
 	if (fq1rmom[0][1]<500.) {
 	  if (lpie < 125 - 0.875*fqpi0mass[0]) {
-	    h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
-            h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	    //h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+            //h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
 	  }
 	} else if (fq1rmom[0][1]<1000.) {
 	  if (lpie < 150 - 0.6*fqpi0mass[0]) {
-	    h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
-            h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	    //h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+            //h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
 	  }
 	} else if (fq1rmom[0][1]>=1000.) {
 	  if (lpie < 100) {
-	    h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
-            h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+	    //h1rpostcutrec[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
+            //h1rpostcutrecDB[nutype][inttype]->Fill(erecmr,fluxWeight[1]);
 	  }
 	}
 
@@ -642,9 +793,29 @@ void sklooper::Loop(double factor, int stepN, int runN)
 
       }
       if (printstuff) {std::cout << "mark 4" << std::endl;}
-
    }
-
+/*
+   for(Int_t nutype = 0; nutype<4; nutype ++ )
+   {
+     for(Int_t inttype = 0; inttype<4; inttype ++ )
+     {
+       for(Int_t ini = 0 ; ini <  htrueTorecoPRE[nutype][inttype]->GetNbinsX(); ini ++ )
+       {
+         for(Int_t jni = 0 ; jni <  htrueTorecoPRE[nutype][inttype]->GetNbinsY(); jni ++ )
+         {
+           double tempTt = 0, tempTt2 = 0;
+           for(Int_t kni = 0 ; kni <  htrueTorecoPRE[nutype][inttype]->GetNbinsY(); kni ++ )
+           {
+             tempTt += htrueTorecoPRE[nutype][inttype]->GetBinContent(kni+1);
+             tempTt2 += htrueTorecoPRENoFlux[nutype][inttype]->GetBinContent(kni+1);
+           }
+           htrueTorecoPRE[nutype][inttype]->SetBinContent(ini+1, jni+1, htrueTorecoPRE[nutype][inttype]->GetBinContent(ini+1, jni+1)/tempTt);
+           htrueTorecoPRENoFlux[nutype][inttype]->SetBinContent(ini+1, jni+1, htrueTorecoPRENoFlux[nutype][inttype]->GetBinContent(ini+1, jni+1)/tempTt2);
+         }
+       }
+     }
+   }
+*/
    outfile->Write();
    outfile->Close();
 

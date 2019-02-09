@@ -64,10 +64,11 @@ int main(int argc, char* argv[])
 
    TCanvas * c2 = new TCanvas();
    TH1D * axesDuneOsc = new TH1D("axesDuneOsc", "DUNE oscillated flux splines;E_{#nu} [GeV];#Phi", 100, 0, 10);
+   axesDuneOsc->GetXaxis()->SetRangeUser(0,10);
    axesDuneOsc->Draw("");
    axesDuneOsc->SetMaximum(0.2);
    axesDuneOsc->SetMinimum(0.);
-   
+
    duneSpline[2]->SetLineColor(3);
    duneSpline[2]->SetLineWidth(2);
    duneSpline[2]->Draw("");

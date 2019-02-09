@@ -803,8 +803,12 @@ public :
    void     Show(Long64_t entry = -1);
    void     LoadFile(TTree* tree);
 
+   void  InfoNeutron(Int_t NofEvent);
+   TH2D* neutron2d[10];
+
    TSpline5**     LoadDuneFlux(TString duneFlux);
    TSpline5**     LoadAtmFlux(TString atmFlux);
+   void 	  LoadNeutronEfficiency(TString neutronEffFile);
 
    TH1D* nue       ;
    TH1D* nuebar    ;
@@ -818,6 +822,7 @@ public :
    // atm return 4 splines while dune returns 8.
    TSpline5* reTot[4];
    TSpline5* reTot2[8];
+   TSpline5* neutronSpline;
 
    TFile*   ff;
    TTree*   tt;
@@ -885,6 +890,10 @@ public :
    double numubarIn[200]={};
    double totNumber[4]={};
    double xx[200]={};
+   double tdist[1000];
+   int nCapture;
+   double nCaptureEff;
+
 };
 
 //#endif

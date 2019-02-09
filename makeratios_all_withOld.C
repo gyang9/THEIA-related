@@ -1,4 +1,46 @@
 {
+  gROOT->SetStyle("Plain");
+  gStyle->SetTitleBorderSize(0);
+  gStyle->SetOptStat("");
+
+  gStyle->SetLabelFont(102,"");
+  gStyle->SetLabelSize(0.06,"");
+  gStyle->SetLabelFont(102,"xyz");
+  gStyle->SetLabelSize(0.06,"xyz");
+  gStyle->SetLabelOffset(0.001,"x");
+  gStyle->SetLabelOffset(0.01,"y");
+
+  gStyle->SetTitleFont(42,"xyz");
+  gStyle->SetTitleFontSize(0.06);
+  gStyle->SetTitleFont(42);
+  gStyle->SetTitleSize(0.06,"xyz");
+  gStyle->SetTitleOffset(1.05,"x");
+  gStyle->SetTitleOffset(1.25,"y");
+
+  gStyle->SetStripDecimals(kFALSE);
+
+  gStyle->SetPadLeftMargin(0.15);
+  gStyle->SetPadBottomMargin(0.15);
+
+  gStyle->SetStatW(0.35);
+  gStyle->SetStatH(0.25);
+
+  //gStyle->SetTitleW(0.2);
+  //gStyle->SetTitleH(0.2);
+
+  gStyle->SetPadTickX(kTRUE);
+  gStyle->SetPadTickY(kTRUE);
+
+  gStyle->SetPalette(1);
+  gStyle->SetNumberContours(99);
+
+  gStyle->SetHistLineWidth(3);
+  gStyle->SetFrameLineWidth(3);
+  gStyle->SetFuncWidth(3);
+
+  gStyle->SetStatFont(42);
+  gStyle->SetOptFit(1111);
+  gStyle->SetOptStat(0);
 
   const int nnutypes = 4;
   TString nunames[nnutypes] = {"nue","nuebar","numu","numubar"};
@@ -40,20 +82,24 @@
   TH2D* h2trueTOrecoNoFlux[nnutypes][ninttypes];
   TH2D* h2trueTOrecoPRE[nnutypes][ninttypes];
 
-  const int nnbins = 25;
-  TString sbinedges[nnbins+1] = {"0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0", "15.0", "20.0", "40.0", "60"};
+  const int nnbins = 26;
+  TString sbinedges[nnbins+1] = {"0.0", "0.2", "0.4", "0.6", "0.8", "1.0", "1.2", "1.4", "1.6", "1.8", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0", "6.0", "7.0", "8.0", "9.0", "10.0", "15.0", "20.0", "40.0", "60", "100"};
 
-  const int nnbinsPost = 9;
-  TString sbinedgesPost[nnbinsPost+1] = {"0.175", "0.6", "1.175", "1.75", "2.5", "3.5", "4.5", "7.5", "10.0", "60.0"};
+  const int nnbinsPost = 10;
+  TString sbinedgesPost[nnbinsPost+1] = {"0.175", "0.6", "1.175", "1.75", "2.5", "3.5", "4.5", "7.5", "10.0", "60.0", "100"};
 
   std::cout<<gApplication->Argv(4)<<" "<< atoi(gApplication->Argv(5))<<" "<< atoi(gApplication->Argv(6))<<std::endl;
 
-  TFile* tf = new TFile(Form("outfilesk_%s_file_step%drun%d.root", gApplication->Argv(4), atoi(gApplication->Argv(5)), atoi(gApplication->Argv(6))  ));
-  int nbins = 25; //nue_ccqe_precut->GetNbinsX();
+  //outfilesk_0.250000_file_RHC_step3run1_fluxCut_0.120000_enerStep_1.000000_tmvaStep_0.050000.root
+  if(atof(gApplication->Argv(10)) > 0 ) TFile* tf = new TFile(Form("outfilesk_%s_file_%s_step%drun%d_fluxCut_%s_enerStep_%s_tmvaStep_%s.root", gApplication->Argv(4), gApplication->Argv(5), atoi(gApplication->Argv(6)), atoi(gApplication->Argv(7)), gApplication->Argv(9), gApplication->Argv(10), gApplication->Argv(11)  ));
+  else if(atof(gApplication->Argv(9)) > 0 ) TFile* tf = new TFile(Form("outfilesk_%s_file_%s_step%drun%d_fluxCut_%s.root", gApplication->Argv(4), gApplication->Argv(5), atoi(gApplication->Argv(6)), atoi(gApplication->Argv(7)), gApplication->Argv(9)  ));
+  else TFile* tf = new TFile(Form("outfilesk_%s_file_%s_step%drun%d.root", gApplication->Argv(4), gApplication->Argv(5), atoi(gApplication->Argv(6)), atoi(gApplication->Argv(7)) ));
+
+  int nbins = 26; //nue_ccqe_precut->GetNbinsX();
   double yvals[100];
   double xvals[100];
 
-  int nbinsPost = 9; //nue_ccqe_postcutrec->GetNbinsX();
+  int nbinsPost = 10; //nue_ccqe_postcutrec->GetNbinsX();
   double yvalsPost[100];
   double xvalsPost[100];
 
@@ -187,6 +233,7 @@
   TH1D* repiccqePreNoFlux[nccqenutypes];
   TH1D* repiccqePreDBNoFlux[nccqenutypes];
   TH1D* repiccSignal;
+  TH1D* repiccSignalPRE;
   TH1D* repiccSignalNoFlux;
   TH1D* repiccSignalNoFluxPRE;
   TGraph* tgepiccqePost[nccqenutypes];
@@ -215,10 +262,19 @@
 	repiccqe[inu]->SetName("repiccqe");
 	repiccqe[inu]->Divide(htruefvOsc[inu][0]);
 
+	if(inu==0) std::cout<<"%precuts_NUE_QE_orig = {"<<std::endl;
+        if(inu==1) std::cout<<"%precuts_ANUE_QE_orig = {"<<std::endl;
 	for (int ibin=0; ibin<nbins; ibin++) {
 	  yvals[ibin] = repiccqe[inu]->GetBinContent(ibin+1);
+	  if(ibin != nbins-1) std::cout<<yvals[ibin]<<", ";
+	  else std::cout<<yvals[ibin]<<" ";
 	  xvals[ibin] = ibin;
 	}
+	std::cout<<"}"<<std::endl;
+	if(inu==0) std::cout<<"%precuts_NUE_QE = interpolation(%energy_pre,%precuts_NUE_QE_orig,1,%sbc)"<<std::endl;
+	else if(inu==1) std::cout<<"%precuts_ANUE_QE = interpolation(%energy_pre,%precuts_ANUE_QE_orig,1,%sbc)"<<std::endl;
+	else std::cout<<"WHY this happening!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "<<std::endl;
+	std::cout<<std::endl;
 
 	tgepiccqe[inu] = new TGraph(nbins,xvals,yvals);
 	tgepiccqe[inu]->SetLineColor(iccqecolor[inu]);
@@ -267,10 +323,18 @@
         repiccqePost[inu]->SetName("repiccqePost");
         repiccqePost[inu]->Divide(hprecutrec[inu][0]);
 
+	if(inu==0) std::cout<<"%likelihood_NUE_QE_orig = {"<<std::endl;
+        if(inu==1) std::cout<<"%likelihood_ANUE_QE_orig = {"<<std::endl;	
         for (int ibin=0; ibin<nbinsPost; ibin++) {
           yvalsPost[ibin] = repiccqePost[inu]->GetBinContent(ibin+1);
+	  if(ibin != nbinsPost-1) std::cout<<yvalsPost[ibin]<<", ";
+	  else std::cout<<yvalsPost[ibin]<<" ";
           xvalsPost[ibin] = ibin;
         }
+	std::cout<<"}"<<std::endl;
+	if(inu==0) std::cout<<"%likelihood_NUE_QE = interpolation(%energy_post,%likelihood_NUE_QE_orig,1,%bc)"<<std::endl;
+        if(inu==1) std::cout<<"%likelihood_ANUE_QE = interpolation(%energy_post,%likelihood_ANUE_QE_orig,1,%bc)"<<std::endl;
+	std::cout<<std::endl;
 
         tgepiccqePost[inu] = new TGraph(nbinsPost,xvalsPost,yvalsPost);
         tgepiccqePost[inu]->SetLineColor(iccqecolor[inu]);
@@ -340,13 +404,33 @@
   for (int inu=0; inu < nccpipnutypes; inu++) {
 
 	repiccpip[inu] = (TH1D*)hprecut[inu][1]->Clone();
-	repiccpip[inu]->SetName("repiccpip");
-	repiccpip[inu]->Divide(htruefvOsc[inu][1]);
 
+	// hack in for "other" sample
+	repiccpip[inu]->Add((TH1D*)hprecut[inu][2]);
+	// end
+
+	repiccpip[inu]->SetName("repiccpip");
+
+	// hack in for "other" sample
+	TH1D* denomT = (TH1D*)htruefv[inu][1]->Clone();
+        denomT->Add(htruefv[inu][2]);
+        repiccpip[inu]->Divide(denomT);
+	//end
+
+	//repiccpip[inu]->Divide(htruefvOsc[inu][1]);
+
+	if(inu==0) std::cout<<"%precuts_NUE_NQE_orig ={"<<std::endl;
+	if(inu==1) std::cout<<"%precuts_ANUE_NQE_orig ={"<<std::endl;
 	for (int ibin=0; ibin<nbins; ibin++) {
 	  yvals[ibin] = repiccpip[inu]->GetBinContent(ibin+1);
+	  if(ibin != nbins-1) std::cout<<yvals[ibin]<<", ";
+	  else std::cout<<yvals[ibin]<<" ";
 	  xvals[ibin] = ibin;
 	}
+	std::cout<<"}"<<std::endl;
+	if(inu==0) std::cout<<"%precuts_NUE_NQE = interpolation(%energy_pre,%precuts_NUE_NQE_orig,1,%sbc)"<<std::endl;
+        if(inu==1) std::cout<<"%precuts_ANUE_NQE = interpolation(%energy_pre,%precuts_ANUE_NQE_orig,1,%sbc)"<<std::endl;
+	std::cout<<std::endl;
 
 	tgepiccpip[inu] = new TGraph(nbins,xvals,yvals);
 	tgepiccpip[inu]->SetLineColor(iccpipcolor[inu]);
@@ -392,13 +476,32 @@
         repiccpipPreDBNoFlux[inu]->SetName("repiccpipPreDBNoFlux");
 
         repiccpipPost[inu] = (TH1D*)hpostcutrec[inu][1]->Clone();
-        repiccpipPost[inu]->SetName("repiccpipPost");
-        repiccpipPost[inu]->Divide(hprecutrec[inu][1]);
 
-        for (int ibin=0; ibin<nbinsPost; ibin++) {
+        // hack in for "other" sample
+        repiccpipPost[inu]->Add((TH1D*)hpostcutrec[inu][2]);
+        // end
+
+        repiccpipPost[inu]->SetName("repiccpipPost");
+        //repiccpipPost[inu]->Divide(hprecutrec[inu][1]);
+
+        // hack in for "other" sample
+        TH1D* denomTrec = (TH1D*)hprecutrec[inu][1]->Clone();
+        denomTrec->Add(hprecutrec[inu][2]);
+        repiccpipPost[inu]->Divide(denomTrec);
+        //end
+
+        if(inu==0) std::cout<<"%likelihood_NUE_NQE_orig = {"<<std::endl;
+        if(inu==1) std::cout<<"%likelihood_ANUE_NQE_orig = {"<<std::endl;
+	for (int ibin=0; ibin<nbinsPost; ibin++) {
           yvalsPost[ibin] = repiccpipPost[inu]->GetBinContent(ibin+1);
+	  if(ibin != nbinsPost-1) std::cout<<yvalsPost[ibin]<<", ";
+	  else std::cout<<yvalsPost[ibin]<<" ";
           xvalsPost[ibin] = ibin;
         }
+	std::cout<<"}"<<std::endl;
+	if(inu==0) std::cout<<"%likelihood_NUE_NQE = interpolation(%energy_post,%likelihood_NUE_NQE_orig,1,%bc)"<<std::endl;
+        if(inu==1) std::cout<<"%likelihood_ANUE_NQE = interpolation(%energy_post,%likelihood_ANUE_NQE_orig,1,%bc)"<<std::endl;
+	std::cout<<std::endl;
 
         tgepiccpipPost[inu] = new TGraph(nbinsPost,xvalsPost,yvalsPost);
         tgepiccpipPost[inu]->SetLineColor(iccpipcolor[inu]);
@@ -604,10 +707,27 @@
       denom->Add(htruefv[3][2]);
       repiccnumu->Divide(denom);
 
+      std::cout<<"%precuts_numuCC_orig = {"<<std::endl;
       for (int ibin=0; ibin<nbins; ibin++) {
 	yvals[ibin] = repiccnumu->GetBinContent(ibin+1);
+	if(ibin != nbins-1) std::cout<<yvals[ibin]<<", ";
+	else std::cout<<yvals[ibin]<<" ";
 	xvals[ibin] = ibin;
       }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%precuts_numuCC = interpolation(%energy_pre,%precuts_numuCC_orig,1,%sbc)"<<std::endl;
+      std::cout<<std::endl;
+
+      std::cout<<"%precuts_anumuCC_orig = {"<<std::endl;
+      for (int ibin=0; ibin<nbins; ibin++) {
+        yvals[ibin] = repiccnumu->GetBinContent(ibin+1);
+        if(ibin != nbins-1) std::cout<<yvals[ibin]<<", ";
+	else std::cout<<yvals[ibin]<<" ";
+        xvals[ibin] = ibin;
+      }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%precuts_anumuCC = interpolation(%energy_pre,%precuts_anumuCC_orig,1,%sbc)"<<std::endl;
+      std::cout<<std::endl;      
 
       tgepiccnumu = new TGraph(nbins,xvals,yvals);
       tgepiccnumu->SetLineColor(7);
@@ -699,10 +819,28 @@
       denomPost->Add(hprecutrec[3][2]);
       repiccnumuPost->Divide(denomPost);
 
+      std::cout<<"%likelihood_numuCC_orig = {"<<std::endl;
       for (int ibin=0; ibin<nbinsPost; ibin++) {
         yvalsPost[ibin] = repiccnumuPost->GetBinContent(ibin+1);
+	if(ibin != nbinsPost-1) std::cout<<yvalsPost[ibin]<<", ";
+	else std::cout<<yvalsPost[ibin]<<" ";
         xvalsPost[ibin] = ibin;
       }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%likelihood_numuCC = interpolation(%energy_post,%likelihood_numuCC_orig,1,%bc)"<<std::endl;
+      std::cout<<std::endl;
+
+      std::cout<<"%likelihood_anumuCC_orig = {"<<std::endl;
+      for (int ibin=0; ibin<nbinsPost; ibin++) {
+        yvalsPost[ibin] = repiccnumuPost->GetBinContent(ibin+1);
+        if(ibin != nbinsPost-1) std::cout<<yvalsPost[ibin]<<", ";
+	else std::cout<<yvalsPost[ibin]<<" ";
+        xvalsPost[ibin] = ibin;
+      }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%likelihood_anumuCC = interpolation(%energy_post,%likelihood_anumuCC_orig,1,%bc)"<<std::endl;
+      std::cout<<std::endl;      
+
 
       tgepiccnumuPost = new TGraph(nbinsPost,xvalsPost,yvalsPost);
       tgepiccnumuPost->SetLineColor(7);
@@ -800,10 +938,27 @@
       denom->Add(htruefv[3][3]);
       repinc->Divide(denom);
 
+      std::cout<<"%precuts_NC_orig = {"<<std::endl;
       for (int ibin=0; ibin<nbins; ibin++) {
         yvals[ibin] = repinc->GetBinContent(ibin+1);
+	if(ibin != nbins-1) std::cout<<yvals[ibin]<<", ";
+	else std::cout<<yvals[ibin]<<" ";
         xvals[ibin] = ibin;
       }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%precuts_NC = interpolation(%energy_pre,%precuts_NC_orig,1,%sbc)"<<std::endl;
+      std::cout<<std::endl;
+
+      std::cout<<"%precuts_ANC_orig = {"<<std::endl;
+      for (int ibin=0; ibin<nbins; ibin++) {
+        yvals[ibin] = repinc->GetBinContent(ibin+1);
+        if(ibin != nbins-1) std::cout<<yvals[ibin]<<", ";
+	else std::cout<<yvals[ibin]<<" ";
+        xvals[ibin] = ibin;
+      }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%precuts_ANC = interpolation(%energy_pre,%precuts_ANC_orig,1,%sbc)"<<std::endl;
+      std::cout<<std::endl;
 
       tgepinc = new TGraph(nbins,xvals,yvals);
       tgepinc->SetLineColor(42);
@@ -877,10 +1032,27 @@
       denomPost->Add(hprecutrec[3][3]);
       repincPost->Divide(denomPost);
 
+      std::cout<<"%likelihood_NC_orig = {"<<std::endl;
       for (int ibin=0; ibin<nbinsPost; ibin++) {
 	yvalsPost[ibin] = repincPost->GetBinContent(ibin+1);
+	if(ibin != nbinsPost-1) std::cout<<yvalsPost[ibin]<<", ";
+	else std::cout<<yvalsPost[ibin]<<" ";
 	xvalsPost[ibin] = ibin;
       }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%likelihood_NC = interpolation(%energy_post,%likelihood_NC_orig,1,%bc)"<<std::endl;
+      std::cout<<std::endl;
+
+      std::cout<<"%likelihood_ANC_orig = {"<<std::endl;
+      for (int ibin=0; ibin<nbinsPost; ibin++) {
+        yvalsPost[ibin] = repincPost->GetBinContent(ibin+1);
+        if(ibin != nbinsPost-1)std::cout<<yvalsPost[ibin]<<", ";
+	else std::cout<<yvalsPost[ibin]<<" ";
+        xvalsPost[ibin] = ibin;
+      }
+      std::cout<<"}"<<std::endl;
+      std::cout<<"%likelihood_ANC = interpolation(%energy_post,%likelihood_ANC_orig,1,%bc)"<<std::endl;
+      std::cout<<std::endl;
 
       tgepincPost = new TGraph(nbinsPost,xvalsPost,yvalsPost);
       tgepincPost->SetLineColor(42);
@@ -974,7 +1146,26 @@
       plotarea2->GetXaxis()->SetTitle("True E_{#nu} (GeV)");
       plotarea2->GetYaxis()->SetTitle("Efficiency");
       plotarea2->Draw();
-      
+     
+      /*
+      std::cout<<"nue ccqe pre: "<<std::endl; 
+      tgepiccqe[0]->Print();
+      std::cout<<"nuebar ccqe pre: "<<std::endl;
+      tgepiccqe[1]->Print();
+      std::cout<<"nue cc1pi pre: "<<std::endl;
+      tgepiccpip[0]->Print();
+      std::cout<<"nuebar cc1pi pre: "<<std::endl;
+      tgepiccpip[1]->Print();
+      std::cout<<"nue ccother pre: "<<std::endl;
+      tgepiccother[0]->Print();
+      std::cout<<"nuebar ccother pre: "<<std::endl;
+      tgepiccother[1]->Print();
+      std::cout<<"numu pre: "<<std::endl;
+      tgepiccnumu->Print();
+      std::cout<<"nc pre: "<<std::endl;
+      tgepinc->Print();
+      */
+
       tgepiccqe[0]->Draw("same LP");
       tgepiccqe[1]->Draw("same LP");
       tgepiccpip[0]->Draw("same LP");
@@ -1036,6 +1227,25 @@
       plotarea2Post->GetXaxis()->SetTitle("Reco E_{#nu} (GeV)");
       plotarea2Post->GetYaxis()->SetTitle("Efficiency");
       plotarea2Post->Draw();
+
+      /*
+      std::cout<<"nue ccqe post: "<<std::endl;
+      tgepiccqePost[0]->Print();
+      std::cout<<"nuebar ccqe post: "<<std::endl;
+      tgepiccqePost[1]->Print();
+      std::cout<<"nue cc1pi post: "<<std::endl;
+      tgepiccpipPost[0]->Print();
+      std::cout<<"nuebar cc1pi post: "<<std::endl;
+      tgepiccpipPost[1]->Print();
+      std::cout<<"nue ccother post: "<<std::endl;
+      tgepiccotherPost[0]->Print();
+      std::cout<<"nuebar ccother post: "<<std::endl;
+      tgepiccotherPost[1]->Print();
+      std::cout<<"numu post: "<<std::endl;
+      tgepiccnumuPost->Print();
+      std::cout<<"nc post: "<<std::endl;
+      tgepincPost->Print();      
+      */
 
       tgepiccqePost[0]->Draw("same LP");
       tgepiccqePost[1]->Draw("same LP");
@@ -1105,7 +1315,7 @@
       cannamePost1r += ".png";
       tcanPost1r->Print(cannamePost1r);
 
-      TLegend* legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+      legend = new TLegend(0.1, 0.6, 0.25, 0.9);
       legend->SetHeader("curves");
       legend->AddEntry(tgepiccqePost1r[0],"CCQE nu 1","l");
       legend->AddEntry(tgepiccqePost1r[1],"CCQE nu 2","l");
@@ -1124,11 +1334,32 @@
   c13->Divide(nnutypes,ninttypes);
   for (int nt=0; nt<nnutypes; nt++) {
     for (int it=0; it<ninttypes; it++) {
-      c13->cd(ninttypes*nt + it +1);
-      h2trueTOrecoPRE[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
-      h2trueTOrecoPRE[nt][it]->Draw("colz");
+       for(Int_t ini = 0 ; ini <  h2trueTOrecoPRE[nt][it]->GetNbinsX(); ini ++ )
+       {
+         for(Int_t jni = 0 ; jni <  h2trueTOrecoPRE[nt][it]->GetNbinsY(); jni ++ )
+         {
+           double tempTt = 0, tempTt2 = 0;
+           for(Int_t kni = 0 ; kni <  h2trueTOrecoPRE[nt][it]->GetNbinsY(); kni ++ )
+           {
+             tempTt += h2trueTOrecoPRE[nt][it]->GetBinContent(ini+1, kni+1);
+           }
+             if(tempTt > 0) {
+	       h2trueTOrecoPRE[nt][it]->SetBinContent(ini+1, jni+1, h2trueTOrecoPRE[nt][it]->GetBinContent(ini+1, jni+1)/tempTt);
+	       //std::cout<<tempTt<<" "<<nnutypes<<" "<<ninttypes<<std::endl;
+	     }
+	 }
+       }
+       c13->cd(ninttypes*nt + it +1);
+       h2trueTOrecoPRE[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
+       h2trueTOrecoPRE[nt][it]->GetXaxis()->SetRangeUser(0.5,7);
+       h2trueTOrecoPRE[nt][it]->GetYaxis()->SetRangeUser(0.5,7);
+       h2trueTOrecoPRE[nt][it]->Draw("colz");
     }
   }
+
+  new TCanvas();
+  h2trueTOrecoPRE[0][0]->SetTitle(Form("int type %d, nu type %d", 0, 0));
+  h2trueTOrecoPRE[0][0]->Draw("colz");
 
   TCanvas* c3 = new TCanvas();
   c3->Divide(nnutypes,ninttypes);    
@@ -1136,11 +1367,11 @@
     for (int it=0; it<ninttypes; it++) {
       c3->cd(ninttypes*nt + it +1);
       h2trueTOreco[nt][it]->SetTitle(Form("int type %d, nu type %d", it, nt));
+      h2trueTOreco[nt][it]->GetXaxis()->SetRangeUser(0,10);
+      h2trueTOreco[nt][it]->GetYaxis()->SetRangeUser(0,10);
       h2trueTOreco[nt][it]->Draw("colz");
     }
   }
-
-   THStack *hs = new THStack("hs","");
 
    repiccnumuPostDB->SetFillColor(1);
    repincPostDB->SetFillColor(2);
@@ -1186,6 +1417,7 @@
    repiccSignalNoFlux->Add(repiccqePostDBNoFlux[1]);
    repiccSignalNoFlux->Add(repiccpipPostDBNoFlux[1]);
    repiccSignalNoFlux->Add(repiccotherPostDBNoFlux[1]);
+   repiccSignalNoFlux->SetFillColor(4);
 
    repiccSignalNoFluxPRE = (TH1D*)repiccqePreDBNoFlux[0]->Clone();
    repiccSignalNoFluxPRE->Add(repiccpipPreDBNoFlux[0]);
@@ -1193,6 +1425,136 @@
    repiccSignalNoFluxPRE->Add(repiccqePreDBNoFlux[1]);
    repiccSignalNoFluxPRE->Add(repiccpipPreDBNoFlux[1]);
    repiccSignalNoFluxPRE->Add(repiccotherPreDBNoFlux[1]);
+
+   repiccnumuPostDBNoFlux->SetFillColor(1);
+   repincPostDBNoFlux->SetFillColor(2);
+
+   repiccnumuPostDB->Scale(50./22.5);
+   repincPostDB->Scale(50./22.5);
+   repiccSignal->Scale(50./22.5);
+
+   repiccnumuPostDB1r->Scale(50./22.5);
+   repincPostDB1r->Scale(50./22.5);
+   repiccSignal1r->Scale(50./22.5);
+
+
+   if(atoi(gApplication->Argv(8)) == 1){
+
+     TH1D* sph1 = new TH1D("#nu_{e}","#nu_{e} Spectrum",62,0.25,8);
+     TH1D* sph2 = new TH1D("$nu_{#mu}","#nu_{e} Spectrum",62,0.25,8);
+     TH1D* sph3 = new TH1D("nc","#nu_{e} Spectrum",62,0.25,8);
+     double currLar = 0.;
+     for(Int_t i=0;i<repiccSignal->GetNbinsX();i++){
+       sph2->SetBinContent(i+1, repiccnumuPostDB->GetBinContent(i+1));
+       sph3->SetBinContent(i+1, repiccnumuPostDB->GetBinContent(i+1) + repincPostDB->GetBinContent(i+1));
+       sph1->SetBinContent(i+1, repiccSignal->GetBinContent(i+1) + repincPostDB->GetBinContent(i+1) + repiccnumuPostDB->GetBinContent(i+1));
+       if (repiccSignal->GetBinContent(i+1) + repincPostDB->GetBinContent(i+1) + repiccnumuPostDB->GetBinContent(i+1) > currLar) currLar = repiccSignal->GetBinContent(i+1) + repincPostDB->GetBinContent(i+1) + repiccnumuPostDB->GetBinContent(i+1);
+     }
+     sph1->SetMarkerColor(1);
+     sph1->SetLineColor(1);
+     sph2->SetFillColor(7);
+     sph2->SetLineColor(7);
+     sph3->SetFillColor(41);
+     sph3->SetLineColor(41);
+     sph1->Rebin(2);
+     sph2->Rebin(2);
+     sph3->Rebin(2);
+
+     currLar *= 2;
+
+     sph1->GetXaxis()->SetTitle("Neutrino Energy (GeV)");
+     sph1->GetYaxis()->SetTitle("Events / 0.25 GeV");
+     sph1->GetYaxis()->SetRangeUser(0, currLar * 1.3);
+     sph1->GetXaxis()->SetRangeUser(0.5,8);
+
+     TCanvas* csp = new TCanvas();
+     sph1->Draw("hist ep");
+     sph3->Draw("same");
+     sph2->Draw("same");
+/*
+     TPaveText *titlesp = new TPaveText(0.65, 0.65, 0.9, 0.9);
+     titlesp->AddText(Form("%s", gApplication->Argv(5)));
+     titlesp->AddText(Form(" %f NC and %f #nu_{e}",sph3->Integral(8,11)-sph2->Integral(8,11),sph1->Integral(8,11)-sph3->Integral(8,11)-sph2->Integral(8,11)));
+     titlesp->AddText(Form("in between 2-3 GeV"));
+     titlesp->SetFillColor(0);
+     titlesp->SetTextFont(1);
+     titlesp->Draw();
+*/
+     TText *t22 = new TText(1, currLar * 1.15 , Form(" %f NC %f nue",(sph3->Integral(8,11)-sph2->Integral(8,11)), (sph1->Integral(8,11)-sph3->Integral(8,11))) );
+     t22->SetTextSize(0.04);
+     t22->Draw();
+     TText *t23 = new TText(1.2, currLar* 1.05 , Form("in 2-3 GeV") );
+     t23->SetTextSize(0.04);
+     t23->Draw();
+
+
+     TLegend* legendsp = new TLegend(0.65, 0.65, 0.9, 0.9);
+     legendsp->SetHeader("50-kt WCD 3.5 years");
+     legendsp->AddEntry(sph1,"#nu_{e}","l");
+     legendsp->AddEntry(sph2,"#nu_{#mu} BG","f");
+     legendsp->AddEntry(sph3,"NC BG","f");
+     legendsp->Draw();
+     csp->SaveAs(Form("eventRate_%s_file_%s_step%drun%d_fluxCut_%s.png", gApplication->Argv(4), gApplication->Argv(5), atoi(gApplication->Argv(6)), atoi(gApplication->Argv(7)), gApplication->Argv(9)  ));
+
+     /////////////////////////////////////////////////////////////////////////////////
+
+     TH1D* sph11r = new TH1D("#nu_{e}","#nu_{e} Spectrum",62,0.25,8);
+     TH1D* sph21r = new TH1D("$nu_{#mu}","#nu_{e} Spectrum",62,0.25,8);
+     TH1D* sph31r = new TH1D("nc","#nu_{e} Spectrum",62,0.25,8);
+     double currLar1r = 0.;
+     for(Int_t i=0;i<repiccSignal1r->GetNbinsX();i++){
+       sph21r->SetBinContent(i+1, repiccnumuPostDB1r->GetBinContent(i+1));
+       sph31r->SetBinContent(i+1, repiccnumuPostDB1r->GetBinContent(i+1) + repincPostDB1r->GetBinContent(i+1));
+       sph11r->SetBinContent(i+1, repiccSignal1r->GetBinContent(i+1) + repincPostDB1r->GetBinContent(i+1) + repiccnumuPostDB1r->GetBinContent(i+1));
+       if (repiccSignal1r->GetBinContent(i+1) + repincPostDB1r->GetBinContent(i+1) + repiccnumuPostDB1r->GetBinContent(i+1) > currLar1r) currLar1r = repiccSignal1r->GetBinContent(i+1) + repincPostDB1r->GetBinContent(i+1) + repiccnumuPostDB1r->GetBinContent(i+1);
+     }
+     sph11r->SetMarkerColor(1);
+     sph11r->SetLineColor(1);
+     sph21r->SetFillColor(7);
+     sph21r->SetLineColor(7);
+     sph31r->SetFillColor(41);
+     sph31r->SetLineColor(41);
+     sph11r->Rebin(2);
+     sph21r->Rebin(2);
+     sph31r->Rebin(2);
+
+     currLar1r *= 2;
+
+     sph11r->GetXaxis()->SetTitle("Neutrino Energy (GeV)");
+     sph11r->GetYaxis()->SetTitle("Events / 0.25 GeV");
+     sph11r->GetYaxis()->SetRangeUser(0, currLar1r * 1.3);
+     sph11r->GetXaxis()->SetRangeUser(0.5,8);
+
+     TCanvas* csp1r = new TCanvas();
+     sph11r->Draw("hist ep");
+     sph31r->Draw("same");
+     sph21r->Draw("same");
+
+     TPaveText *titlesp = new TPaveText(0.65, 0.65, 0.9, 0.9);
+     titlesp->AddText(Form("%s", gApplication->Argv(5)));
+     titlesp->AddText(Form(" %f NC and %f #nu_{e}",sph3->Integral(8,11)-sph2->Integral(8,11),sph1->Integral(8,11)-sph3->Integral(8,11)-sph2->Integral(8,11)));
+     titlesp->AddText(Form("in between 2-3 GeV"));
+     titlesp->SetFillColor(0);
+     titlesp->SetTextFont(1);
+     titlesp->Draw();
+
+/*     
+     TText *t221r = new TText(1, currLar1r * 1.15 , Form(" %f NC %f nue",(sph31r->Integral(8,11)-sph21r->Integral(8,11)), (sph11r->Integral(8,11)-sph31r->Integral(8,11))) );
+     t221r->SetTextSize(0.04);
+     t221r->Draw();
+     TText *t231r = new TText(1.2, currLar1r* 1.05 , Form("in 2-3 GeV") );
+     t231r->SetTextSize(0.04);
+     t231r->Draw();
+*/
+     TLegend* legendsp1r = new TLegend(0.65, 0.65, 0.9, 0.9);
+     legendsp1r->SetHeader("50-kt WCD 3.5 years");
+     legendsp1r->AddEntry(sph1,"#nu_{e}","l");
+     legendsp1r->AddEntry(sph2,"#nu_{#mu} BG","f");
+     legendsp1r->AddEntry(sph3,"NC BG","f");
+     legendsp1r->Draw();
+     csp1r->SaveAs(Form("eventRate1r_%s_file_%s_step%drun%d_fluxCut_%s.png", gApplication->Argv(4), gApplication->Argv(5), atoi(gApplication->Argv(6)), atoi(gApplication->Argv(7)), gApplication->Argv(9)  ));
+
+   }
 
    //nue, nuebar, numu, numubar, nueOsc, nuebarOsc, numuOsc, numubarOsc
    //integral for 0 7.42579e-12
@@ -1244,37 +1606,43 @@
    //repincPostDB->Scale(1.47e21 * 3.5 * 50);
    //repiccSignal->Scale(1.47e21 * 3.5 * 50);
 
-   repiccnumuPostDB->Rebin(2);
-   repincPostDB->Rebin(2);
-   repiccSignal->Rebin(2);
+   repiccnumuPostDB->Rebin(1);
+   repincPostDB->Rebin(1);
+   repiccSignal->Rebin(1);   
+
+   //repiccnumuPostDB->Scale(50./22.5);
+   //repincPostDB->Scale(50./22.5);
+   //repiccSignal->Scale(50./22.5);
+
+   THStack *hs = new THStack("hs","hs");
 
    hs->Add(repiccnumuPostDB);
    hs->Add(repincPostDB);   
    hs->Add(repiccSignal);
 
    new TCanvas();
-   hs->Draw();
+   hs->Draw("hist");
 
-   legend = new TLegend(0.1, 0.6, 0.25, 0.9);
+   TLegend* legend = new TLegend(0.1, 0.6, 0.25, 0.9);
    legend->SetHeader("Stacked plot");
-   legend->AddEntry(repiccnumuPostDB,"numu","f");
-   legend->AddEntry(repincPostDB,"nc","f");
-   legend->AddEntry(repiccSignal,"nue CC (all)","f");
+   legend->AddEntry(repiccnumuPostDBNoFlux,"numu","f");
+   legend->AddEntry(repincPostDBNoFlux,"nc","f");
+   legend->AddEntry(repiccSignalNoFlux,"nue CC (all)","f");
    legend->Draw();
 
    // with old method to cut pi0
    THStack *hs3 = new THStack("hs3","old method stacked");
 
-   repiccnumuPostDB1r->Rebin(2);
-   repincPostDB1r->Rebin(2);
-   repiccSignal1r->Rebin(2);
+   repiccnumuPostDB1r->Rebin(1);
+   repincPostDB1r->Rebin(1);
+   repiccSignal1r->Rebin(1);
 
    hs3->Add(repiccnumuPostDB1r);
    hs3->Add(repincPostDB1r);
    hs3->Add(repiccSignal1r);
 
    new TCanvas();
-   hs3->Draw();
+   hs3->Draw("hist");
 
    legend = new TLegend(0.1, 0.6, 0.25, 0.9);
    legend->SetHeader("Stacked plot");
@@ -1300,7 +1668,7 @@
    hs2->Add(repiccSignalPRE);
 
    new TCanvas();
-   hs2->Draw();
+   hs2->Draw("hist");
 
    legend = new TLegend(0.1, 0.6, 0.25, 0.9);
    legend->SetHeader("Stacked plot");

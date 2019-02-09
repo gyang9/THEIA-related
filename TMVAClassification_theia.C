@@ -448,7 +448,7 @@ else if(atoi(gApplication->Argv(4))==2){
    // Set individual event weights (the variables must exist in the original TTree)
    // -  for signal    : `dataloader->SetSignalWeightExpression    ("weight1*weight2");`
    // -  for background: `dataloader->SetBackgroundWeightExpression("weight1*weight2");`
-   dataloader->SetSignalWeightExpression( "fluxWeight[1]" );
+   dataloader->SetSignalWeightExpression( "fluxWeight[1]*2" );
    dataloader->SetBackgroundWeightExpression( "fluxWeight[1]" );
 
    // Apply additional cuts on the signal and background samples (can be different)
@@ -456,7 +456,7 @@ else if(atoi(gApplication->Argv(4))==2){
    //TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) && !((fqmrnring[0]==1 && fqnse == 1) || (fqmrnring[0]==1 && fqnse == 2) || (fqmrnring[0]==2 && fqnse == 2)) "; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2
-   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse < 3 && evis < 1500";
+   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 && fqnse == 1 ";
    TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  " && myCommonCut;
    TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  " && myCommonCut;
 

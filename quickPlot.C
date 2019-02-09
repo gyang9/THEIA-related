@@ -9,7 +9,7 @@
    Int_t ipnu[50];
 
 
-   TFile f("outputTree_reinput0.root");
+   TFile f("outputTest.root");
    TTree*t = (TTree*)f.Get("h1");
 
    t->SetBranchAddress("erecmr", &erecmr);
@@ -39,7 +39,7 @@
    }
 
    Long64_t nbytes = 0, nb = 0;
-   NofEvent = 1500000; //t->GetEntries();
+   NofEvent = t->GetEntries();
 
    for (Long64_t jentry=0; jentry<NofEvent;jentry++) {
       t->GetEntry(jentry);  

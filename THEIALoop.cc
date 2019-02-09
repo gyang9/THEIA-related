@@ -700,6 +700,10 @@ void THEIA::prepareOutput(TString outName){
    tt->Branch("erec1r",&erec1r,"erec1r/D");
    tt->Branch("erecmr",&erecmr,"erecmr/D");
    tt->Branch("eTOpre",&eTOpre,"eTOpre/D");
+
+   tt->Branch("tdist",&tdist,"tdist/D");
+   tt->Branch("nCaptureEff",&nCaptureEff,"nCaptureEff/D");
+   tt->Branch("nCapture",&nCapture,"nCapture/I");
 }
 
 
@@ -718,20 +722,20 @@ TTree* THEIA:: LoopAndWrite(Int_t NofEvent){
       //std::cout<<"neutrino ip and energy : "<<ipnu[0]<<" "<<pnu[0]<<std::endl;
 
       if(ipnu[0] == 12){
-        fluxWeight[0] = (reTot2[0]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
-        fluxWeight[1] = (reTot2[4]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
+        fluxWeight[0] = (reTot2[0]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[4]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[0]->Eval(pnu[0]));
       }
       if(ipnu[0] == -12){
-        fluxWeight[0] = (reTot2[1]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
-        fluxWeight[1] = (reTot2[5]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
+        fluxWeight[0] = (reTot2[1]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[5]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[1]->Eval(pnu[0]));
       }
       if(ipnu[0] == 14){
-        fluxWeight[0] = (reTot2[2]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
-        fluxWeight[1] = (reTot2[6]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
+        fluxWeight[0] = (reTot2[2]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[6]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[2]->Eval(pnu[0]));
       }
       if(ipnu[0] == -14){
-        fluxWeight[0] = (reTot2[3]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
-        fluxWeight[1] = (reTot2[7]->Eval(pnu[0])*1.47e21*3.5)/ (10.*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
+        fluxWeight[0] = (reTot2[3]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
+        fluxWeight[1] = (reTot2[7]->Eval(pnu[0])*1.47e21*3.5)/ (500.00*365.*24.*3600.*4.*TMath::Pi()*reTot[3]->Eval(pnu[0]));
       }
 
       if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }
@@ -768,6 +772,15 @@ Double_t THEIA::GetToWall(double *pos, double *dir){
     }
 }
 
+
+//neutron efficiency spline generated here
+void THEIA:: LoadNeutronEfficiency(TString neutronEffFile){
+
+   TGraph * gNeutronSpline     = new TGraph(neutronEffFile, "%lg %lg" , "");
+   TSpline5* neutronSpline    = new TSpline5("neutronSpline", gNeutronSpline);
+}
+
+
 // 88 variables aimed at 
 void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
@@ -799,6 +812,7 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
       }
 
       if(TMath::Abs(mode) > 30) { fluxWeight[1] = fluxWeight[0]; }
+        //if(TMath::Abs(ipnu[0]) == 12) { fluxWeight[1] = fluxWeight[1]/2.; }
         //if(fluxWeight[0]>0.1) {fluxWeight[0] = 10e-22;}
         //if(fluxWeight[1]>0.1) {fluxWeight[1] = 10e-22;}
 
@@ -1001,7 +1015,30 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 	else{
 	  erecmr = erec1r;
 	}
-	  
+
+        /////////////////////////////////////////////////////////////////////////
+        ////////   Neutron information   ///////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////
+	
+	for(Int_t neutronloop=0;neutronloop<1000;neutronloop++) tdist[neutronloop]=0;
+        nCapture = 0;
+        for(int iw=0; iw<nscndprt; iw++){
+          if( lmecscnd[iw]==18 && /* Neutron capture */
+          iprtscnd[iw]==22 /* PDG code for gamma */
+          )
+          {
+            for(int innerloop =0 ; innerloop<10; innerloop++) tdist[innerloop]=0.0;
+            for(int jw=0; jw<3; jw++)
+            {
+              tdist[nCapture]+=(posv[jw] - vtxscnd[iw][jw])*(posv[jw] - vtxscnd[iw][jw]);
+              //std::cout<<vtxscnd[i][j]<<" "<<posv[j]<<" "<<(posv[j] - vtxscnd[i][j])*(posv[j] - vtxscnd[i][j])<<std::endl;
+            }
+            nCapture ++;
+	    nCaptureEff += neutronSpline->Eval(tdist[nCapture]);	    
+	    //std::cout<<"one neutron at "<<nCapture<<" with distance of "<<tdist[nCapture-1]<<" "<<std::endl;
+          }
+        }
+
 	//std::cout<<"erec and likelihood ratios examine: "<<erec1r<<" "<<erecmr<<" "<<fq2rGG<<" "<<fq2rEE<<std::endl;
 	sigCategory = -1;
 	bkgCategory = -1;
@@ -1015,8 +1052,8 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
           if((nhitac<16)
           && (fqwall > 200.)
           && (fqmrnring[0] == 1)
-	  && evis >30
-          //&& (lemu > fq1rmom[0][1]*0.2)
+	  && fq1rmom[0][1] >30
+          && (lemu > fq1rmom[0][1]*0.2)
           //&& (fq1rmom[0][1]>100.)
 	  && fqnse == 1){
 		//std::cout<<"towall is "<<towall<<" "<<fq1rdir[0][1][2]<<" "<<fq1rpos[0][1][2]<<std::endl;
@@ -1061,13 +1098,13 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
           else if((nhitac<16)
           && (fqwall > 200.)
-	  && evis > 30
+	  && fq1rmom[0][1] > 30
           && (fqmrnring[0] == 1)
-          //&& (lemu > fq1rmom[0][1]*0.2)
+          && (lemu > fq1rmom[0][1]*0.2)
           //&& (fq1rmom[0][1]>100.)
           && fqnse == 2){
 
-                if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
+                if(TMath::Abs(mode) < 30  && ipnu[0]==12) isSIG = true;
                 else isBKG = true;
 /*
                 if(TMath::Abs(mode) >30) {
@@ -1104,13 +1141,13 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
           else if((nhitac<16)
           && (fqwall > 200.)
-	  && evis > 30
+	  && fq1rmom[0][1] > 30
           && (fqmrnring[0] > 1)
-          //&& (lemu > fq1rmom[0][1]*0.2)
+          && (lemu > fq1rmom[0][1]*0.2)
           //&& (fq1rmom[0][1]>100.)
           && fqnse < 3){
 
-                if(TMath::Abs(mode) < 30  && TMath::Abs(ipnu[0]==12)) isSIG = true;
+                if(TMath::Abs(mode) < 30  && ((ipnu[0]==12 && fqnse <3) || (ipnu[0]==-12 && fqnse == 1)) ) isSIG = true;
                 else isBKG = true;
 /*
                 if(TMath::Abs(mode) >30) {
@@ -1157,7 +1194,6 @@ void THEIA:: LoopAndWrite(Int_t NofEvent, Bool_t SigBkgTagger){
 
    ff->Close();
 }
-
 
 
 //#endif // #ifdef THEIA_cxx

@@ -1,0 +1,21 @@
+now recording event rates: 
+CC nue 1.79258e-21
+CC nuebar 2.21332e-22
+CC numu 1.47427e-19
+CC numubar 5.01898e-21
+CC nutau 1.79258e-21
+CC nutaubar 2.21332e-22
+NC nue 1.79258e-21
+NC nuebar 2.21332e-22
+NC numu 1.47427e-19
+NC numubar 5.01898e-21
+NC nutau 1.79258e-21
+NC nutaubar 2.21332e-22
+the integral for 0 1.0131e-12
+the integral for 1 1.7992e-13
+the integral for 2 1.14462e-10
+the integral for 3 7.17658e-12
+the integral for 4 6.91537e-12
+the integral for 5 4.89886e-13
+the integral for 6 3.56342e-11
+the integral for 7 3.21376e-12

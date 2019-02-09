@@ -26,6 +26,11 @@ public :
    double c_bbb[100];
    double curr_sEff[100];
 
+   double enerStep ;  // was 0.1 for 0 - 10 GeV  100 in total
+   double tmvaStep ;  // was 0.01 for -0.4 - 0.4  80 in total
+   double enerSize ;
+   double tmvaSize ;
+
    // Declaration of leaf types
    Int_t           nring;
    UInt_t          nrun;
@@ -794,7 +799,7 @@ public :
 
    Double_t fluxWeight[2];
 
-   virtual void     GetTMVACut(double factor, int stepN, int runN);
+   virtual void     GetTMVACut(double factor, std::string horn, int stepN, int runN, double eStep, double tStep);
    //virtual void     GetTMVACut(double factor, int fileID);
    sklooper(TTree *tree=0);
    sklooper(TString filename);
@@ -804,7 +809,7 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop(double factor, int stepN, int runN);
+   virtual void     Loop(double factor, std::string horn, int stepN, int runN, double fluxCut);
    //virtual void     Loop(double factor, int fileID);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);

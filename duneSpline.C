@@ -1,6 +1,7 @@
+void duneSpline()
 {
 //=========Macro generated from canvas: c1_n2/c1_n2
-//=========  (Mon Jul 16 06:27:50 2018) by ROOT version5.34/30
+//=========  (Thu Nov  8 16:54:22 2018) by ROOT version 6.14/02
    TCanvas *c1_n2 = new TCanvas("c1_n2", "c1_n2",0,0,700,500);
    gStyle->SetOptStat(0);
    c1_n2->SetHighLightColor(2);
@@ -1180,13 +1181,13 @@
    entry->SetTextFont(42);
    leg->Draw();
    
-   TPaveText *pt = new TPaveText(0.4023563,0.9365254,0.5976437,0.995,"blNDC");
+   TPaveText *pt = new TPaveText(0.4030747,0.9365254,0.5969253,0.995,"blNDC");
    pt->SetName("title");
    pt->SetBorderSize(0);
    pt->SetFillColor(0);
    pt->SetFillStyle(0);
    pt->SetTextFont(42);
-   TText *text = pt->AddText("numu_flux");
+   TText *pt_LaTex = pt->AddText("numu_flux");
    pt->Draw();
    c1_n2->Modified();
    c1_n2->cd();
