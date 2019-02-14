@@ -770,6 +770,7 @@ Double_t THEIA::GetToWall(double *pos, double *dir){
         towall=(-1810-pos[2])/dir[2];
       }
     }
+    return towall;
 }
 
 
