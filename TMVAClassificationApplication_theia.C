@@ -262,6 +262,12 @@ void TMVAClassificationApplication_theia( TString myMethodList = "" )
     Float_t fq3rPPE_fq2rPP;
 
    Float_t fqnse;
+ 
+   Float_t nCapture;
+   Float_t tdist0;
+   Float_t tdist1;
+   Float_t tdist2;
+   Float_t tdist3;
 
    ////////
    
@@ -358,6 +364,12 @@ void TMVAClassificationApplication_theia( TString myMethodList = "" )
    reader->AddVariable( "fq3rPEP-fq2rPE",&fq3rPEP_fq2rPE );
    reader->AddVariable( "fq3rPPE-fq2rPP",&fq3rPPE_fq2rPP);
 
+   reader->AddVariable( "nCapture", &nCapture);
+   reader->AddVariable( "tdist[0]", &tdist0);
+   reader->AddVariable( "tdist[1]", &tdist1);
+   reader->AddVariable( "tdist[2]", &tdist2);
+   reader->AddVariable( "tdist[3]", &tdist3);
+
    //reader->AddVariable( "fqnse", &fqnse );
 
 /*
@@ -441,7 +453,7 @@ else {
       if (it->second) {
          TString methodName = TString(it->first) + TString(" method");
          TString weightfile = dir + prefix + TString("_") + TString(it->first) + TString(".weights.xml");
-         reader->BookMVA( methodName,  Form("dataset/weights/TMVAClassification_BDT.weights.step%drun%d.xml",atoi(gApplication->Argv(4)),atoi(gApplication->Argv(5)) ) );
+         reader->BookMVA( methodName,  Form("dataset/weights/TMVAClassification_BDT.weights.xml",atoi(gApplication->Argv(4)),atoi(gApplication->Argv(5)) ) );
       }
    }
 
@@ -546,8 +558,8 @@ else {
    //
    TFile *input(0);
    TString fname;
-   if( /*atoi(gApplication->Argv(6))> 0*/ 1) fname = Form("/home/gyang/work/t2k/wc/outputTest.root" /*atoi(gApplication->Argv(6))*/);
-   else fname = "/home/gyang/work/t2k/wc/outputTest.root";
+   if( /*atoi(gApplication->Argv(6))> 0*/ 1) fname = Form("/home/guang/work/theia/wc/outputTest_FHC.root" /*atoi(gApplication->Argv(6))*/);
+   else fname = "/home/gyang/work/t2k/wc/outputTest_FHC.root";
    //TString fname = "/home/theiaang/work/t2k/wc/input/skmc/combined.root";
    //TString fname = "./tmva_class_example.root";
    if (!gSystem->AccessPathName( fname )) {
@@ -677,6 +689,9 @@ else {
    Float_t         fqmrpos  [60][6][3];   //[fqnmrfit]
    Float_t         fqmrdir  [60][6][3];   //[fqnmrfit]
 
+   Int_t 	   nCapture2;
+   Float_t	   tdist[100];
+
    Double_t  erecmr2;
    Double_t  eTOpre2;
    Double_t  fqwall2;
@@ -794,6 +809,9 @@ else {
    theTree->SetBranchAddress("evis",&evis);
    theTree->SetBranchAddress("nhitac",&nhitac);
 
+   theTree->SetBranchAddress("nCapture",&nCapture2);
+   theTree->SetBranchAddress("tdist",&tdist);
+
    double tmvaR;
    //TBranch *tmvaAdd = theTree->Branch("tmva",&tmvaR,"tmva/D");
 
@@ -808,7 +826,7 @@ else {
    Int_t    nSelCutsGA = 0;
    Double_t effS       = 0.7;
 
-   TFile* ff = TFile::Open(Form("outputTree_reinput_step%drun%d.root",  atoi(gApplication->Argv(4)),atoi(gApplication->Argv(5))  ),"RECREATE");
+   TFile* ff = TFile::Open(Form("outputTree_reinput_FHC_neutron_step%drun%d.root",  atoi(gApplication->Argv(4)),atoi(gApplication->Argv(5))  ),"RECREATE");
    TTree* tt = theTree->CloneTree(0);
    //ff->Write();
    //delete ff;
@@ -1101,6 +1119,12 @@ else {
         anglepp = anglepp2;
         angleepi = angleepi2;
         anglepie = anglepie2;
+
+        nCapture = nCapture2;
+	tdist0 = tdist[0];
+	tdist1 = tdist[1];
+	tdist2 = tdist[2];
+	tdist3 = tdist[3];
 	
       // Return the MVA outputs and fill into histograms
 

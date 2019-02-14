@@ -17,7 +17,7 @@
 #include "TMVA/Tools.h"
 #include "TMVA/TMVAGui.h"
 
-int TMVAClassification_theia( TString myMethodList = "" )
+int TMVAClassification_neutron( TString myMethodList = "" )
 {
    // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
@@ -119,7 +119,7 @@ int TMVAClassification_theia( TString myMethodList = "" )
 
    // Here the preparation phase begins
 
-   cout<<atoi(gApplication->Argv(4))<<" "<<atoi(gApplication->Argv(5))<<endl;
+   //cout<<atoi(gApplication->Argv(4))<<" "<<atoi(gApplication->Argv(5))<<endl;
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
    TFile *input(0);
@@ -200,7 +200,7 @@ int TMVAClassification_theia( TString myMethodList = "" )
    // Define the input variables that shall be used for the MVA training
    // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
    // [all types of expressions that can also be parsed by TTree::Draw( "expression" )]
-
+/*
    dataloader->AddVariable( "var1:=fqpi0mom1[0]", "fqpi0mom1[0]", "units",  'F' );
    dataloader->AddVariable( "var2:=fqpi0mom2[0]", "fqpi0mom2[0]", "units", 'F' );
    dataloader->AddVariable( "var3:=fq1rnll[0][1]-fqpi0nll[0]", "fq1rnll[0][1]-fqpi0nll[0]", "units", 'F' );
@@ -294,15 +294,22 @@ int TMVAClassification_theia( TString myMethodList = "" )
    dataloader->AddVariable( "var86:=fq3rPEP-fq2rPE", "fq3rPEP-fq2rPE", "units", 'F' );
    dataloader->AddVariable( "var87:=fq3rPPE-fq2rPP", "fq3rPPE-fq2rPP", "units", 'F' );
 
-   dataloader->AddVariable( "var88:=nCapture", "nCapture", "units", 'I' );
-   dataloader->AddVariable( "var89:=tdist[0]", "tdist[0]", "units", 'F' );
-   dataloader->AddVariable( "var90:=tdist[1]", "tdist[1]", "units", 'F' );
-   dataloader->AddVariable( "var91:=tdist[2]", "tdist[2]", "units", 'F' );
-   dataloader->AddVariable( "var92:=tdist[3]", "tdist[3]", "units", 'F' );
-
    //dataloader->AddVariable( "var88:=fqnse", "fqnse", "units", 'I' );
-
+*/
+   dataloader->AddVariable( "var1:=nCapture", "nCapture", "units", 'I' );
+   dataloader->AddVariable( "var2:=tdist[0]", "tdist[0]", "units", 'F' );
+   dataloader->AddVariable( "var3:=tdist[1]", "tdist[1]", "units", 'F' );
 /*
+   dataloader->AddVariable( "var4:=tdist[2]", "tdist[2]", "units", 'F' );
+   dataloader->AddVariable( "var5:=tdist[3]", "tdist[3]", "units", 'F' );
+   dataloader->AddVariable( "var6:=tdist[4]", "tdist[4]", "units", 'F' );
+   dataloader->AddVariable( "var7:=tdist[5]", "tdist[5]", "units", 'F' );
+   dataloader->AddVariable( "var8:=tdist[6]", "tdist[6]", "units", 'F' );
+   dataloader->AddVariable( "var9:=tdist[7]", "tdist[7]", "units", 'F' );
+   dataloader->AddVariable( "var10:=tdist[8]", "tdist[8]", "units", 'F' );
+   dataloader->AddVariable( "var11:=tdist[9]", "tdist[9]", "units", 'F' );
+
+
 if(atoi(gApplication->Argv(4))==1){
    dataloader->AddVariable( "var1:=fqpi0mom1[0]", "fqpi0mom1[0]", "units",  'F' );
    dataloader->AddVariable( "var2:=fqpi0mom2[0]", "fqpi0mom2[0]", "units", 'F' );
@@ -462,7 +469,7 @@ else if(atoi(gApplication->Argv(4))==2){
    //TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  && (evis > 30 && fqwall > 200 && nhitac < 16 && fqnse < 3) && !((fqmrnring[0]==1 && fqnse == 1) || (fqmrnring[0]==1 && fqnse == 2) || (fqmrnring[0]==2 && fqnse == 2)) "; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2
-   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 1 && (fqnse == 1 || fqnse == 2) && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 ";
+   TCut myCommonCut = "fq1rmom[0][1] > 30 && fqwall > 200 && nhitac < 16 && fqmrnring[0] == 1 && fqnse == 1 && fq1rnll[0][2]-fq1rnll[0][1] > fq1rmom[0][1]*0.2 ";
    TCut mycuts = "sigCategory >= 0 && sigCategory <= 2  " && myCommonCut;
    TCut mycutb = "bkgCategory >= 0 && bkgCategory <= 2  " && myCommonCut;
 
@@ -477,7 +484,7 @@ else if(atoi(gApplication->Argv(4))==2){
    //
    //    dataloader->PrepareTrainingAndTestTree( mycut,
    //         "NSigTrain=3000:NBkgTrain=3000:NSigTest=3000:NBkgTest=3000:SplitMode=Random:!V" );
-   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"nTest_Signal=3000:nTest_Background=3000:SplitMode=Random:NormMode=NumEvents:!V" );
+   dataloader->PrepareTrainingAndTestTree( mycuts, mycutb,"nTest_Signal=1000:nTest_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
                                         //"nTrain_Signal=1000:nTrain_Background=1000:SplitMode=Random:NormMode=NumEvents:!V" );
 
 
@@ -749,5 +756,5 @@ int main( int argc, char** argv )
       if (!methodList.IsNull()) methodList += TString(",");
       methodList += regMethod;
    }
-   return TMVAClassification_theia(methodList);
+   return TMVAClassification_neutron(methodList);
 }
